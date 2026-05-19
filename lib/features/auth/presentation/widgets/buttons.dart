@@ -39,11 +39,13 @@ class PrimaryButton extends StatelessWidget {
 class SocialButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
+  final String? iconPath;
 
   const SocialButton({
     Key? key,
     required this.text,
     required this.onPressed,
+    this.iconPath,
   }) : super(key: key);
 
   @override
@@ -61,11 +63,9 @@ class SocialButton extends StatelessWidget {
           ),
         ),
         icon: SvgPicture.asset(
-          'assets/images/ico.svg',
+          iconPath ?? 'assets/images/google_logo.svg',
           width: 24,
           height: 24,
-          // If you need the Google logo specifically or just using the app logo for now
-          // If the app logo is ico.svg, we use it here as placeholder for Google or modify later
         ),
         label: Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
       ),

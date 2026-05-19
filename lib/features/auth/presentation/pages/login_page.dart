@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -53,14 +54,20 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      SvgPicture.asset(
+                        'assets/images/logo_white.svg',
+                        height: 60,
+                        colorFilter: const ColorFilter.mode(AppTheme.primaryText, BlendMode.srcIn),
+                      ),
+                      const SizedBox(height: 32),
                       const Text(
-                        'Welcome Back',
-                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.primaryText),
+                        'Login to Clair',
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.primaryText),
                       ),
                       const SizedBox(height: 8),
                       const Text(
-                        'Login to your account',
-                        style: TextStyle(color: AppTheme.secondaryText, fontSize: 16),
+                        'Enter your credentials',
+                        style: TextStyle(color: AppTheme.secondaryText, fontSize: 14),
                       ),
                       const SizedBox(height: 32),
                       
