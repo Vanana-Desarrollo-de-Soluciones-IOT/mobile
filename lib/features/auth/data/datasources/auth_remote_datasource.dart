@@ -5,6 +5,7 @@ import '../models/auth_models.dart';
 abstract class AuthRemoteDataSource {
   Future<AuthUserEntity> signUp(RegisterRequestModel request);
   Future<AuthUserEntity> signIn(SignInRequestModel request);
+  Future<AuthUserEntity> confirmRegistration(ConfirmRegistrationRequestModel request);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -44,7 +45,26 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       
       return AuthUserEntity.fromJson(response.data);
     } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw Exception('Credenciales incorrectas o cuenta no verificada');
+      }
       throw Exception(e.response?.data['message'] ?? 'Failed to sign in');
+    } catch (e) {
+      throw Exception('An unexpected error occurred');
+    }
+  }
+
+  @override
+  Future<AuthUserEntity> confirmRegistration(ConfirmRegistrationRequestModel request) async {
+    try {
+      final response = await apiClient.dio.post(
+        '/api/v1/auth/confirm',
+        data: request.toJson(),
+      );
+      
+      return AuthUserEntity.fromJson(response.data);
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'Failed to confirm registration');
     } catch (e) {
       throw Exception('An unexpected error occurred');
     }

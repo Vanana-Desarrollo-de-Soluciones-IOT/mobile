@@ -32,11 +32,11 @@ class _RegisterPageState extends State<RegisterPage> {
       body: SafeArea(
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
-            if (state.status == AuthStatus.success) {
+            if (state.status == AuthStatus.success && state.user?.sessionId != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Registration initiated successfully'), backgroundColor: AppTheme.successText),
               );
-              // Navigate to confirm or home
+              context.go('/confirm');
             } else if (state.status == AuthStatus.failure && state.errorMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.errorMessage!), backgroundColor: AppTheme.errorText),

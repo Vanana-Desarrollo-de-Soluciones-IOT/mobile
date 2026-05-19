@@ -25,12 +25,14 @@ void setupDependencies() {
   // Use cases
   getIt.registerLazySingleton(() => RegisterUseCase(repository: getIt()));
   getIt.registerLazySingleton(() => LoginUseCase(repository: getIt()));
+  getIt.registerLazySingleton(() => ConfirmRegistrationUseCase(repository: getIt()));
 
   // BLoC
   getIt.registerFactory(
     () => AuthBloc(
       registerUseCase: getIt(),
       loginUseCase: getIt(),
+      confirmRegistrationUseCase: getIt(),
     ),
   );
 }

@@ -27,4 +27,14 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(e.toString().replaceAll('Exception: ', ''));
     }
   }
+
+  @override
+  Future<Either<String, AuthUserEntity>> confirmRegistration(ConfirmRegistrationRequestModel request) async {
+    try {
+      final result = await remoteDataSource.confirmRegistration(request);
+      return Right(result);
+    } catch (e) {
+      return Left(e.toString().replaceAll('Exception: ', ''));
+    }
+  }
 }

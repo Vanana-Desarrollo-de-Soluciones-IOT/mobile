@@ -26,6 +26,23 @@ class SignInRequestModel {
   }
 }
 
+class ConfirmRegistrationRequestModel {
+  final String sessionId;
+  final String verificationCode;
+
+  ConfirmRegistrationRequestModel({
+    required this.sessionId,
+    required this.verificationCode,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sessionId': sessionId,
+      'verificationCode': verificationCode,
+    };
+  }
+}
+
 class AuthUserEntity {
   final String id;
   final String email;

@@ -33,11 +33,11 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
-            if (state.status == AuthStatus.success) {
+            if (state.status == AuthStatus.success && state.user?.token != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Login successful'), backgroundColor: AppTheme.successText),
               );
-              // Navigate to home
+              context.go('/dashboard');
             } else if (state.status == AuthStatus.failure && state.errorMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.errorMessage!), backgroundColor: AppTheme.errorText),

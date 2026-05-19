@@ -35,3 +35,12 @@ class TermsToggled extends AuthEvent {
   @override
   List<Object> get props => [accepted];
 }
+
+class ConfirmRegistrationSubmitted extends AuthEvent {
+  final String verificationCode;
+
+  const ConfirmRegistrationSubmitted({required this.verificationCode});
+
+  @override
+  List<Object> get props => [verificationCode];
+}

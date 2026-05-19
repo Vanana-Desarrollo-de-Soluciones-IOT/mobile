@@ -6,30 +6,32 @@ import 'di.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/auth/presentation/pages/register_page.dart';
+import '../features/auth/presentation/pages/confirm_page.dart';
+import '../features/dashboard/presentation/pages/dashboard_page.dart';
 
 final router = GoRouter(
-  initialLocation: '/register',
+  initialLocation: '/login',
   routes: [
     GoRoute(
       path: '/register',
-      builder: (context, state) => BlocProvider(
-        create: (_) => getIt<AuthBloc>(),
-        child: const RegisterPage(),
-      ),
+      builder: (context, state) => const RegisterPage(),
     ),
     GoRoute(
       path: '/login',
-      builder: (context, state) => BlocProvider(
-        create: (_) => getIt<AuthBloc>(),
-        child: const LoginPage(),
-      ),
+      builder: (context, state) => const LoginPage(),
     ),
-    // Placeholder for home
+    GoRoute(
+      path: '/confirm',
+      builder: (context, state) => const ConfirmPage(),
+    ),
+    GoRoute(
+      path: '/dashboard',
+      builder: (context, state) => const DashboardPage(),
+    ),
+    // Deprecated home route
     GoRoute(
       path: '/home',
-      builder: (context, state) => const Scaffold(
-        body: Center(child: Text('Home')),
-      ),
+      redirect: (context, state) => '/dashboard',
     )
   ],
 );

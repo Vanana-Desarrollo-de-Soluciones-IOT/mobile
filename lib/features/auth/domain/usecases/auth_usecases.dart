@@ -21,3 +21,13 @@ class LoginUseCase {
     return repository.signIn(request);
   }
 }
+
+class ConfirmRegistrationUseCase {
+  final AuthRepository repository;
+
+  ConfirmRegistrationUseCase({required this.repository});
+
+  Future<Either<String, AuthUserEntity>> call(ConfirmRegistrationRequestModel request) {
+    return repository.confirmRegistration(request);
+  }
+}
