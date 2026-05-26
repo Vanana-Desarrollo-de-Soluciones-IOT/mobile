@@ -1,26 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'app/di.dart';
-import 'app/router.dart';
-import 'shared/theme.dart';
-import 'features/auth/presentation/bloc/auth_bloc.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  // Load environment variables
-  await dotenv.load(fileName: ".env");
-  
-  // Initialize dependency injection
-  setupDependencies();
-
-  runApp(
-    BlocProvider(
-      create: (context) => getIt<AuthBloc>(),
-      child: const MyApp(),
-    ),
-  );
+void main() {
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -28,11 +9,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Clair',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
-      routerConfig: router,
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Text('Hello World'),
+        ),
+      ),
     );
   }
 }
