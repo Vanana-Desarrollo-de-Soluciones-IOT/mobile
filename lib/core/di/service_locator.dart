@@ -29,6 +29,7 @@ import 'package:mobile/alerts/interfaces/pages/alerts_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/confirm_registration/confirm_registration_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/login/login_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/register/register_cubit.dart';
+import 'package:mobile/iam/interfaces/pages/settings/settings_cubit.dart';
 import 'package:mobile/spaces/application/internal/commandservices/spaces_command_service_impl.dart';
 import 'package:mobile/spaces/application/internal/queryservices/spaces_query_service_impl.dart';
 import 'package:mobile/spaces/domain/services/spaces.command-service.dart';
@@ -130,4 +131,11 @@ void setupServiceLocator() {
   getIt.registerFactory<AnalyticsCubit>(() => AnalyticsCubit());
   getIt.registerFactory<AlertsCubit>(() => AlertsCubit());
   getIt.registerFactory<SpacesCubit>(() => SpacesCubit());
+
+  getIt.registerFactory<SettingsCubit>(
+    () => SettingsCubit(
+      getIt<AuthenticationCommandService>(),
+      getIt<TokenLocalStorage>(),
+    ),
+  );
 }

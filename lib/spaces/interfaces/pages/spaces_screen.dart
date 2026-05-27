@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/shared/interfaces/widgets/logout_button.dart';
+import 'package:go_router/go_router.dart';
 
 class SpacesScreen extends StatelessWidget {
   const SpacesScreen({super.key});
@@ -8,8 +8,19 @@ class SpacesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Spaces'),
-        actions: [LogoutButton()],
+        title: const Text('Spaces'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_none),
+            onPressed: () {
+              // Notifications placeholder
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => context.go('/settings'),
+          ),
+        ],
       ),
       body: const SizedBox.shrink(),
     );
