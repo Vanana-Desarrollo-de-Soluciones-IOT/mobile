@@ -34,6 +34,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           if (state.sessionId != null) {
             context.go('/confirm-registration');
           }
+          if (state.isSuccess) {
+            context.go('/dashboard');
+          }
           if (state.errorMessage != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.errorMessage!)),
@@ -120,6 +123,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     );
                               }
                             },
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              const Expanded(child: Divider(color: Colors.white10)),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  'OR REGISTER WITH',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white.withValues(alpha: 0.3),
+                                  ),
+                                ),
+                              ),
+                              const Expanded(child: Divider(color: Colors.white10)),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          AuthButton(
+                            label: 'Google',
+                            isSecondary: true,
+                            isLoading: state.isLoading,
+                            icon: const GoogleIcon(size: 18),
+                            onPressed: () => context.read<RegisterCubit>().signUpWithGoogle(),
                           ),
                           const SizedBox(height: 32),
                           GestureDetector(

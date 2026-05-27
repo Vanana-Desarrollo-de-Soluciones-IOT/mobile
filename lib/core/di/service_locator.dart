@@ -62,7 +62,10 @@ void setupServiceLocator() {
     ),
   );
   getIt.registerFactory<RegisterCubit>(
-    () => RegisterCubit(getIt<AuthenticationCommandService>()),
+    () => RegisterCubit(
+      getIt<AuthenticationCommandService>(),
+      getIt<GoogleIdTokenProvider>(),
+    ),
   );
   getIt.registerFactory<ConfirmRegistrationCubit>(
     () => ConfirmRegistrationCubit(

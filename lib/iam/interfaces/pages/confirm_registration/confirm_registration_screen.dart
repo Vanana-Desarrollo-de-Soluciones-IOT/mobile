@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile/iam/interfaces/pages/confirm_registration/confirm_registration_cubit.dart';
 import 'package:mobile/iam/interfaces/widgets/auth_button.dart';
 import 'package:mobile/iam/interfaces/widgets/auth_text_field.dart';
-import 'package:mobile/shared/interfaces/widgets/widgets.dart';
 
 class ConfirmRegistrationScreen extends StatefulWidget {
   const ConfirmRegistrationScreen({super.key});
@@ -47,8 +46,6 @@ class _ConfirmRegistrationScreenState extends State<ConfirmRegistrationScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const ClairIcon(size: 80),
-                  const SizedBox(height: 48),
                   Container(
                     padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
@@ -62,7 +59,7 @@ class _ConfirmRegistrationScreenState extends State<ConfirmRegistrationScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Text(
-                            'Confirm Registration',
+                            'Verify Account',
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
@@ -71,7 +68,7 @@ class _ConfirmRegistrationScreenState extends State<ConfirmRegistrationScreen> {
                           ),
                           const SizedBox(height: 8),
                           const Text(
-                            'Enter the verification code sent to your email.',
+                            'Enter the verification code sent to your email',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 14,
@@ -81,7 +78,8 @@ class _ConfirmRegistrationScreenState extends State<ConfirmRegistrationScreen> {
                           const SizedBox(height: 32),
                           AuthTextField(
                             controller: _codeController,
-                            label: 'Verification Code (XXXX-XXXX)',
+                            label: 'Verification Code',
+                            hint: 'ABCD-1234',
                             textCapitalization: TextCapitalization.characters,
                             prefixIcon: const Icon(Icons.verified_user_outlined, color: Colors.white54, size: 20),
                             validator: (value) {
@@ -91,7 +89,7 @@ class _ConfirmRegistrationScreenState extends State<ConfirmRegistrationScreen> {
                           ),
                           const SizedBox(height: 32),
                           AuthButton(
-                            label: 'Confirm',
+                            label: 'Verify',
                             isLoading: state.isLoading,
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
@@ -105,7 +103,7 @@ class _ConfirmRegistrationScreenState extends State<ConfirmRegistrationScreen> {
                           TextButton(
                             onPressed: () => context.go('/login'),
                             child: const Text(
-                              'Back to Sign In',
+                              'Back to Login',
                               style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                             ),
                           ),

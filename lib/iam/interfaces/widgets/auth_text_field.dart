@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AuthTextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
+  final String? hint;
   final bool obscureText;
   final TextInputType? keyboardType;
   final TextCapitalization textCapitalization;
@@ -14,6 +15,7 @@ class AuthTextField extends StatelessWidget {
     super.key,
     required this.controller,
     required this.label,
+    this.hint,
     this.obscureText = false,
     this.keyboardType,
     this.textCapitalization = TextCapitalization.none,
@@ -33,6 +35,7 @@ class AuthTextField extends StatelessWidget {
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
+        hintText: hint,
         labelStyle: const TextStyle(color: Colors.white70),
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
