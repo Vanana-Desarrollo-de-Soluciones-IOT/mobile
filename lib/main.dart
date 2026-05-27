@@ -1,26 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'app/di.dart';
-import 'app/router.dart';
-import 'shared/theme.dart';
-import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:mobile/core/di/service_locator.dart';
+import 'package:mobile/core/routing/app_router.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Load environment variables
-  await dotenv.load(fileName: ".env");
-  
-  // Initialize dependency injection
-  setupDependencies();
-
-  runApp(
-    BlocProvider(
-      create: (context) => getIt<AuthBloc>(),
-      child: const MyApp(),
-    ),
-  );
+  await dotenv.load(fileName: '.env');
+  setupServiceLocator();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -29,10 +16,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Clair',
+      title: 'ClairCore',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
-      routerConfig: router,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+        useMaterial3: true,
+      ),
+      routerConfig: AppRouter.router,
     );
   }
 }
