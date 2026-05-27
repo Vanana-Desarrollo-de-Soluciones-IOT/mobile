@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/analytics/interfaces/pages/analytics_cubit.dart';
+import 'package:mobile/analytics/interfaces/pages/analytics_screen.dart';
+import 'package:mobile/alerts/interfaces/pages/alerts_cubit.dart';
+import 'package:mobile/alerts/interfaces/pages/alerts_screen.dart';
 import 'package:mobile/core/di/service_locator.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/token_local_storage.dart';
 import 'package:mobile/iam/interfaces/pages/confirm_registration/confirm_registration_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/confirm_registration/confirm_registration_screen.dart';
-import 'package:mobile/iam/interfaces/pages/dashboard/dashboard_cubit.dart';
-import 'package:mobile/iam/interfaces/pages/dashboard/dashboard_screen.dart';
 import 'package:mobile/iam/interfaces/pages/login/login_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/login/login_screen.dart';
 import 'package:mobile/iam/interfaces/pages/register/register_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/register/register_screen.dart';
+import 'package:mobile/iam/interfaces/pages/settings/settings_cubit.dart';
+import 'package:mobile/iam/interfaces/pages/settings/settings_screen.dart';
+import 'package:mobile/shared/interfaces/widgets/scaffold_with_nav_bar.dart';
+import 'package:mobile/spaces/interfaces/pages/spaces_cubit.dart';
+import 'package:mobile/spaces/interfaces/pages/spaces_screen.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -30,7 +37,7 @@ class AppRouter {
           }
 
           if (isAuthenticated && isAuthRoute) {
-            return '/dashboard';
+            return '/analytics';
           }
 
           return null;
@@ -57,11 +64,37 @@ class AppRouter {
               child: const ConfirmRegistrationScreen(),
             ),
           ),
+          ShellRoute(
+            builder: (context, state, child) => ScaffoldWithNavBar(child: child),
+            routes: [
+              GoRoute(
+                path: '/analytics',
+                builder: (context, state) => BlocProvider(
+                  create: (_) => getIt<AnalyticsCubit>(),
+                  child: const AnalyticsScreen(),
+                ),
+              ),
+              GoRoute(
+                path: '/alerts',
+                builder: (context, state) => BlocProvider(
+                  create: (_) => getIt<AlertsCubit>(),
+                  child: const AlertsScreen(),
+                ),
+              ),
+              GoRoute(
+                path: '/spaces',
+                builder: (context, state) => BlocProvider(
+                  create: (_) => getIt<SpacesCubit>(),
+                  child: const SpacesScreen(),
+                ),
+              ),
+            ],
+          ),
           GoRoute(
-            path: '/dashboard',
+            path: '/settings',
             builder: (context, state) => BlocProvider(
-              create: (_) => getIt<DashboardCubit>(),
-              child: const DashboardScreen(),
+              create: (_) => getIt<SettingsCubit>(),
+              child: const SettingsScreen(),
             ),
           ),
         ],

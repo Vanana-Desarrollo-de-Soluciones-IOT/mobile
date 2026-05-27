@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocConsumer<LoginCubit, LoginState>(
         listener: (context, state) {
           if (state.isSuccess) {
-            context.go('/dashboard');
+            context.go('/analytics');
           }
           if (state.errorMessage != null) {
             ScaffoldMessenger.of(context).showSnackBar(

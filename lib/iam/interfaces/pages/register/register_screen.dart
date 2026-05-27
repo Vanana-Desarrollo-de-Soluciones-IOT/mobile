@@ -35,7 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             context.go('/confirm-registration');
           }
           if (state.isSuccess) {
-            context.go('/dashboard');
+            context.go('/analytics');
           }
           if (state.errorMessage != null) {
             ScaffoldMessenger.of(context).showSnackBar(
