@@ -19,7 +19,14 @@ class MyApp extends StatelessWidget {
       title: 'ClairCore',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: Colors.black,
+        colorScheme: const ColorScheme.dark(
+          primary: Colors.white,
+          onPrimary: Colors.black,
+          surface: Color(0xFF121212),
+          onSurface: Colors.white,
+        ),
         useMaterial3: true,
       ),
       routerConfig: AppRouter.router,
