@@ -43,49 +43,75 @@ class _ConfirmRegistrationScreenState extends State<ConfirmRegistrationScreen> {
           return Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Confirm Registration',
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(32),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF121212),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                     ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Enter the verification code sent to your email.',
-                      textAlign: TextAlign.center,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Verify Account',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Enter the verification code sent to your email',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white54,
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          AuthTextField(
+                            controller: _codeController,
+                            label: 'Verification Code',
+                            hint: 'ABCD-1234',
+                            textCapitalization: TextCapitalization.characters,
+                            prefixIcon: const Icon(Icons.verified_user_outlined, color: Colors.white54, size: 20),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) return 'Verification code is required';
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 32),
+                          AuthButton(
+                            label: 'Verify',
+                            isLoading: state.isLoading,
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                context.read<ConfirmRegistrationCubit>().confirmRegistration(
+                                      verificationCode: _codeController.text.trim().toUpperCase(),
+                                    );
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 32),
+                          TextButton(
+                            onPressed: () => context.go('/login'),
+                            child: const Text(
+                              'Back to Login',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 32),
-                    AuthTextField(
-                      controller: _codeController,
-                      label: 'Verification Code (XXXX-XXXX)',
-                      textCapitalization: TextCapitalization.characters,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return 'Verification code is required';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    AuthButton(
-                      label: 'Confirm',
-                      isLoading: state.isLoading,
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          context.read<ConfirmRegistrationCubit>().confirmRegistration(
-                                verificationCode: _codeController.text.trim().toUpperCase(),
-                              );
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    TextButton(
-                      onPressed: () => context.go('/login'),
-                      child: const Text('Back to Sign In'),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           );

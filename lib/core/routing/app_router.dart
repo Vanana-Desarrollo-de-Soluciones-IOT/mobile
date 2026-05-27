@@ -18,6 +18,7 @@ class AppRouter {
 
   static GoRouter get router => GoRouter(
         navigatorKey: _rootNavigatorKey,
+        initialLocation: '/login',
         redirect: (context, state) async {
           final isAuthenticated = await _tokenStorage.hasToken();
           final isAuthRoute = state.matchedLocation == '/login' ||
