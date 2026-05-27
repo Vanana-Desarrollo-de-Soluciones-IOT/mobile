@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/shared/interfaces/widgets/air_quality_icon.dart';
+import 'package:mobile/shared/interfaces/widgets/alerts_icon.dart';
+import 'package:mobile/shared/interfaces/widgets/space_devices_icon.dart';
 
 class ScaffoldWithNavBar extends StatelessWidget {
   final Widget child;
@@ -45,19 +48,31 @@ class ScaffoldWithNavBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _NavItem(
-                  icon: Icons.waves,
+                  icon: AirQualityIcon(
+                    size: 24,
+                    color: selectedIndex == 0 ? Colors.white : Colors.white54,
+                  ),
                   label: 'Analytics',
                   isSelected: selectedIndex == 0,
                   onTap: () => _onItemTapped(context, 0),
                 ),
                 _NavItem(
-                  icon: Icons.warning_amber_outlined,
+                  icon: AlertsIcon(
+                    size: 24,
+                    color: selectedIndex == 1 ? Colors.white : Colors.white54,
+                  ),
                   label: 'Alerts',
                   isSelected: selectedIndex == 1,
                   onTap: () => _onItemTapped(context, 1),
                 ),
                 _NavItem(
-                  icon: Icons.hub_outlined,
+                  icon: Transform.scale(
+                    scale: 1.3,
+                    child: SpaceDevicesIcon(
+                      size: 24,
+                      color: selectedIndex == 2 ? Colors.white : Colors.white54,
+                    ),
+                  ),
                   label: 'Spaces',
                   isSelected: selectedIndex == 2,
                   onTap: () => _onItemTapped(context, 2),
@@ -72,7 +87,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
 }
 
 class _NavItem extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
@@ -98,11 +113,7 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              color: isSelected ? Colors.white : Colors.white54,
-              size: 24,
-            ),
+            icon,
             const SizedBox(height: 4),
             Text(
               label,
