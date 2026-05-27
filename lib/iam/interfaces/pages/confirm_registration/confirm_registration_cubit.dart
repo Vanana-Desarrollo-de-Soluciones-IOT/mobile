@@ -3,21 +3,36 @@ import 'package:mobile/iam/domain/model/commands/confirm_registration.command.da
 import 'package:mobile/iam/domain/model/valueobjects/session_id.valueobject.dart';
 import 'package:mobile/iam/domain/model/valueobjects/verification_code.valueobject.dart';
 import 'package:mobile/iam/domain/services/authentication.command-service.dart';
+import 'package:mobile/iam/infrastructure/persistence/local/registration_session_local_storage.dart';
 
 part 'confirm_registration_state.dart';
 
 class ConfirmRegistrationCubit extends Cubit<ConfirmRegistrationState> {
   final AuthenticationCommandService _commandService;
+  final RegistrationSessionLocalStorage _registrationSessionLocalStorage;
 
-  ConfirmRegistrationCubit(this._commandService) : super(const ConfirmRegistrationState());
+  ConfirmRegistrationCubit(
+    this._commandService,
+    this._registrationSessionLocalStorage,
+  ) : super(const ConfirmRegistrationState());
 
   Future<void> confirmRegistration({
-    required String sessionId,
     required String verificationCode,
   }) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
     try {
+      final sessionId = await _registrationSessionLocalStorage.getSessionId();
+      if (sessionId == null || sessionId.trim().isEmpty) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'Registration session not found. Please sign up again.',
+          ),
+        );
+        return;
+      }
+
       final sessionIdVo = SessionId(sessionId);
       final codeVo = VerificationCode(verificationCode);
       final command = ConfirmRegistrationCommand(

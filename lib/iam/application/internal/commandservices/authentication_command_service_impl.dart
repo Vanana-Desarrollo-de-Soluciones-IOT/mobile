@@ -7,6 +7,7 @@ import 'package:mobile/iam/domain/model/commands/sign_in.command.dart';
 import 'package:mobile/iam/domain/model/commands/sign_out.command.dart';
 import 'package:mobile/iam/domain/services/authentication.command-service.dart';
 import 'package:mobile/iam/infrastructure/api/gateways/authentication.gateway.dart';
+import 'package:mobile/iam/infrastructure/persistence/local/registration_session_local_storage.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/token_local_storage.dart';
 import 'package:mobile/iam/interfaces/rest/resources/authenticated_user_resource.resource.dart';
 import 'package:mobile/iam/interfaces/rest/resources/registration_initiated_resource.resource.dart';
@@ -16,8 +17,13 @@ import 'package:mobile/iam/interfaces/rest/transform/authentication_transform.da
 class AuthenticationCommandServiceImpl implements AuthenticationCommandService {
   final AuthenticationGateway _gateway;
   final TokenLocalStorage _localStorage;
+  final RegistrationSessionLocalStorage _registrationSessionLocalStorage;
 
-  AuthenticationCommandServiceImpl(this._gateway, this._localStorage);
+  AuthenticationCommandServiceImpl(
+    this._gateway,
+    this._localStorage,
+    this._registrationSessionLocalStorage,
+  );
 
   @override
   Future<Either<Failure, RegistrationInitiatedResource>> handleInitiateRegistration(
@@ -26,6 +32,7 @@ class AuthenticationCommandServiceImpl implements AuthenticationCommandService {
     try {
       final resource = toInitiateRegistrationResource(command);
       final result = await _gateway.initiateRegistration(resource);
+      await _registrationSessionLocalStorage.saveSessionId(result.sessionId);
       return Right(result);
     } catch (e) {
       return Left(Failure(_mapError(e)));
@@ -39,6 +46,7 @@ class AuthenticationCommandServiceImpl implements AuthenticationCommandService {
     try {
       final resource = toConfirmRegistrationResource(command);
       final result = await _gateway.confirmRegistration(resource);
+      await _registrationSessionLocalStorage.clearSessionId();
       return Right(result);
     } catch (e) {
       return Left(Failure(_mapError(e)));

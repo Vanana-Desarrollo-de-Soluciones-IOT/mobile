@@ -30,7 +30,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: BlocConsumer<RegisterCubit, RegisterState>(
         listener: (context, state) {
           if (state.sessionId != null) {
-            context.go('/confirm-registration', extra: state.sessionId);
+            context.go('/confirm-registration');
           }
           if (state.errorMessage != null) {
             ScaffoldMessenger.of(context).showSnackBar(

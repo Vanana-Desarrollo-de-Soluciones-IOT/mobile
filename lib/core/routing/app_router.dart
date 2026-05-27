@@ -51,13 +51,10 @@ class AppRouter {
           ),
           GoRoute(
             path: '/confirm-registration',
-            builder: (context, state) {
-              final sessionId = state.extra as String?;
-              return BlocProvider(
-                create: (_) => getIt<ConfirmRegistrationCubit>(),
-                child: ConfirmRegistrationScreen(sessionId: sessionId),
-              );
-            },
+            builder: (context, state) => BlocProvider(
+              create: (_) => getIt<ConfirmRegistrationCubit>(),
+              child: const ConfirmRegistrationScreen(),
+            ),
           ),
           GoRoute(
             path: '/dashboard',

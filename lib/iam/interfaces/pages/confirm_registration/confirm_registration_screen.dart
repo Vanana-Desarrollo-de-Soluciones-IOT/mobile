@@ -6,9 +6,7 @@ import 'package:mobile/iam/interfaces/widgets/auth_button.dart';
 import 'package:mobile/iam/interfaces/widgets/auth_text_field.dart';
 
 class ConfirmRegistrationScreen extends StatefulWidget {
-  final String? sessionId;
-
-  const ConfirmRegistrationScreen({super.key, this.sessionId});
+  const ConfirmRegistrationScreen({super.key});
 
   @override
   State<ConfirmRegistrationScreen> createState() => _ConfirmRegistrationScreenState();
@@ -16,20 +14,10 @@ class ConfirmRegistrationScreen extends StatefulWidget {
 
 class _ConfirmRegistrationScreenState extends State<ConfirmRegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _sessionController = TextEditingController();
   final _codeController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    if (widget.sessionId != null) {
-      _sessionController.text = widget.sessionId!;
-    }
-  }
-
-  @override
   void dispose() {
-    _sessionController.dispose();
     _codeController.dispose();
     super.dispose();
   }
@@ -71,16 +59,6 @@ class _ConfirmRegistrationScreenState extends State<ConfirmRegistrationScreen> {
                     ),
                     const SizedBox(height: 32),
                     AuthTextField(
-                      controller: _sessionController,
-                      label: 'Session ID',
-                      readOnly: widget.sessionId != null,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return 'Session ID is required';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    AuthTextField(
                       controller: _codeController,
                       label: 'Verification Code (XXXX-XXXX)',
                       textCapitalization: TextCapitalization.characters,
@@ -96,7 +74,6 @@ class _ConfirmRegistrationScreenState extends State<ConfirmRegistrationScreen> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           context.read<ConfirmRegistrationCubit>().confirmRegistration(
-                                sessionId: _sessionController.text.trim(),
                                 verificationCode: _codeController.text.trim().toUpperCase(),
                               );
                         }
