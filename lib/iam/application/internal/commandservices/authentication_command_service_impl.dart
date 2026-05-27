@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
 import 'package:mobile/iam/domain/model/commands/confirm_registration.command.dart';
+import 'package:mobile/iam/domain/model/commands/authenticate_with_google.command.dart';
 import 'package:mobile/iam/domain/model/commands/initiate_registration.command.dart';
 import 'package:mobile/iam/domain/model/commands/refresh_token.command.dart';
 import 'package:mobile/iam/domain/model/commands/sign_in.command.dart';
@@ -60,6 +61,24 @@ class AuthenticationCommandServiceImpl implements AuthenticationCommandService {
     try {
       final resource = toSignInResource(command);
       final result = await _gateway.signIn(resource);
+      await _localStorage.saveTokens(
+        accessToken: result.token,
+        refreshToken: result.refreshToken,
+      );
+      await _localStorage.saveUser(userId: result.id, email: result.email);
+      return Right(result);
+    } catch (e) {
+      return Left(Failure(_mapError(e)));
+    }
+  }
+
+  @override
+  Future<Either<Failure, AuthenticatedUserResource>> handleAuthenticateWithGoogle(
+    AuthenticateWithGoogleCommand command,
+  ) async {
+    try {
+      final resource = toGoogleSignInResource(command);
+      final result = await _gateway.googleSignIn(resource);
       await _localStorage.saveTokens(
         accessToken: result.token,
         refreshToken: result.refreshToken,

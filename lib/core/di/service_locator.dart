@@ -1,4 +1,6 @@
 import 'package:get_it/get_it.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mobile/core/constants/api_constants.dart';
 import 'package:mobile/core/network/dio_client.dart';
 import 'package:mobile/iam/application/internal/commandservices/authentication_command_service_impl.dart';
 import 'package:mobile/iam/application/internal/queryservices/authentication_query_service_impl.dart';
@@ -6,6 +8,8 @@ import 'package:mobile/iam/domain/services/authentication.command-service.dart';
 import 'package:mobile/iam/domain/services/authentication.query-service.dart';
 import 'package:mobile/iam/infrastructure/api/gateways/authentication.gateway.dart';
 import 'package:mobile/iam/infrastructure/api/gateways/authentication_http.gateway.dart';
+import 'package:mobile/iam/infrastructure/oauth/google/google_id_token_provider.dart';
+import 'package:mobile/iam/infrastructure/oauth/google/google_sign_in_id_token_provider.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/registration_session_local_storage.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/token_local_storage.dart';
 import 'package:mobile/iam/interfaces/pages/confirm_registration/confirm_registration_cubit.dart';
@@ -23,6 +27,15 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<TokenLocalStorage>(() => TokenLocalStorage());
   getIt.registerLazySingleton<RegistrationSessionLocalStorage>(
     () => RegistrationSessionLocalStorage(),
+  );
+  getIt.registerLazySingleton<GoogleSignIn>(
+    () => GoogleSignIn(
+      scopes: const ['email', 'profile', 'openid'],
+      serverClientId: ApiConstants.googleServerClientId,
+    ),
+  );
+  getIt.registerLazySingleton<GoogleIdTokenProvider>(
+    () => GoogleSignInIdTokenProvider(getIt<GoogleSignIn>()),
   );
   getIt.registerLazySingleton<AuthenticationGateway>(
     () => AuthenticationHttpGateway(getIt<DioClient>().client),
@@ -43,7 +56,10 @@ void setupServiceLocator() {
 
   // Interface Controllers (Cubits)
   getIt.registerFactory<LoginCubit>(
-    () => LoginCubit(getIt<AuthenticationCommandService>()),
+    () => LoginCubit(
+      getIt<AuthenticationCommandService>(),
+      getIt<GoogleIdTokenProvider>(),
+    ),
   );
   getIt.registerFactory<RegisterCubit>(
     () => RegisterCubit(getIt<AuthenticationCommandService>()),

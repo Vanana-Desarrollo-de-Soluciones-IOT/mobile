@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
 import 'package:mobile/iam/domain/model/commands/confirm_registration.command.dart';
+import 'package:mobile/iam/domain/model/commands/authenticate_with_google.command.dart';
 import 'package:mobile/iam/domain/model/commands/initiate_registration.command.dart';
 import 'package:mobile/iam/domain/model/commands/refresh_token.command.dart';
 import 'package:mobile/iam/domain/model/commands/sign_in.command.dart';
@@ -20,6 +21,10 @@ abstract class AuthenticationCommandService {
 
   Future<Either<Failure, AuthenticatedUserResource>> handleSignIn(
     SignInCommand command,
+  );
+
+  Future<Either<Failure, AuthenticatedUserResource>> handleAuthenticateWithGoogle(
+    AuthenticateWithGoogleCommand command,
   );
 
   Future<Either<Failure, Unit>> handleSignOut(

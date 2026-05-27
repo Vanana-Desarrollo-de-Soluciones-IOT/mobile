@@ -84,6 +84,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                       },
                     ),
+                    const SizedBox(height: 12),
+                    AuthButton(
+                      label: 'Continue with Google',
+                      isLoading: state.isLoading,
+                      onPressed: () => context.read<LoginCubit>().signInWithGoogle(),
+                    ),
                     const SizedBox(height: 16),
                     TextButton(
                       onPressed: () => context.go('/register'),

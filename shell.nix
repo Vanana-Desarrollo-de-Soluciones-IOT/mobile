@@ -16,11 +16,10 @@ let
   androidSdk = androidComposition.androidsdk;
 in
 pkgs.mkShell {
-  ANDROID_SDK_ROOT = "${androidSdk}/libexec/android-sdk";
+  ANDROID_SDK_ROOT = "/home/giks/Android/Sdk";
   
   buildInputs = with pkgs; [
     flutter
-    androidSdk
     jdk17
   ];
 }

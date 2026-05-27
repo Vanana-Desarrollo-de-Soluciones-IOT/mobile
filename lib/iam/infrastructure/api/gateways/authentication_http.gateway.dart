@@ -3,6 +3,7 @@ import 'package:mobile/core/constants/api_constants.dart';
 import 'package:mobile/iam/infrastructure/api/gateways/authentication.gateway.dart';
 import 'package:mobile/iam/interfaces/rest/resources/authenticated_user_resource.resource.dart';
 import 'package:mobile/iam/interfaces/rest/resources/confirm_registration_request.resource.dart';
+import 'package:mobile/iam/interfaces/rest/resources/google_sign_in_request.resource.dart';
 import 'package:mobile/iam/interfaces/rest/resources/initiate_registration_request.resource.dart';
 import 'package:mobile/iam/interfaces/rest/resources/refresh_token_request.resource.dart';
 import 'package:mobile/iam/interfaces/rest/resources/registration_initiated_resource.resource.dart';
@@ -41,6 +42,15 @@ class AuthenticationHttpGateway implements AuthenticationGateway {
   Future<AuthenticatedUserResource> signIn(SignInRequestResource resource) async {
     final response = await _dio.post(
       '${ApiConstants.authBase}/sign-in',
+      data: resource.toJson(),
+    );
+    return AuthenticatedUserResource.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<AuthenticatedUserResource> googleSignIn(GoogleSignInRequestResource resource) async {
+    final response = await _dio.post(
+      '${ApiConstants.authBase}/google/sign-in',
       data: resource.toJson(),
     );
     return AuthenticatedUserResource.fromJson(response.data as Map<String, dynamic>);
