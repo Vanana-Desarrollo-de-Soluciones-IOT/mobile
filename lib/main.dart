@@ -1,9 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:mobile/core/constants/api_constants.dart';
 import 'package:mobile/core/di/service_locator.dart';
 import 'package:mobile/core/routing/app_router.dart';
+import 'package:mobile/iam/domain/model/queries/verify_token.query.dart';
+import 'package:mobile/iam/domain/model/valueobjects/access_token.valueobject.dart';
+import 'package:mobile/iam/domain/services/authentication.query-service.dart';
 import 'package:mobile/iam/infrastructure/auth_session.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/token_local_storage.dart';
 
@@ -25,35 +26,25 @@ Future<void> _restoreSession() async {
     return;
   }
 
-  try {
-    final dio = Dio(
-      BaseOptions(
-        baseUrl: ApiConstants.baseUrl,
-        connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10),
-      ),
-    );
+  final queryService = getIt<AuthenticationQueryService>();
+  final result = await queryService.handleVerifyToken(
+    VerifyTokenQuery(accessToken: AccessToken(token)),
+  );
 
-    final response = await dio.get(
-      '${ApiConstants.authBase}/verify',
-      options: Options(
-        headers: {'Authorization': 'Bearer $token'},
-      ),
-    );
-
-    final data = response.data as Map<String, dynamic>;
-    final isValid = data['isValid'] as bool? ?? false;
-
-    if (isValid) {
-      AuthSession().setAuthenticated(true);
-    } else {
+  await result.fold(
+    (_) async {
       await tokenStorage.clearAll();
       AuthSession().setAuthenticated(false);
-    }
-  } catch (_) {
-    await tokenStorage.clearAll();
-    AuthSession().setAuthenticated(false);
-  }
+    },
+    (resource) async {
+      if (resource.valid) {
+        AuthSession().setAuthenticated(true);
+      } else {
+        await tokenStorage.clearAll();
+        AuthSession().setAuthenticated(false);
+      }
+    },
+  );
 }
 
 class MyApp extends StatelessWidget {

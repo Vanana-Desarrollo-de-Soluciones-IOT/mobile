@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:mobile/core/constants/api_constants.dart';
 import 'package:mobile/iam/infrastructure/auth_session.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/token_local_storage.dart';
+import 'package:mobile/iam/interfaces/rest/resources/authenticated_user_resource.resource.dart';
 
 class DioClient {
   late final Dio _dio;
@@ -72,17 +73,17 @@ class DioClient {
         data: {'refreshToken': refreshToken},
       );
 
-      final data = response.data as Map<String, dynamic>;
-      final newAccess = data['token'] as String?;
-      final newRefresh = data['refreshToken'] as String?;
+      final resource = AuthenticatedUserResource.fromJson(
+        response.data as Map<String, dynamic>,
+      );
 
-      if (newAccess != null && newRefresh != null) {
-        await _tokenStorage.saveTokens(
-          accessToken: newAccess,
-          refreshToken: newRefresh,
-        );
-        return true;
-      }
+      await _tokenStorage.saveTokens(
+        accessToken: resource.token,
+        refreshToken: resource.refreshToken,
+      );
+      await _tokenStorage.saveUser(userId: resource.id, email: resource.email);
+      AuthSession().setAuthenticated(true);
+      return true;
     } catch (_) {
       // ignore refresh errors
     }
