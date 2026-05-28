@@ -8,6 +8,7 @@ import 'package:mobile/iam/domain/model/commands/sign_in.command.dart';
 import 'package:mobile/iam/domain/model/commands/sign_out.command.dart';
 import 'package:mobile/iam/domain/services/authentication.command-service.dart';
 import 'package:mobile/iam/infrastructure/api/gateways/authentication.gateway.dart';
+import 'package:mobile/iam/infrastructure/auth_session.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/registration_session_local_storage.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/token_local_storage.dart';
 import 'package:mobile/iam/interfaces/rest/resources/authenticated_user_resource.resource.dart';
@@ -66,6 +67,7 @@ class AuthenticationCommandServiceImpl implements AuthenticationCommandService {
         refreshToken: result.refreshToken,
       );
       await _localStorage.saveUser(userId: result.id, email: result.email);
+      AuthSession().setAuthenticated(true);
       return Right(result);
     } catch (e) {
       return Left(Failure(_mapError(e)));
@@ -84,6 +86,7 @@ class AuthenticationCommandServiceImpl implements AuthenticationCommandService {
         refreshToken: result.refreshToken,
       );
       await _localStorage.saveUser(userId: result.id, email: result.email);
+      AuthSession().setAuthenticated(true);
       return Right(result);
     } catch (e) {
       return Left(Failure(_mapError(e)));
@@ -95,9 +98,11 @@ class AuthenticationCommandServiceImpl implements AuthenticationCommandService {
     try {
       await _gateway.signOut(command.accessToken.token);
       await _localStorage.clearAll();
+      AuthSession().setAuthenticated(false);
       return const Right(unit);
     } catch (e) {
       await _localStorage.clearAll();
+      AuthSession().setAuthenticated(false);
       return Left(Failure(_mapError(e)));
     }
   }
@@ -114,6 +119,7 @@ class AuthenticationCommandServiceImpl implements AuthenticationCommandService {
         refreshToken: result.refreshToken,
       );
       await _localStorage.saveUser(userId: result.id, email: result.email);
+      AuthSession().setAuthenticated(true);
       return Right(result);
     } catch (e) {
       return Left(Failure(_mapError(e)));

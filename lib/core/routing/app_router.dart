@@ -6,7 +6,7 @@ import 'package:mobile/analytics/interfaces/pages/analytics_screen.dart';
 import 'package:mobile/alerts/interfaces/pages/alerts_cubit.dart';
 import 'package:mobile/alerts/interfaces/pages/alerts_screen.dart';
 import 'package:mobile/core/di/service_locator.dart';
-import 'package:mobile/iam/infrastructure/persistence/local/token_local_storage.dart';
+import 'package:mobile/iam/infrastructure/auth_session.dart';
 import 'package:mobile/iam/interfaces/pages/confirm_registration/confirm_registration_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/confirm_registration/confirm_registration_screen.dart';
 import 'package:mobile/iam/interfaces/pages/login/login_cubit.dart';
@@ -21,13 +21,14 @@ import 'package:mobile/spaces/interfaces/pages/spaces_screen.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
-  static final _tokenStorage = getIt<TokenLocalStorage>();
+  static final _authSession = AuthSession();
 
   static GoRouter get router => GoRouter(
         navigatorKey: _rootNavigatorKey,
         initialLocation: '/login',
-        redirect: (context, state) async {
-          final isAuthenticated = await _tokenStorage.hasToken();
+        refreshListenable: _authSession,
+        redirect: (context, state) {
+          final isAuthenticated = _authSession.isAuthenticated;
           final isAuthRoute = state.matchedLocation == '/login' ||
               state.matchedLocation == '/register' ||
               state.matchedLocation == '/confirm-registration';
