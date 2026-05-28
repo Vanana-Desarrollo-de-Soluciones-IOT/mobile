@@ -26,6 +26,13 @@ import 'package:mobile/alerts/domain/services/alerts.query-service.dart';
 import 'package:mobile/alerts/infrastructure/api/gateways/alerts.gateway.dart';
 import 'package:mobile/alerts/infrastructure/api/gateways/alerts_http.gateway.dart';
 import 'package:mobile/alerts/interfaces/pages/alerts_cubit.dart';
+import 'package:mobile/devices/application/internal/commandservices/organizations_command_service_impl.dart';
+import 'package:mobile/devices/application/internal/queryservices/organizations_query_service_impl.dart';
+import 'package:mobile/devices/domain/services/organizations.command-service.dart';
+import 'package:mobile/devices/domain/services/organizations.query-service.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/organizations.gateway.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/organizations_http.gateway.dart';
+import 'package:mobile/devices/interfaces/pages/organizations/organizations_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/confirm_registration/confirm_registration_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/login/login_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/register/register_cubit.dart';
@@ -108,6 +115,17 @@ void setupServiceLocator() {
     () => SpacesQueryServiceImpl(getIt<SpacesGateway>()),
   );
 
+  // Devices Context (Organizations)
+  getIt.registerLazySingleton<OrganizationsGateway>(
+    () => OrganizationsHttpGateway(getIt<DioClient>().client),
+  );
+  getIt.registerLazySingleton<OrganizationsCommandService>(
+    () => OrganizationsCommandServiceImpl(getIt<OrganizationsGateway>()),
+  );
+  getIt.registerLazySingleton<OrganizationsQueryService>(
+    () => OrganizationsQueryServiceImpl(getIt<OrganizationsGateway>()),
+  );
+
   // Interface Controllers (Cubits)
   getIt.registerFactory<LoginCubit>(
     () => LoginCubit(
@@ -131,6 +149,12 @@ void setupServiceLocator() {
   getIt.registerFactory<AnalyticsCubit>(() => AnalyticsCubit());
   getIt.registerFactory<AlertsCubit>(() => AlertsCubit());
   getIt.registerFactory<SpacesCubit>(() => SpacesCubit());
+  getIt.registerFactory<OrganizationsCubit>(
+    () => OrganizationsCubit(
+      getIt<OrganizationsQueryService>(),
+      getIt<OrganizationsCommandService>(),
+    ),
+  );
 
   getIt.registerFactory<SettingsCubit>(
     () => SettingsCubit(

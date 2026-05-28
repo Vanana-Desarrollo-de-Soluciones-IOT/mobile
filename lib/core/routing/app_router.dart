@@ -16,8 +16,8 @@ import 'package:mobile/iam/interfaces/pages/register/register_screen.dart';
 import 'package:mobile/iam/interfaces/pages/settings/settings_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/settings/settings_screen.dart';
 import 'package:mobile/shared/interfaces/widgets/scaffold_with_nav_bar.dart';
-import 'package:mobile/spaces/interfaces/pages/spaces_cubit.dart';
-import 'package:mobile/spaces/interfaces/pages/spaces_screen.dart';
+import 'package:mobile/devices/interfaces/pages/organizations/organizations_cubit.dart';
+import 'package:mobile/devices/interfaces/pages/organizations/organizations_screen.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -85,8 +85,8 @@ class AppRouter {
               GoRoute(
                 path: '/spaces',
                 builder: (context, state) => BlocProvider(
-                  create: (_) => getIt<SpacesCubit>(),
-                  child: const SpacesScreen(),
+                  create: (_) => getIt<OrganizationsCubit>(),
+                  child: const OrganizationsScreen(),
                 ),
               ),
             ],
