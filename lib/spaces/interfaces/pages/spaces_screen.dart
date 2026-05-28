@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/shared/interfaces/widgets/widgets.dart';
 
 class SpacesScreen extends StatelessWidget {
   const SpacesScreen({super.key});
@@ -8,7 +9,7 @@ class SpacesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Spaces'),
+        title: const ClairName(height: 18),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_none),

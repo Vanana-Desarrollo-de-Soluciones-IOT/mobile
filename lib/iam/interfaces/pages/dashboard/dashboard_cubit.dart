@@ -4,6 +4,7 @@ import 'package:mobile/iam/domain/model/queries/verify_token.query.dart';
 import 'package:mobile/iam/domain/model/valueobjects/access_token.valueobject.dart';
 import 'package:mobile/iam/domain/services/authentication.command-service.dart';
 import 'package:mobile/iam/domain/services/authentication.query-service.dart';
+import 'package:mobile/iam/infrastructure/auth_session.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/token_local_storage.dart';
 
 part 'dashboard_state.dart';
@@ -34,16 +35,22 @@ class DashboardCubit extends Cubit<DashboardState> {
     final result = await _queryService.handleVerifyToken(query);
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isLoading: false,
-        isAuthenticated: false,
-        errorMessage: failure.message,
-      )),
-      (_) => emit(state.copyWith(
-        isLoading: false,
-        isAuthenticated: true,
-        email: email,
-      )),
+      (failure) {
+        AuthSession().setAuthenticated(false);
+        emit(state.copyWith(
+          isLoading: false,
+          isAuthenticated: false,
+          errorMessage: failure.message,
+        ));
+      },
+      (_) {
+        AuthSession().setAuthenticated(true);
+        emit(state.copyWith(
+          isLoading: false,
+          isAuthenticated: true,
+          email: email,
+        ));
+      },
     );
   }
 
