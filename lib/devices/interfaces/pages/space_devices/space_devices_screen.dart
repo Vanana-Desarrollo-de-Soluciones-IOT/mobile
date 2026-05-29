@@ -250,7 +250,8 @@ class _SpaceDevicesScreenState extends State<SpaceDevicesScreen> {
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 12,
                                   mainAxisSpacing: 12,
-                                  childAspectRatio: 0.98,
+                                  // Slightly wider than tall to match the design.
+                                  childAspectRatio: 1.12,
                                 ),
                                 itemCount: state.devices.length,
                                 itemBuilder: (context, index) {
@@ -382,10 +383,15 @@ class _DeviceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final label = _chipLabel(device);
     final updatedLabel = _updatedLabel(device);
+    // Backend status is often OFFLINE until presence pings arrive;
+    // show a "recently seen" dot to match the UI expectations.
     final isOnline = device.status.toUpperCase() == 'ONLINE';
+    final isRecentlySeen = device.lastSeenAt != null &&
+        DateTime.now().difference(device.lastSeenAt!).inMinutes < 2;
+    final isPoweredOn = isOnline || isRecentlySeen;
 
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       decoration: BoxDecoration(
         color: const Color(0xFF151515),
         borderRadius: BorderRadius.circular(18),
@@ -416,7 +422,7 @@ class _DeviceCard extends StatelessWidget {
               Icon(Icons.signal_cellular_alt, size: 18, color: Colors.white.withValues(alpha: 0.85)),
             ],
           ),
-          const Spacer(),
+          const SizedBox(height: 14),
           Row(
             children: [
               Expanded(
@@ -428,21 +434,15 @@ class _DeviceCard extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
+                    height: 1.05,
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
-              Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  color: isOnline ? const Color(0xFF21D07A) : Colors.white24,
-                  shape: BoxShape.circle,
-                ),
-              ),
+              const SizedBox(width: 10),
+              _PowerStatusBadge(isOn: isPoweredOn),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Row(
             children: [
               Icon(Icons.access_time, size: 14, color: Colors.white.withValues(alpha: 0.55)),
@@ -467,6 +467,28 @@ class _DeviceCard extends StatelessWidget {
   }
 }
 
+class _PowerStatusBadge extends StatelessWidget {
+  final bool isOn;
+
+  const _PowerStatusBadge({required this.isOn});
+
+  @override
+  Widget build(BuildContext context) {
+    final bg = isOn ? const Color(0xFF21D07A) : Colors.white.withValues(alpha: 0.10);
+    // In the design, the green power button reads as a filled green dot with a dark icon.
+    final fg = isOn ? Colors.black : Colors.white70;
+    return Container(
+      width: 18,
+      height: 18,
+      decoration: BoxDecoration(
+        color: bg,
+        shape: BoxShape.circle,
+      ),
+      child: Icon(Icons.power_settings_new, size: 10.5, color: fg),
+    );
+  }
+}
+
 class _DeviceListTile extends StatelessWidget {
   final DeviceResponseResource device;
 
@@ -475,6 +497,9 @@ class _DeviceListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isOnline = device.status.toUpperCase() == 'ONLINE';
+    final isRecentlySeen = device.lastSeenAt != null &&
+        DateTime.now().difference(device.lastSeenAt!).inMinutes < 2;
+    final isPoweredOn = isOnline || isRecentlySeen;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
@@ -484,14 +509,7 @@ class _DeviceListTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 10,
-            height: 10,
-            decoration: BoxDecoration(
-              color: isOnline ? const Color(0xFF21D07A) : Colors.white24,
-              shape: BoxShape.circle,
-            ),
-          ),
+          _PowerStatusBadge(isOn: isPoweredOn),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
