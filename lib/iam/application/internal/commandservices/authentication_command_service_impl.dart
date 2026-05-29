@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
 import 'package:mobile/iam/domain/model/commands/confirm_registration.command.dart';
@@ -127,6 +128,29 @@ class AuthenticationCommandServiceImpl implements AuthenticationCommandService {
   }
 
   String _mapError(Object error) {
+    if (error is DioException) {
+      final statusCode = error.response?.statusCode;
+      switch (statusCode) {
+        case 400:
+          return 'Invalid request. Please check your input.';
+        case 401:
+          return 'Invalid email or password.';
+        case 403:
+          return 'Access denied. Please contact support.';
+        case 404:
+          return 'User not found.';
+        case 409:
+          return 'User already exists.';
+        case 422:
+          return 'Invalid data. Please check your input.';
+        case 500:
+        case 502:
+        case 503:
+          return 'Server error. Please try again later.';
+        default:
+          return 'Network error. Please check your connection.';
+      }
+    }
     if (error is Exception) {
       return error.toString().replaceFirst('Exception: ', '');
     }
