@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/devices/interfaces/pages/organizations/organizations_cubit.dart';
 import 'package:mobile/devices/interfaces/widgets/create_organization_form.dart';
+import 'package:mobile/devices/interfaces/widgets/edit_organization_name_form.dart';
 
 class OrganizationsScreen extends StatefulWidget {
   const OrganizationsScreen({super.key});
@@ -51,6 +52,81 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
         );
       },
     );
+  }
+
+  Future<void> _openEditOrganizationSheet({
+    required BuildContext context,
+    required String organizationId,
+    required String currentName,
+  }) async {
+    final cubit = context.read<OrganizationsCubit>();
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF121212),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return BlocProvider.value(
+          value: cubit,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: 16 + MediaQuery.of(sheetContext).viewInsets.bottom,
+            ),
+            child: BlocBuilder<OrganizationsCubit, OrganizationsState>(
+              builder: (context, state) {
+                return EditOrganizationNameForm(
+                  isLoading: state.isLoading,
+                  initialName: currentName,
+                  onSubmit: (name) async {
+                    await cubit.updateOrganizationName(
+                      organizationId: organizationId,
+                      name: name,
+                    );
+                    if (context.mounted) Navigator.of(context).pop();
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _confirmDeleteOrganization({
+    required BuildContext context,
+    required String organizationId,
+    required String organizationName,
+  }) async {
+    final cubit = context.read<OrganizationsCubit>();
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete organization?'),
+          content: Text('This will delete "$organizationName".'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldDelete == true) {
+      await cubit.deleteOrganization(organizationId);
+    }
   }
 
   @override
@@ -110,6 +186,16 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                             final org = state.organizations[index];
                             return _OrganizationCard(
                               name: org.name,
+                              onEdit: () => _openEditOrganizationSheet(
+                                context: context,
+                                organizationId: org.id,
+                                currentName: org.name,
+                              ),
+                              onDelete: () => _confirmDeleteOrganization(
+                                context: context,
+                                organizationId: org.id,
+                                organizationName: org.name,
+                              ),
                               onTap: () {},
                             );
                           },
@@ -133,10 +219,14 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
 
 class _OrganizationCard extends StatelessWidget {
   final String name;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
   final VoidCallback onTap;
 
   const _OrganizationCard({
     required this.name,
+    required this.onEdit,
+    required this.onDelete,
     required this.onTap,
   });
 
@@ -155,15 +245,25 @@ class _OrganizationCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Expanded(
-                child: Text(
-                  name,
+               Expanded(
+                 child: Text(
+                   name,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14.5,
                     fontWeight: FontWeight.w500,
                   ),
-                ),
+                 ),
+               ),
+              IconButton(
+                tooltip: 'Edit',
+                onPressed: onEdit,
+                icon: const Icon(Icons.edit_outlined, color: Colors.white70),
+              ),
+              IconButton(
+                tooltip: 'Delete',
+                onPressed: onDelete,
+                icon: const Icon(Icons.delete_outline, color: Colors.white70),
               ),
               const Icon(Icons.chevron_right, color: Colors.white70),
             ],

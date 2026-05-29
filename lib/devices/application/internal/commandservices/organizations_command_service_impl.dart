@@ -1,6 +1,8 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
 import 'package:mobile/devices/domain/model/commands/create_organization.command.dart';
+import 'package:mobile/devices/domain/model/commands/delete_organization.command.dart';
+import 'package:mobile/devices/domain/model/commands/update_organization_name.command.dart';
 import 'package:mobile/devices/domain/services/organizations.command-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/organizations.gateway.dart';
 import 'package:mobile/devices/interfaces/rest/resources/organization_response.resource.dart';
@@ -19,6 +21,31 @@ class OrganizationsCommandServiceImpl implements OrganizationsCommandService {
       final resource = toCreateOrganizationRequestResource(command);
       final result = await _gateway.createOrganization(resource);
       return Right(result);
+    } catch (e) {
+      return Left(Failure(_mapError(e)));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> handleDeleteOrganization(
+    DeleteOrganizationCommand command,
+  ) async {
+    try {
+      await _gateway.deleteOrganization(command.organizationId.value);
+      return const Right(null);
+    } catch (e) {
+      return Left(Failure(_mapError(e)));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> handleUpdateOrganizationName(
+    UpdateOrganizationNameCommand command,
+  ) async {
+    try {
+      final resource = toUpdateOrganizationNameRequestResource(command);
+      await _gateway.updateOrganizationName(command.organizationId.value, resource);
+      return const Right(null);
     } catch (e) {
       return Left(Failure(_mapError(e)));
     }
