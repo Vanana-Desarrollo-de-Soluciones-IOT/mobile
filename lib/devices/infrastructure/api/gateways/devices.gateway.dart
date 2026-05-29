@@ -6,4 +6,12 @@ abstract class DevicesGateway {
     int page = 0,
     int size = 20,
   });
+
+  Future<Map<String, dynamic>> pairDeviceRaw({
+    required Map<String, dynamic> requestBody,
+  });
+
+  Future<Map<String, dynamic>> claimDeviceRaw({
+    required Map<String, dynamic> requestBody,
+  });
 }

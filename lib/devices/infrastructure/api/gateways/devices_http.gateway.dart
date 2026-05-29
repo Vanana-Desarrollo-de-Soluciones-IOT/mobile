@@ -44,4 +44,30 @@ class DevicesHttpGateway implements DevicesGateway {
     if (data is Map<String, dynamic>) return data;
     throw Exception('Unexpected devices response format');
   }
+
+  @override
+  Future<Map<String, dynamic>> pairDeviceRaw({
+    required Map<String, dynamic> requestBody,
+  }) async {
+    final response = await _dio.post(
+      '${ApiConstants.apiPrefix}/devices/pair',
+      data: requestBody,
+    );
+    final data = response.data;
+    if (data is Map<String, dynamic>) return data;
+    throw Exception('Unexpected pair device response format');
+  }
+
+  @override
+  Future<Map<String, dynamic>> claimDeviceRaw({
+    required Map<String, dynamic> requestBody,
+  }) async {
+    final response = await _dio.post(
+      '${ApiConstants.apiPrefix}/devices/claim',
+      data: requestBody,
+    );
+    final data = response.data;
+    if (data is Map<String, dynamic>) return data;
+    throw Exception('Unexpected claim device response format');
+  }
 }

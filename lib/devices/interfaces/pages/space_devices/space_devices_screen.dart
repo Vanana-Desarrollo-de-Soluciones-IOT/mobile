@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/devices/interfaces/pages/space_devices/space_devices_cubit.dart';
 import 'package:mobile/devices/interfaces/rest/resources/device_response.resource.dart';
+import 'package:mobile/devices/interfaces/widgets/claim_device_form.dart';
+import 'package:mobile/devices/interfaces/widgets/pair_device_form.dart';
 import 'package:mobile/shared/interfaces/widgets/clair_name.dart';
 
 class SpaceDevicesScreen extends StatefulWidget {
@@ -24,6 +26,106 @@ class _SpaceDevicesScreenState extends State<SpaceDevicesScreen> {
   void initState() {
     super.initState();
     context.read<SpaceDevicesCubit>().loadDevices(spaceId: widget.spaceId);
+  }
+
+  Future<void> _openClaimDeviceSheet(BuildContext context) async {
+    final cubit = context.read<SpaceDevicesCubit>();
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF121212),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return BlocProvider.value(
+          value: cubit,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: 16 + MediaQuery.of(sheetContext).viewInsets.bottom,
+            ),
+            child: BlocBuilder<SpaceDevicesCubit, SpaceDevicesState>(
+              builder: (context, state) {
+                return ClaimDeviceForm(
+                  isLoading: state.isLoading,
+                  onSubmit: (token) async {
+                    final claimed = await cubit.claimDeviceToSpace(
+                      claimToken: token,
+                      spaceId: widget.spaceId,
+                    );
+                    if (claimed != null && context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _openPairDeviceSheet(BuildContext context) async {
+    final cubit = context.read<SpaceDevicesCubit>();
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF121212),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return BlocProvider.value(
+          value: cubit,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: 16 + MediaQuery.of(sheetContext).viewInsets.bottom,
+            ),
+            child: BlocBuilder<SpaceDevicesCubit, SpaceDevicesState>(
+              builder: (context, state) {
+                return PairDeviceForm(
+                  isLoading: state.isLoading,
+                  onSubmit: (hardwareId) async {
+                    final pairing = await cubit.pairDevice(hardwareId: hardwareId);
+                    if (!context.mounted) return;
+
+                    if (pairing != null) {
+                      Navigator.of(context).pop();
+                      await showDialog<void>(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Pairing started'),
+                            content: Text(
+                              pairing.claimToken == null || pairing.claimToken!.isEmpty
+                                  ? 'No claim token returned.'
+                                  : 'Claim token: ${pairing.claimToken}',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text('Close'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -84,11 +186,7 @@ class _SpaceDevicesScreenState extends State<SpaceDevicesScreen> {
                     ),
                     IconButton(
                       tooltip: 'Add device',
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Add device coming soon')),
-                        );
-                      },
+                      onPressed: state.isLoading ? null : () => _openClaimDeviceSheet(context),
                       icon: const Icon(Icons.add, color: Colors.black),
                       style: IconButton.styleFrom(
                         backgroundColor: const Color(0xFF21D07A),
@@ -96,9 +194,9 @@ class _SpaceDevicesScreenState extends State<SpaceDevicesScreen> {
                     ),
                     const SizedBox(width: 10),
                     IconButton(
-                      tooltip: 'More',
-                      onPressed: () {},
-                      icon: const Icon(Icons.more_horiz, color: Colors.white70),
+                      tooltip: 'Pair device',
+                      onPressed: state.isLoading ? null : () => _openPairDeviceSheet(context),
+                      icon: const Icon(Icons.wifi_tethering_outlined, color: Colors.white70),
                       style: IconButton.styleFrom(
                         backgroundColor: Colors.white.withValues(alpha: 0.10),
                       ),

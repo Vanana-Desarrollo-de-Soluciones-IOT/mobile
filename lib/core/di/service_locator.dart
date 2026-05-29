@@ -36,6 +36,8 @@ import 'package:mobile/devices/infrastructure/api/gateways/devices.gateway.dart'
 import 'package:mobile/devices/infrastructure/api/gateways/devices_http.gateway.dart';
 import 'package:mobile/devices/interfaces/pages/organizations/organizations_cubit.dart';
 import 'package:mobile/devices/interfaces/pages/space_devices/space_devices_cubit.dart';
+import 'package:mobile/devices/application/internal/commandservices/devices_command_service_impl.dart';
+import 'package:mobile/devices/domain/services/devices.command-service.dart';
 import 'package:mobile/devices/application/internal/queryservices/devices_query_service_impl.dart';
 import 'package:mobile/devices/domain/services/devices.query-service.dart';
 import 'package:mobile/iam/interfaces/pages/confirm_registration/confirm_registration_cubit.dart';
@@ -138,6 +140,9 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<DevicesQueryService>(
     () => DevicesQueryServiceImpl(getIt<DevicesGateway>()),
   );
+  getIt.registerLazySingleton<DevicesCommandService>(
+    () => DevicesCommandServiceImpl(getIt<DevicesGateway>()),
+  );
 
   // Interface Controllers (Cubits)
   getIt.registerFactory<LoginCubit>(
@@ -176,7 +181,10 @@ void setupServiceLocator() {
   );
 
   getIt.registerFactory<SpaceDevicesCubit>(
-    () => SpaceDevicesCubit(getIt<DevicesQueryService>()),
+    () => SpaceDevicesCubit(
+      getIt<DevicesQueryService>(),
+      getIt<DevicesCommandService>(),
+    ),
   );
 
   getIt.registerFactory<SettingsCubit>(
