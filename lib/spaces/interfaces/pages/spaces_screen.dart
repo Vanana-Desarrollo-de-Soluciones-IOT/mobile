@@ -239,6 +239,10 @@ class _SpacesScreenState extends State<SpacesScreen> {
                                 spaceId: space.id,
                                 spaceName: space.name,
                               ),
+                              onOpen: () => context.go(
+                                '/spaces/${widget.organizationId}/${space.id}',
+                                extra: space.name,
+                              ),
                             );
                           },
                         ),
@@ -260,12 +264,14 @@ class _SpaceCard extends StatelessWidget {
   final int? deviceCount;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback onOpen;
 
   const _SpaceCard({
     required this.name,
     required this.deviceCount,
     required this.onEdit,
     required this.onDelete,
+    required this.onOpen,
   });
 
   @override
@@ -323,12 +329,7 @@ class _SpaceCard extends StatelessWidget {
           ),
           IconButton(
             tooltip: 'Open',
-            onPressed: () {
-              // Placeholder for navigation into a space.
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Coming soon')),
-              );
-            },
+            onPressed: onOpen,
             icon: const Icon(Icons.chevron_right, color: Colors.white70),
           ),
         ],

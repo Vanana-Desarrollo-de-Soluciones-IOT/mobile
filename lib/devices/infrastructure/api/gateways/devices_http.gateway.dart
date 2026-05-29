@@ -24,4 +24,24 @@ class DevicesHttpGateway implements DevicesGateway {
     if (total is num) return total.toInt();
     return 0;
   }
+
+  @override
+  Future<Map<String, dynamic>> getDevicesBySpaceRaw({
+    required String spaceId,
+    int page = 0,
+    int size = 20,
+  }) async {
+    final response = await _dio.get(
+      '${ApiConstants.apiPrefix}/devices',
+      queryParameters: {
+        'spaceId': spaceId,
+        'page': page,
+        'size': size,
+      },
+    );
+
+    final data = response.data;
+    if (data is Map<String, dynamic>) return data;
+    throw Exception('Unexpected devices response format');
+  }
 }

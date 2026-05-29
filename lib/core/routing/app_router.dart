@@ -18,6 +18,8 @@ import 'package:mobile/iam/interfaces/pages/settings/settings_screen.dart';
 import 'package:mobile/shared/interfaces/widgets/scaffold_with_nav_bar.dart';
 import 'package:mobile/devices/interfaces/pages/organizations/organizations_cubit.dart';
 import 'package:mobile/devices/interfaces/pages/organizations/organizations_screen.dart';
+import 'package:mobile/devices/interfaces/pages/space_devices/space_devices_cubit.dart';
+import 'package:mobile/devices/interfaces/pages/space_devices/space_devices_screen.dart';
 import 'package:mobile/spaces/interfaces/pages/spaces_cubit.dart';
 import 'package:mobile/spaces/interfaces/pages/spaces_screen.dart';
 
@@ -104,6 +106,22 @@ class AppRouter {
                     ),
                   );
                 },
+                routes: [
+                  GoRoute(
+                    path: ':spaceId',
+                    builder: (context, state) {
+                      final spaceId = state.pathParameters['spaceId']!;
+                      final spaceName = state.extra is String ? state.extra as String : null;
+                      return BlocProvider(
+                        create: (_) => getIt<SpaceDevicesCubit>(),
+                        child: SpaceDevicesScreen(
+                          spaceId: spaceId,
+                          spaceName: spaceName,
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),
