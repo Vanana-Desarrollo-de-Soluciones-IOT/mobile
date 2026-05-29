@@ -18,6 +18,7 @@ class ClairAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: showBack,
       leading: showBack
           ? IconButton(
               onPressed: () {
