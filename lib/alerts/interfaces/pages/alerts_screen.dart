@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mobile/shared/interfaces/widgets/widgets.dart';
 
 class AlertsScreen extends StatelessWidget {
@@ -8,21 +7,7 @@ class AlertsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const ClairName(height: 18),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none),
-            onPressed: () {
-              // Notifications placeholder
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => context.go('/settings'),
-          ),
-        ],
-      ),
+      appBar: const ClairAppBar(),
       body: const SizedBox.shrink(),
     );
   }

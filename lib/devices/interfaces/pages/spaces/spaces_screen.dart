@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile/devices/interfaces/pages/spaces/spaces_cubit.dart';
 import 'package:mobile/devices/interfaces/widgets/create_space_form.dart';
 import 'package:mobile/devices/interfaces/widgets/edit_space_name_form.dart';
+import 'package:mobile/devices/interfaces/widgets/space_card.dart';
+import 'package:mobile/shared/interfaces/widgets/widgets.dart';
 
 class SpacesScreen extends StatefulWidget {
   final String organizationId;
@@ -140,58 +142,60 @@ class _SpacesScreenState extends State<SpacesScreen> {
   @override
   Widget build(BuildContext context) {
     final title = widget.organizationName ?? 'Spaces';
-    return SafeArea(
-      child: BlocBuilder<SpacesCubit, SpacesState>(
-        builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        // When this route is reached via `go()`, there may be nothing to pop.
-                        if (context.canPop()) {
-                          context.pop();
-                          return;
+    return Scaffold(
+      appBar: const ClairAppBar(),
+      body: SafeArea(
+        child: BlocBuilder<SpacesCubit, SpacesState>(
+          builder: (context, state) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          // When this route is reached via `go()`, there may be nothing to pop.
+                          if (context.canPop()) {
+                            context.pop();
+                            return;
+                          }
+                          context.go('/spaces');
+                        },
+                        icon: const Icon(Icons.arrow_back, color: Colors.white70),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'Create space',
+                        onPressed: state.isLoading ? null : () => _openCreateSpaceSheet(context),
+                        icon: const Icon(Icons.add, color: Colors.white70),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white.withValues(alpha: 0.10),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        if (state.isLoading && state.spaces.isEmpty) {
+                          return const Center(child: CircularProgressIndicator());
                         }
-                        context.go('/spaces');
-                      },
-                      icon: const Icon(Icons.arrow_back, color: Colors.white70),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                            ),
-                      ),
-                    ),
-                    IconButton(
-                      tooltip: 'Create space',
-                      onPressed: state.isLoading ? null : () => _openCreateSpaceSheet(context),
-                      icon: const Icon(Icons.add, color: Colors.white70),
-                      style: IconButton.styleFrom(
-                        backgroundColor: Colors.white.withValues(alpha: 0.10),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: Builder(
-                    builder: (context) {
-                      if (state.isLoading && state.spaces.isEmpty) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
 
                       if (state.errorMessage != null && state.spaces.isEmpty) {
                         return Center(
@@ -215,124 +219,46 @@ class _SpacesScreenState extends State<SpacesScreen> {
                         );
                       }
 
-                      return RefreshIndicator(
-                        onRefresh: () => context.read<SpacesCubit>().loadSpaces(
-                              organizationId: widget.organizationId,
-                            ),
-                        child: ListView.separated(
-                          padding: const EdgeInsets.only(top: 4),
-                          itemCount: state.spaces.length,
-                          separatorBuilder: (context, index) => const SizedBox(height: 10),
-                          itemBuilder: (context, index) {
-                            final space = state.spaces[index];
-                            final count = state.deviceCountsBySpaceId[space.id];
-                            return _SpaceCard(
-                              name: space.name,
-                              deviceCount: count,
-                              onEdit: () => _openEditSpaceSheet(
-                                context: context,
-                                spaceId: space.id,
-                                currentName: space.name,
+                        return RefreshIndicator(
+                          onRefresh: () => context.read<SpacesCubit>().loadSpaces(
+                                organizationId: widget.organizationId,
                               ),
-                              onDelete: () => _confirmDeleteSpace(
-                                context: context,
-                                spaceId: space.id,
-                                spaceName: space.name,
-                              ),
-                              onOpen: () => context.go(
-                                '/spaces/${widget.organizationId}/${space.id}',
-                                extra: space.name,
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _SpaceCard extends StatelessWidget {
-  final String name;
-  final int? deviceCount;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
-  final VoidCallback onOpen;
-
-  const _SpaceCard({
-    required this.name,
-    required this.deviceCount,
-    required this.onEdit,
-    required this.onDelete,
-    required this.onOpen,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final countLabel = deviceCount == null ? '...' : '$deviceCount';
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.22)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14.5,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Text(
-                    '$countLabel DEVICES',
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.2,
+                          child: ListView.separated(
+                            padding: const EdgeInsets.only(top: 4),
+                            itemCount: state.spaces.length,
+                            separatorBuilder: (context, index) => const SizedBox(height: 10),
+                            itemBuilder: (context, index) {
+                              final space = state.spaces[index];
+                              final count = state.deviceCountsBySpaceId[space.id];
+                              return SpaceCard(
+                                name: space.name,
+                                deviceCount: count,
+                                onEdit: () => _openEditSpaceSheet(
+                                  context: context,
+                                  spaceId: space.id,
+                                  currentName: space.name,
+                                ),
+                                onDelete: () => _confirmDeleteSpace(
+                                  context: context,
+                                  spaceId: space.id,
+                                  spaceName: space.name,
+                                ),
+                                onOpen: () => context.go(
+                                  '/spaces/${widget.organizationId}/${space.id}',
+                                  extra: space.name,
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            tooltip: 'Edit',
-            onPressed: onEdit,
-            icon: const Icon(Icons.edit_outlined, color: Colors.white70),
-          ),
-          IconButton(
-            tooltip: 'Delete',
-            onPressed: onDelete,
-            icon: const Icon(Icons.delete_outline, color: Colors.white70),
-          ),
-          IconButton(
-            tooltip: 'Open',
-            onPressed: onOpen,
-            icon: const Icon(Icons.chevron_right, color: Colors.white70),
-          ),
-        ],
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
