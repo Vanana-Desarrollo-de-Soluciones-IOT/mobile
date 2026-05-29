@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile/devices/interfaces/pages/organizations/organizations_cubit.dart';
 import 'package:mobile/devices/interfaces/widgets/create_organization_form.dart';
 import 'package:mobile/devices/interfaces/widgets/edit_organization_name_form.dart';
@@ -185,6 +186,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                           itemBuilder: (context, index) {
                             final org = state.organizations[index];
                             return _OrganizationCard(
+                              id: org.id,
                               name: org.name,
                               onEdit: () => _openEditOrganizationSheet(
                                 context: context,
@@ -196,7 +198,10 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                                 organizationId: org.id,
                                 organizationName: org.name,
                               ),
-                              onTap: () {},
+                              onTap: () => context.go(
+                                '/spaces/${org.id}',
+                                extra: org.name,
+                              ),
                             );
                           },
                         ),
@@ -218,12 +223,14 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
 }
 
 class _OrganizationCard extends StatelessWidget {
+  final String id;
   final String name;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final VoidCallback onTap;
 
   const _OrganizationCard({
+    required this.id,
     required this.name,
     required this.onEdit,
     required this.onDelete,

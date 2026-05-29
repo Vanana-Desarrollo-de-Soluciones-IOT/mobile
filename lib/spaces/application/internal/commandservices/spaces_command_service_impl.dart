@@ -1,9 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
-import 'package:mobile/spaces/domain/model/commands/refresh_spaces.command.dart';
+import 'package:mobile/spaces/domain/model/commands/create_space.command.dart';
+import 'package:mobile/spaces/domain/model/commands/delete_space.command.dart';
+import 'package:mobile/spaces/domain/model/commands/update_space_name.command.dart';
 import 'package:mobile/spaces/domain/services/spaces.command-service.dart';
 import 'package:mobile/spaces/infrastructure/api/gateways/spaces.gateway.dart';
-import 'package:mobile/spaces/interfaces/rest/resources/space_resource.resource.dart';
+import 'package:mobile/spaces/interfaces/rest/resources/space_response.resource.dart';
+import 'package:mobile/spaces/interfaces/rest/transform/spaces_transform.dart';
 
 class SpacesCommandServiceImpl implements SpacesCommandService {
   final SpacesGateway _gateway;
@@ -11,18 +15,62 @@ class SpacesCommandServiceImpl implements SpacesCommandService {
   SpacesCommandServiceImpl(this._gateway);
 
   @override
-  Future<Either<Failure, List<SpaceResource>>> handleRefreshSpaces(
-    RefreshSpacesCommand command,
-  ) async {
+  Future<Either<Failure, SpaceResponseResource>> handleCreateSpace(CreateSpaceCommand command) async {
     try {
-      final result = await _gateway.refreshSpaces(spaceId: command.spaceId?.id);
+      final resource = toCreateSpaceRequestResource(command);
+      final result = await _gateway.createSpace(
+        organizationId: command.organizationId.value,
+        resource: resource,
+      );
       return Right(result);
     } catch (e) {
       return Left(Failure(_mapError(e)));
     }
   }
 
+  @override
+  Future<Either<Failure, void>> handleDeleteSpace(DeleteSpaceCommand command) async {
+    try {
+      await _gateway.deleteSpace(command.spaceId.value);
+      return const Right(null);
+    } catch (e) {
+      return Left(Failure(_mapError(e)));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> handleUpdateSpaceName(UpdateSpaceNameCommand command) async {
+    try {
+      final resource = toUpdateSpaceNameRequestResource(command);
+      await _gateway.updateSpaceName(command.spaceId.value, resource);
+      return const Right(null);
+    } catch (e) {
+      return Left(Failure(_mapError(e)));
+    }
+  }
+
   String _mapError(Object error) {
+    if (error is DioException) {
+      final statusCode = error.response?.statusCode;
+      switch (statusCode) {
+        case 400:
+          return 'Invalid request.';
+        case 401:
+          return 'Session expired. Please sign in again.';
+        case 403:
+          return 'Access denied.';
+        case 404:
+          return 'Not found.';
+        case 409:
+          return 'Conflict.';
+        case 500:
+        case 502:
+        case 503:
+          return 'Server error. Please try again later.';
+        default:
+          return 'Network error. Please check your connection.';
+      }
+    }
     if (error is Exception) {
       return error.toString().replaceFirst('Exception: ', '');
     }

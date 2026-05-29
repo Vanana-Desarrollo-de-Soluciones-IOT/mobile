@@ -1,29 +1,313 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile/shared/interfaces/widgets/widgets.dart';
+import 'package:mobile/spaces/interfaces/pages/spaces_cubit.dart';
+import 'package:mobile/spaces/interfaces/widgets/create_space_form.dart';
+import 'package:mobile/spaces/interfaces/widgets/edit_space_name_form.dart';
 
-class SpacesScreen extends StatelessWidget {
-  const SpacesScreen({super.key});
+class SpacesScreen extends StatefulWidget {
+  final String organizationId;
+  final String? organizationName;
+
+  const SpacesScreen({
+    super.key,
+    required this.organizationId,
+    this.organizationName,
+  });
+
+  @override
+  State<SpacesScreen> createState() => _SpacesScreenState();
+}
+
+class _SpacesScreenState extends State<SpacesScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<SpacesCubit>().loadSpaces(organizationId: widget.organizationId);
+  }
+
+  Future<void> _openCreateSpaceSheet(BuildContext context) async {
+    final cubit = context.read<SpacesCubit>();
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF121212),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return BlocProvider.value(
+          value: cubit,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: 16 + MediaQuery.of(sheetContext).viewInsets.bottom,
+            ),
+            child: BlocBuilder<SpacesCubit, SpacesState>(
+              builder: (context, state) {
+                return CreateSpaceForm(
+                  isLoading: state.isLoading,
+                  onSubmit: (name) async {
+                    await cubit.createSpace(
+                      organizationId: widget.organizationId,
+                      name: name,
+                    );
+                    if (context.mounted) Navigator.of(context).pop();
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _openEditSpaceSheet({
+    required BuildContext context,
+    required String spaceId,
+    required String currentName,
+  }) async {
+    final cubit = context.read<SpacesCubit>();
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF121212),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return BlocProvider.value(
+          value: cubit,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: 16 + MediaQuery.of(sheetContext).viewInsets.bottom,
+            ),
+            child: BlocBuilder<SpacesCubit, SpacesState>(
+              builder: (context, state) {
+                return EditSpaceNameForm(
+                  isLoading: state.isLoading,
+                  initialName: currentName,
+                  onSubmit: (name) async {
+                    await cubit.updateSpaceName(spaceId: spaceId, name: name);
+                    if (context.mounted) Navigator.of(context).pop();
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _confirmDeleteSpace({
+    required BuildContext context,
+    required String spaceId,
+    required String spaceName,
+  }) async {
+    final cubit = context.read<SpacesCubit>();
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete space?'),
+          content: Text('This will delete "$spaceName".'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldDelete == true) {
+      await cubit.deleteSpace(spaceId);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const ClairName(height: 18),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none),
-            onPressed: () {
-              // Notifications placeholder
-            },
+    final title = widget.organizationName ?? 'Spaces';
+    return SafeArea(
+      child: BlocBuilder<SpacesCubit, SpacesState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => context.pop(),
+                      icon: const Icon(Icons.arrow_back, color: Colors.white70),
+                    ),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Create space',
+                      onPressed: state.isLoading ? null : () => _openCreateSpaceSheet(context),
+                      icon: const Icon(Icons.add_circle_outline, color: Colors.white70),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: Builder(
+                    builder: (context) {
+                      if (state.isLoading && state.spaces.isEmpty) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      if (state.errorMessage != null && state.spaces.isEmpty) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Text(
+                              state.errorMessage!,
+                              style: const TextStyle(color: Colors.white70),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }
+
+                      if (state.spaces.isEmpty) {
+                        return const Center(
+                          child: Text(
+                            'No spaces yet',
+                            style: TextStyle(color: Colors.white54),
+                          ),
+                        );
+                      }
+
+                      return RefreshIndicator(
+                        onRefresh: () => context.read<SpacesCubit>().loadSpaces(
+                              organizationId: widget.organizationId,
+                            ),
+                        child: ListView.separated(
+                          padding: const EdgeInsets.only(top: 4),
+                          itemCount: state.spaces.length,
+                          separatorBuilder: (context, index) => const SizedBox(height: 10),
+                          itemBuilder: (context, index) {
+                            final space = state.spaces[index];
+                            final count = state.deviceCountsBySpaceId[space.id];
+                            return _SpaceCard(
+                              name: space.name,
+                              deviceCount: count,
+                              onEdit: () => _openEditSpaceSheet(
+                                context: context,
+                                spaceId: space.id,
+                                currentName: space.name,
+                              ),
+                              onDelete: () => _confirmDeleteSpace(
+                                context: context,
+                                spaceId: space.id,
+                                spaceName: space.name,
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _SpaceCard extends StatelessWidget {
+  final String name;
+  final int? deviceCount;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  const _SpaceCard({
+    required this.name,
+    required this.deviceCount,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final countLabel = deviceCount == null ? '...' : '$deviceCount';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.22)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    '$countLabel DEVICES',
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => context.go('/settings'),
+            tooltip: 'Edit',
+            onPressed: onEdit,
+            icon: const Icon(Icons.edit_outlined, color: Colors.white70),
+          ),
+          IconButton(
+            tooltip: 'Delete',
+            onPressed: onDelete,
+            icon: const Icon(Icons.delete_outline, color: Colors.white70),
           ),
         ],
       ),
-      body: const SizedBox.shrink(),
     );
   }
 }

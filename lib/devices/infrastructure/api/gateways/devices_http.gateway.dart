@@ -1,0 +1,27 @@
+import 'package:dio/dio.dart';
+import 'package:mobile/core/constants/api_constants.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/devices.gateway.dart';
+
+class DevicesHttpGateway implements DevicesGateway {
+  final Dio _dio;
+
+  DevicesHttpGateway(this._dio);
+
+  @override
+  Future<int> getDeviceCountBySpace(String spaceId) async {
+    final response = await _dio.get(
+      '${ApiConstants.apiPrefix}/devices',
+      queryParameters: {
+        'spaceId': spaceId,
+        'page': 0,
+        'size': 1,
+      },
+    );
+
+    final data = response.data as Map<String, dynamic>;
+    final total = data['totalElements'];
+    if (total is int) return total;
+    if (total is num) return total.toInt();
+    return 0;
+  }
+}

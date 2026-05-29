@@ -1,2 +1,12 @@
-// Transform functions for Spaces context
-// Domain to Resource and Resource to Domain transformations
+import 'package:mobile/spaces/domain/model/commands/create_space.command.dart';
+import 'package:mobile/spaces/domain/model/commands/update_space_name.command.dart';
+import 'package:mobile/spaces/interfaces/rest/resources/create_space_request.resource.dart';
+import 'package:mobile/spaces/interfaces/rest/resources/update_space_name_request.resource.dart';
+
+CreateSpaceRequestResource toCreateSpaceRequestResource(CreateSpaceCommand command) {
+  return CreateSpaceRequestResource(name: command.name.value);
+}
+
+UpdateSpaceNameRequestResource toUpdateSpaceNameRequestResource(UpdateSpaceNameCommand command) {
+  return UpdateSpaceNameRequestResource(name: command.name.value);
+}
