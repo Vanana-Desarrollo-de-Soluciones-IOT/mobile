@@ -272,7 +272,11 @@ class _OrganizationCard extends StatelessWidget {
                 onPressed: onDelete,
                 icon: const Icon(Icons.delete_outline, color: Colors.white70),
               ),
-              const Icon(Icons.chevron_right, color: Colors.white70),
+              IconButton(
+                tooltip: 'Open',
+                onPressed: onTap,
+                icon: const Icon(Icons.chevron_right, color: Colors.white70),
+              ),
             ],
           ),
         ),

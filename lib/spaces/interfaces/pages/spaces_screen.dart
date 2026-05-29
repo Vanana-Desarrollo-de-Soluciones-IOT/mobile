@@ -151,9 +151,21 @@ class _SpacesScreenState extends State<SpacesScreen> {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: () => context.pop(),
+                      onPressed: () {
+                        // When this route is reached via `go()`, there may be nothing to pop.
+                        if (context.canPop()) {
+                          context.pop();
+                          return;
+                        }
+                        context.go('/spaces');
+                      },
                       icon: const Icon(Icons.arrow_back, color: Colors.white70),
                     ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
                     Expanded(
                       child: Text(
                         title,
@@ -166,7 +178,10 @@ class _SpacesScreenState extends State<SpacesScreen> {
                     IconButton(
                       tooltip: 'Create space',
                       onPressed: state.isLoading ? null : () => _openCreateSpaceSheet(context),
-                      icon: const Icon(Icons.add_circle_outline, color: Colors.white70),
+                      icon: const Icon(Icons.add, color: Colors.white70),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.white.withValues(alpha: 0.10),
+                      ),
                     ),
                   ],
                 ),
@@ -305,6 +320,16 @@ class _SpaceCard extends StatelessWidget {
             tooltip: 'Delete',
             onPressed: onDelete,
             icon: const Icon(Icons.delete_outline, color: Colors.white70),
+          ),
+          IconButton(
+            tooltip: 'Open',
+            onPressed: () {
+              // Placeholder for navigation into a space.
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Coming soon')),
+              );
+            },
+            icon: const Icon(Icons.chevron_right, color: Colors.white70),
           ),
         ],
       ),
