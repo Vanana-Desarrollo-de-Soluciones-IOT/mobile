@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
 import 'package:mobile/iam/domain/model/queries/verify_token.query.dart';
@@ -23,6 +24,25 @@ class AuthenticationQueryServiceImpl implements AuthenticationQueryService {
   }
 
   String _mapError(Object error) {
+    if (error is DioException) {
+      final statusCode = error.response?.statusCode;
+      switch (statusCode) {
+        case 400:
+          return 'Invalid request.';
+        case 401:
+          return 'Session expired. Please sign in again.';
+        case 403:
+          return 'Access denied.';
+        case 404:
+          return 'Not found.';
+        case 500:
+        case 502:
+        case 503:
+          return 'Server error. Please try again later.';
+        default:
+          return 'Network error. Please check your connection.';
+      }
+    }
     if (error is Exception) {
       return error.toString().replaceFirst('Exception: ', '');
     }

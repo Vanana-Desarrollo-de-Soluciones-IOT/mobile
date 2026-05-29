@@ -1,15 +1,12 @@
 class SpaceId {
-  final String id;
+  final String value;
 
-  factory SpaceId(String id) {
-    if (id.isEmpty) {
-      throw ArgumentError('Space ID cannot be empty');
+  factory SpaceId(String value) {
+    if (value.trim().isEmpty) {
+      throw ArgumentError('Space id is required');
     }
-    return SpaceId._(id);
+    return SpaceId._(value);
   }
 
-  const SpaceId._(this.id);
-
-  @override
-  String toString() => id;
+  const SpaceId._(this.value);
 }

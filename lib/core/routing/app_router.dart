@@ -16,6 +16,10 @@ import 'package:mobile/iam/interfaces/pages/register/register_screen.dart';
 import 'package:mobile/iam/interfaces/pages/settings/settings_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/settings/settings_screen.dart';
 import 'package:mobile/shared/interfaces/widgets/scaffold_with_nav_bar.dart';
+import 'package:mobile/devices/interfaces/pages/organizations/organizations_cubit.dart';
+import 'package:mobile/devices/interfaces/pages/organizations/organizations_screen.dart';
+import 'package:mobile/devices/interfaces/pages/space_devices/space_devices_cubit.dart';
+import 'package:mobile/devices/interfaces/pages/space_devices/space_devices_screen.dart';
 import 'package:mobile/spaces/interfaces/pages/spaces_cubit.dart';
 import 'package:mobile/spaces/interfaces/pages/spaces_screen.dart';
 
@@ -85,9 +89,39 @@ class AppRouter {
               GoRoute(
                 path: '/spaces',
                 builder: (context, state) => BlocProvider(
-                  create: (_) => getIt<SpacesCubit>(),
-                  child: const SpacesScreen(),
+                  create: (_) => getIt<OrganizationsCubit>(),
+                  child: const OrganizationsScreen(),
                 ),
+              ),
+              GoRoute(
+                path: '/spaces/:organizationId',
+                builder: (context, state) {
+                  final organizationId = state.pathParameters['organizationId']!;
+                  final organizationName = state.extra is String ? state.extra as String : null;
+                  return BlocProvider(
+                    create: (_) => getIt<SpacesCubit>(),
+                    child: SpacesScreen(
+                      organizationId: organizationId,
+                      organizationName: organizationName,
+                    ),
+                  );
+                },
+                routes: [
+                  GoRoute(
+                    path: ':spaceId',
+                    builder: (context, state) {
+                      final spaceId = state.pathParameters['spaceId']!;
+                      final spaceName = state.extra is String ? state.extra as String : null;
+                      return BlocProvider(
+                        create: (_) => getIt<SpaceDevicesCubit>(),
+                        child: SpaceDevicesScreen(
+                          spaceId: spaceId,
+                          spaceName: spaceName,
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),

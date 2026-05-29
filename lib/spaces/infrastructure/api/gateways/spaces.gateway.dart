@@ -1,7 +1,18 @@
-import 'package:mobile/spaces/interfaces/rest/resources/space_resource.resource.dart';
+import 'package:mobile/spaces/interfaces/rest/resources/create_space_request.resource.dart';
+import 'package:mobile/spaces/interfaces/rest/resources/space_response.resource.dart';
+import 'package:mobile/spaces/interfaces/rest/resources/update_space_name_request.resource.dart';
 
 abstract class SpacesGateway {
-  Future<List<SpaceResource>> refreshSpaces({String? spaceId});
+  Future<SpaceResponseResource> createSpace({
+    required String organizationId,
+    required CreateSpaceRequestResource resource,
+  });
 
-  Future<List<SpaceResource>> getSpaces({String? search});
+  Future<List<SpaceResponseResource>> getSpacesByOrganization({
+    required String organizationId,
+  });
+
+  Future<void> deleteSpace(String spaceId);
+
+  Future<void> updateSpaceName(String spaceId, UpdateSpaceNameRequestResource resource);
 }
