@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile/spaces/interfaces/pages/spaces_cubit.dart';
-import 'package:mobile/spaces/interfaces/widgets/create_space_form.dart';
-import 'package:mobile/spaces/interfaces/widgets/edit_space_name_form.dart';
+import 'package:mobile/devices/interfaces/pages/spaces/spaces_cubit.dart';
+import 'package:mobile/devices/interfaces/widgets/create_space_form.dart';
+import 'package:mobile/devices/interfaces/widgets/edit_space_name_form.dart';
 
 class SpacesScreen extends StatefulWidget {
   final String organizationId;

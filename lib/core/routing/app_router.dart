@@ -20,8 +20,8 @@ import 'package:mobile/devices/interfaces/pages/organizations/organizations_cubi
 import 'package:mobile/devices/interfaces/pages/organizations/organizations_screen.dart';
 import 'package:mobile/devices/interfaces/pages/space_devices/space_devices_cubit.dart';
 import 'package:mobile/devices/interfaces/pages/space_devices/space_devices_screen.dart';
-import 'package:mobile/spaces/interfaces/pages/spaces_cubit.dart';
-import 'package:mobile/spaces/interfaces/pages/spaces_screen.dart';
+import 'package:mobile/devices/interfaces/pages/spaces/spaces_cubit.dart';
+import 'package:mobile/devices/interfaces/pages/spaces/spaces_screen.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();

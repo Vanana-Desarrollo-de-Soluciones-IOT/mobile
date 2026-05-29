@@ -44,13 +44,13 @@ import 'package:mobile/iam/interfaces/pages/confirm_registration/confirm_registr
 import 'package:mobile/iam/interfaces/pages/login/login_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/register/register_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/settings/settings_cubit.dart';
-import 'package:mobile/spaces/application/internal/commandservices/spaces_command_service_impl.dart';
-import 'package:mobile/spaces/application/internal/queryservices/spaces_query_service_impl.dart';
-import 'package:mobile/spaces/domain/services/spaces.command-service.dart';
-import 'package:mobile/spaces/domain/services/spaces.query-service.dart';
-import 'package:mobile/spaces/infrastructure/api/gateways/spaces.gateway.dart';
-import 'package:mobile/spaces/infrastructure/api/gateways/spaces_http.gateway.dart';
-import 'package:mobile/spaces/interfaces/pages/spaces_cubit.dart';
+import 'package:mobile/devices/application/internal/commandservices/spaces_command_service_impl.dart';
+import 'package:mobile/devices/application/internal/queryservices/spaces_query_service_impl.dart';
+import 'package:mobile/devices/domain/services/spaces.command-service.dart';
+import 'package:mobile/devices/domain/services/spaces.query-service.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/spaces.gateway.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/spaces_http.gateway.dart';
+import 'package:mobile/devices/interfaces/pages/spaces/spaces_cubit.dart';
 
 final getIt = GetIt.instance;
 

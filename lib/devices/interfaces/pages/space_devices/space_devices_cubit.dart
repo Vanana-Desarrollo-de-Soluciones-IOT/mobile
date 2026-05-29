@@ -8,7 +8,7 @@ import 'package:mobile/devices/domain/services/devices.command-service.dart';
 import 'package:mobile/devices/domain/services/devices.query-service.dart';
 import 'package:mobile/devices/interfaces/rest/resources/device_response.resource.dart';
 import 'package:mobile/devices/interfaces/rest/resources/device_pairing_resource.resource.dart';
-import 'package:mobile/spaces/domain/model/valueobjects/space_id.valueobject.dart';
+import 'package:mobile/devices/domain/model/valueobjects/space_id.valueobject.dart';
 
 part 'space_devices_state.dart';
 

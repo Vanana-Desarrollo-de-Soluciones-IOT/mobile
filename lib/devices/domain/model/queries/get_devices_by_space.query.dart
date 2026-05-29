@@ -1,4 +1,4 @@
-import 'package:mobile/spaces/domain/model/valueobjects/space_id.valueobject.dart';
+import 'package:mobile/devices/domain/model/valueobjects/space_id.valueobject.dart';
 
 class GetDevicesBySpaceQuery {
   final SpaceId spaceId;

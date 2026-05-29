@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
-import 'package:mobile/spaces/domain/model/commands/create_space.command.dart';
-import 'package:mobile/spaces/domain/model/commands/delete_space.command.dart';
-import 'package:mobile/spaces/domain/model/commands/update_space_name.command.dart';
-import 'package:mobile/spaces/domain/services/spaces.command-service.dart';
-import 'package:mobile/spaces/infrastructure/api/gateways/spaces.gateway.dart';
-import 'package:mobile/spaces/interfaces/rest/resources/space_response.resource.dart';
-import 'package:mobile/spaces/interfaces/rest/transform/spaces_transform.dart';
+import 'package:mobile/devices/domain/model/commands/create_space.command.dart';
+import 'package:mobile/devices/domain/model/commands/delete_space.command.dart';
+import 'package:mobile/devices/domain/model/commands/update_space_name.command.dart';
+import 'package:mobile/devices/domain/services/spaces.command-service.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/spaces.gateway.dart';
+import 'package:mobile/devices/interfaces/rest/resources/space_response.resource.dart';
+import 'package:mobile/devices/interfaces/rest/transform/spaces_transform.dart';
 
 class SpacesCommandServiceImpl implements SpacesCommandService {
   final SpacesGateway _gateway;

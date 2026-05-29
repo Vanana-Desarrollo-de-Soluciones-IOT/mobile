@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
-import 'package:mobile/spaces/domain/model/queries/get_spaces_by_organization.query.dart';
-import 'package:mobile/spaces/domain/services/spaces.query-service.dart';
-import 'package:mobile/spaces/infrastructure/api/gateways/spaces.gateway.dart';
-import 'package:mobile/spaces/interfaces/rest/resources/space_response.resource.dart';
+import 'package:mobile/devices/domain/model/queries/get_spaces_by_organization.query.dart';
+import 'package:mobile/devices/domain/services/spaces.query-service.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/spaces.gateway.dart';
+import 'package:mobile/devices/interfaces/rest/resources/space_response.resource.dart';
 
 class SpacesQueryServiceImpl implements SpacesQueryService {
   final SpacesGateway _gateway;

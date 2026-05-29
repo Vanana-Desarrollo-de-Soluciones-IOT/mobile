@@ -1,9 +1,9 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
-import 'package:mobile/spaces/domain/model/commands/create_space.command.dart';
-import 'package:mobile/spaces/domain/model/commands/delete_space.command.dart';
-import 'package:mobile/spaces/domain/model/commands/update_space_name.command.dart';
-import 'package:mobile/spaces/interfaces/rest/resources/space_response.resource.dart';
+import 'package:mobile/devices/domain/model/commands/create_space.command.dart';
+import 'package:mobile/devices/domain/model/commands/delete_space.command.dart';
+import 'package:mobile/devices/domain/model/commands/update_space_name.command.dart';
+import 'package:mobile/devices/interfaces/rest/resources/space_response.resource.dart';
 
 abstract class SpacesCommandService {
   Future<Either<Failure, SpaceResponseResource>> handleCreateSpace(

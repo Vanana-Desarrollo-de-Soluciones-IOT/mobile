@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:mobile/core/constants/api_constants.dart';
-import 'package:mobile/spaces/infrastructure/api/gateways/spaces.gateway.dart';
-import 'package:mobile/spaces/interfaces/rest/resources/create_space_request.resource.dart';
-import 'package:mobile/spaces/interfaces/rest/resources/space_response.resource.dart';
-import 'package:mobile/spaces/interfaces/rest/resources/update_space_name_request.resource.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/spaces.gateway.dart';
+import 'package:mobile/devices/interfaces/rest/resources/create_space_request.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/space_response.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/update_space_name_request.resource.dart';
 
 class SpacesHttpGateway implements SpacesGateway {
   final Dio _dio;
