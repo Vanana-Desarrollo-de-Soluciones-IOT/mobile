@@ -22,6 +22,8 @@ import 'package:mobile/devices/interfaces/pages/space_devices/space_devices_cubi
 import 'package:mobile/devices/interfaces/pages/space_devices/space_devices_screen.dart';
 import 'package:mobile/devices/interfaces/pages/spaces/spaces_cubit.dart';
 import 'package:mobile/devices/interfaces/pages/spaces/spaces_screen.dart';
+import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_cubit.dart';
+import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_screen.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -122,6 +124,16 @@ class AppRouter {
                     },
                   ),
                 ],
+              ),
+              GoRoute(
+                path: '/devices/:deviceId',
+                builder: (context, state) {
+                  final deviceId = state.pathParameters['deviceId']!;
+                  return BlocProvider(
+                    create: (_) => getIt<DeviceDetailCubit>()..loadDeviceDetail(deviceId),
+                    child: DeviceDetailScreen(deviceId: deviceId),
+                  );
+                },
               ),
             ],
           ),

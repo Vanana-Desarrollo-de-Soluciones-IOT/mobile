@@ -44,7 +44,13 @@ class ClairAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         IconButton(
           icon: const Icon(Icons.settings),
-          onPressed: () => context.go('/settings'),
+          onPressed: () {
+            final currentLocation = GoRouterState.of(context).matchedLocation;
+            if (currentLocation == '/settings') {
+              return;
+            }
+            context.push('/settings');
+          },
         ),
       ],
     );

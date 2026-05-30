@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile/devices/interfaces/rest/resources/device_response.resource.dart';
 import 'package:mobile/devices/interfaces/widgets/device_list_item_labels.dart';
 import 'package:mobile/devices/interfaces/widgets/device_power_status_badge.dart';
@@ -22,7 +23,9 @@ class DeviceCard extends StatelessWidget {
         DateTime.now().difference(device.lastSeenAt!).inMinutes < 2;
     final isPoweredOn = isOnline || isRecentlySeen;
 
-    return Container(
+    return GestureDetector(
+      onTap: () => context.push('/devices/${device.id}', extra: device),
+      child: Container(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       decoration: BoxDecoration(
         color: const Color(0xFF151515),
@@ -103,6 +106,7 @@ class DeviceCard extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }

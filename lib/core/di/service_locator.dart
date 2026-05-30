@@ -51,6 +51,7 @@ import 'package:mobile/devices/domain/services/spaces.query-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/spaces.gateway.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/spaces_http.gateway.dart';
 import 'package:mobile/devices/interfaces/pages/spaces/spaces_cubit.dart';
+import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -186,6 +187,8 @@ void setupServiceLocator() {
       getIt<DevicesCommandService>(),
     ),
   );
+
+  getIt.registerFactory<DeviceDetailCubit>(() => DeviceDetailCubit());
 
   getIt.registerFactory<SettingsCubit>(
     () => SettingsCubit(
