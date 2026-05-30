@@ -7,4 +7,6 @@ abstract class OrganizationsQueryService {
   Future<Either<Failure, List<OrganizationResponseResource>>> handleGetUserOrganizations(
     GetUserOrganizationsQuery query,
   );
+
+  Future<Either<Failure, OrganizationResponseResource>> handleGetOrganizationById(String organizationId);
 }

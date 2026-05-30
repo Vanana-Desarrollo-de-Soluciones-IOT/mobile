@@ -9,6 +9,8 @@ abstract class OrganizationsGateway {
 
   Future<List<OrganizationResponseResource>> getUserOrganizations();
 
+  Future<OrganizationResponseResource> getOrganizationById(String organizationId);
+
   Future<void> deleteOrganization(String organizationId);
 
   Future<void> updateOrganizationName(

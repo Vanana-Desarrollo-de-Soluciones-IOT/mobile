@@ -7,4 +7,6 @@ abstract class SpacesQueryService {
   Future<Either<Failure, List<SpaceResponseResource>>> handleGetSpacesByOrganization(
     GetSpacesByOrganizationQuery query,
   );
+
+  Future<Either<Failure, SpaceResponseResource>> handleGetSpaceById(String spaceId);
 }

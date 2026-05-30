@@ -40,6 +40,26 @@ class DevicesCommandServiceImpl implements DevicesCommandService {
     }
   }
 
+  @override
+  Future<Either<Failure, void>> handleDeleteDevice(String deviceId) async {
+    try {
+      await _gateway.deleteDeviceRaw(deviceId);
+      return const Right(null);
+    } catch (e) {
+      return Left(Failure(_mapError(e)));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> handleUpdateDeviceName(String deviceId, String name) async {
+    try {
+      await _gateway.updateDeviceNameRaw(deviceId, {'name': name});
+      return const Right(null);
+    } catch (e) {
+      return Left(Failure(_mapError(e)));
+    }
+  }
+
   String _mapError(Object error) {
     if (error is DioException) {
       final statusCode = error.response?.statusCode;

@@ -12,6 +12,8 @@ abstract class SpacesGateway {
     required String organizationId,
   });
 
+  Future<SpaceResponseResource> getSpaceById(String spaceId);
+
   Future<void> deleteSpace(String spaceId);
 
   Future<void> updateSpaceName(String spaceId, UpdateSpaceNameRequestResource resource);

@@ -110,16 +110,22 @@ class SpacesCubit extends Cubit<SpacesState> {
   }
 
   Future<void> _loadDeviceCounts(List<SpaceResponseResource> spaces) async {
-    // Fire-and-forget with eventual state update.
     final counts = Map<String, int>.from(state.deviceCountsBySpaceId);
-    for (final space in spaces) {
+
+    final futures = spaces.map((space) async {
       try {
         final count = await _devicesGateway.getDeviceCountBySpace(space.id);
-        counts[space.id] = count;
+        return MapEntry(space.id, count);
       } catch (_) {
-        // ignore device count errors
+        return MapEntry(space.id, 0);
       }
+    });
+
+    final results = await Future.wait(futures);
+    for (final entry in results) {
+      counts[entry.key] = entry.value;
     }
+
     emit(state.copyWith(deviceCountsBySpaceId: counts));
   }
 }

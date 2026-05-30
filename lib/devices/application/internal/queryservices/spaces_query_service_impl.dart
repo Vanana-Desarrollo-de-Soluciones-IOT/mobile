@@ -25,6 +25,16 @@ class SpacesQueryServiceImpl implements SpacesQueryService {
     }
   }
 
+  @override
+  Future<Either<Failure, SpaceResponseResource>> handleGetSpaceById(String spaceId) async {
+    try {
+      final result = await _gateway.getSpaceById(spaceId);
+      return Right(result);
+    } catch (e) {
+      return Left(Failure(_mapError(e)));
+    }
+  }
+
   String _mapError(Object error) {
     if (error is DioException) {
       final statusCode = error.response?.statusCode;

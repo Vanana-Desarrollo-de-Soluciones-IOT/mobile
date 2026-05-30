@@ -11,4 +11,8 @@ abstract class DevicesCommandService {
   Future<Either<Failure, DeviceResponseResource>> handleClaimDeviceToSpace(
     ClaimDeviceToSpaceCommand command,
   );
+
+  Future<Either<Failure, void>> handleDeleteDevice(String deviceId);
+
+  Future<Either<Failure, void>> handleUpdateDeviceName(String deviceId, String name);
 }

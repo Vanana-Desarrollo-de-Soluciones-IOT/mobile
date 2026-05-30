@@ -15,20 +15,53 @@ part 'space_devices_state.dart';
 class SpaceDevicesCubit extends Cubit<SpaceDevicesState> {
   final DevicesQueryService _queryService;
   final DevicesCommandService _commandService;
+  String? _currentSpaceId;
 
   SpaceDevicesCubit(this._queryService, this._commandService) : super(const SpaceDevicesState());
 
   Future<void> loadDevices({required String spaceId}) async {
+    _currentSpaceId = spaceId;
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
-      final query = GetDevicesBySpaceQuery(spaceId: SpaceId(spaceId), page: 0, size: 100);
+      final query = GetDevicesBySpaceQuery(spaceId: SpaceId(spaceId), page: 0, size: 20);
       final result = await _queryService.handleGetDevicesBySpace(query);
       result.fold(
         (failure) => emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
-        (page) => emit(state.copyWith(isLoading: false, devices: page.content)),
+        (page) => emit(state.copyWith(
+          isLoading: false,
+          devices: page.content,
+          totalDevices: page.totalElements,
+          currentPage: 0,
+          hasMore: page.content.length < page.totalElements,
+        )),
       );
     } on ArgumentError catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.message as String?));
+    }
+  }
+
+  Future<void> loadMoreDevices() async {
+    if (state.isLoadingMore || !state.hasMore || _currentSpaceId == null) return;
+
+    emit(state.copyWith(isLoadingMore: true));
+    try {
+      final nextPage = state.currentPage + 1;
+      final query = GetDevicesBySpaceQuery(spaceId: SpaceId(_currentSpaceId!), page: nextPage, size: 20);
+      final result = await _queryService.handleGetDevicesBySpace(query);
+      result.fold(
+        (failure) => emit(state.copyWith(isLoadingMore: false, errorMessage: failure.message)),
+        (page) {
+          final allDevices = [...state.devices, ...page.content];
+          emit(state.copyWith(
+            isLoadingMore: false,
+            devices: allDevices,
+            currentPage: nextPage,
+            hasMore: allDevices.length < page.totalElements,
+          ));
+        },
+      );
+    } on ArgumentError catch (e) {
+      emit(state.copyWith(isLoadingMore: false, errorMessage: e.message as String?));
     }
   }
 
@@ -82,6 +115,25 @@ class SpaceDevicesCubit extends Cubit<SpaceDevicesState> {
     } on ArgumentError catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.message as String?));
       return null;
+    }
+  }
+
+  Future<void> deleteDevice(String deviceId) async {
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+    try {
+      final result = await _commandService.handleDeleteDevice(deviceId);
+      return result.fold(
+        (failure) async {
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message));
+        },
+        (_) async {
+          if (_currentSpaceId != null) {
+            await loadDevices(spaceId: _currentSpaceId!);
+          }
+        },
+      );
+    } on ArgumentError catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.message as String?));
     }
   }
 }

@@ -36,6 +36,12 @@ class SpacesHttpGateway implements SpacesGateway {
   }
 
   @override
+  Future<SpaceResponseResource> getSpaceById(String spaceId) async {
+    final response = await _dio.get('${ApiConstants.apiPrefix}/spaces/$spaceId');
+    return SpaceResponseResource.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
   Future<void> deleteSpace(String spaceId) async {
     await _dio.delete('${ApiConstants.apiPrefix}/spaces/$spaceId');
   }

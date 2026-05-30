@@ -22,6 +22,16 @@ class OrganizationsQueryServiceImpl implements OrganizationsQueryService {
     }
   }
 
+  @override
+  Future<Either<Failure, OrganizationResponseResource>> handleGetOrganizationById(String organizationId) async {
+    try {
+      final result = await _gateway.getOrganizationById(organizationId);
+      return Right(result);
+    } catch (e) {
+      return Left(Failure(_mapError(e)));
+    }
+  }
+
   String _mapError(Object error) {
     if (error is Exception) {
       return error.toString().replaceFirst('Exception: ', '');
