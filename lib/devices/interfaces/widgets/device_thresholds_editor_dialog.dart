@@ -99,7 +99,7 @@ class _DeviceThresholdsEditorDialogState extends State<DeviceThresholdsEditorDia
             ),
             const SizedBox(height: 8),
             SizedBox(
-              height: 460,
+              height: 400,
               child: Row(
                 children: items
                     .map(
@@ -221,25 +221,22 @@ class _ThresholdEditorColumn extends StatelessWidget {
             color: Colors.white.withValues(alpha: 0.25),
           ),
           const SizedBox(height: 10),
-          RichText(
-            text: TextSpan(
-              text: _formatValue(value),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                height: 1,
-              ),
-              children: [
-                TextSpan(
-                  text: ' $unit',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.65),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
+          Text(
+            _formatValue(value),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              height: 1,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            unit,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.55),
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 6),
@@ -250,7 +247,7 @@ class _ThresholdEditorColumn extends StatelessWidget {
               fontSize: 13,
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
           Expanded(
             child: _VerticalThresholdSlider(
               value: value,
@@ -265,10 +262,7 @@ class _ThresholdEditorColumn extends StatelessWidget {
   }
 
   String _formatValue(double value) {
-    if (value == value.roundToDouble()) {
-      return value.toStringAsFixed(0);
-    }
-    return value.toStringAsFixed(1);
+    return value.toStringAsFixed(0);
   }
 }
 
@@ -287,7 +281,7 @@ class _VerticalThresholdSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const sliderHeight = 280.0;
+    const sliderHeight = 240.0;
     const sliderWidth = 32.0;
     const trackWidth = 3.0;
     const thumbWidth = 24.0;

@@ -13,7 +13,7 @@ class UpdateDeviceThresholdResource {
 
   Map<String, dynamic> toJson() {
     return {
-      'metric': metric.name,
+      'metric': metric.apiName,
       'value': value,
       'enabled': enabled,
     };
