@@ -33,6 +33,12 @@ class OrganizationsHttpGateway implements OrganizationsGateway {
   }
 
   @override
+  Future<OrganizationResponseResource> getOrganizationById(String organizationId) async {
+    final response = await _dio.get('${ApiConstants.apiPrefix}/organizations/$organizationId');
+    return OrganizationResponseResource.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
   Future<void> deleteOrganization(String organizationId) async {
     await _dio.delete('${ApiConstants.apiPrefix}/organizations/$organizationId');
   }

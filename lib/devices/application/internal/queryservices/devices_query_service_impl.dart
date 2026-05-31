@@ -4,6 +4,8 @@ import 'package:mobile/devices/domain/model/queries/get_devices_by_space.query.d
 import 'package:mobile/devices/domain/services/devices.query-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/devices.gateway.dart';
 import 'package:mobile/devices/interfaces/rest/resources/device_page_response.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/device_response.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/device_status_response.resource.dart';
 
 class DevicesQueryServiceImpl implements DevicesQueryService {
   final DevicesGateway _gateway;
@@ -21,6 +23,26 @@ class DevicesQueryServiceImpl implements DevicesQueryService {
         size: query.size,
       );
       return Right(DevicePageResponseResource.fromJson(raw));
+    } catch (e) {
+      return Left(Failure(_mapError(e)));
+    }
+  }
+
+  @override
+  Future<Either<Failure, DeviceResponseResource>> handleGetDeviceById(String deviceId) async {
+    try {
+      final raw = await _gateway.getDeviceByIdRaw(deviceId);
+      return Right(DeviceResponseResource.fromJson(raw));
+    } catch (e) {
+      return Left(Failure(_mapError(e)));
+    }
+  }
+
+  @override
+  Future<Either<Failure, DeviceStatusResponseResource>> handleGetDeviceStatus(String deviceId) async {
+    try {
+      final raw = await _gateway.getDeviceStatusRaw(deviceId);
+      return Right(DeviceStatusResponseResource.fromJson(raw));
     } catch (e) {
       return Left(Failure(_mapError(e)));
     }

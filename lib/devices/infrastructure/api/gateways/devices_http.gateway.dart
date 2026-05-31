@@ -44,4 +44,63 @@ class DevicesHttpGateway implements DevicesGateway {
     if (data is Map<String, dynamic>) return data;
     throw Exception('Unexpected devices response format');
   }
+
+  @override
+  Future<Map<String, dynamic>> getDeviceByIdRaw(String deviceId) async {
+    final response = await _dio.get(
+      '${ApiConstants.apiPrefix}/devices/$deviceId',
+    );
+    final data = response.data;
+    if (data is Map<String, dynamic>) return data;
+    throw Exception('Unexpected device response format');
+  }
+
+  @override
+  Future<Map<String, dynamic>> getDeviceStatusRaw(String deviceId) async {
+    final response = await _dio.get(
+      '${ApiConstants.apiPrefix}/devices/$deviceId/status',
+    );
+    final data = response.data;
+    if (data is Map<String, dynamic>) return data;
+    throw Exception('Unexpected device status response format');
+  }
+
+  @override
+  Future<void> deleteDeviceRaw(String deviceId) async {
+    await _dio.delete('${ApiConstants.apiPrefix}/devices/$deviceId');
+  }
+
+  @override
+  Future<void> updateDeviceNameRaw(String deviceId, Map<String, dynamic> requestBody) async {
+    await _dio.patch(
+      '${ApiConstants.apiPrefix}/devices/$deviceId/name',
+      data: requestBody,
+    );
+  }
+
+  @override
+  Future<Map<String, dynamic>> pairDeviceRaw({
+    required Map<String, dynamic> requestBody,
+  }) async {
+    final response = await _dio.post(
+      '${ApiConstants.apiPrefix}/devices/pair',
+      data: requestBody,
+    );
+    final data = response.data;
+    if (data is Map<String, dynamic>) return data;
+    throw Exception('Unexpected pair device response format');
+  }
+
+  @override
+  Future<Map<String, dynamic>> claimDeviceRaw({
+    required Map<String, dynamic> requestBody,
+  }) async {
+    final response = await _dio.post(
+      '${ApiConstants.apiPrefix}/devices/claim',
+      data: requestBody,
+    );
+    final data = response.data;
+    if (data is Map<String, dynamic>) return data;
+    throw Exception('Unexpected claim device response format');
+  }
 }

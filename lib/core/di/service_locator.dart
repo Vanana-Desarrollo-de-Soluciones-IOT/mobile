@@ -36,19 +36,28 @@ import 'package:mobile/devices/infrastructure/api/gateways/devices.gateway.dart'
 import 'package:mobile/devices/infrastructure/api/gateways/devices_http.gateway.dart';
 import 'package:mobile/devices/interfaces/pages/organizations/organizations_cubit.dart';
 import 'package:mobile/devices/interfaces/pages/space_devices/space_devices_cubit.dart';
+import 'package:mobile/devices/application/internal/commandservices/devices_command_service_impl.dart';
+import 'package:mobile/devices/domain/services/devices.command-service.dart';
 import 'package:mobile/devices/application/internal/queryservices/devices_query_service_impl.dart';
 import 'package:mobile/devices/domain/services/devices.query-service.dart';
 import 'package:mobile/iam/interfaces/pages/confirm_registration/confirm_registration_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/login/login_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/register/register_cubit.dart';
 import 'package:mobile/iam/interfaces/pages/settings/settings_cubit.dart';
-import 'package:mobile/spaces/application/internal/commandservices/spaces_command_service_impl.dart';
-import 'package:mobile/spaces/application/internal/queryservices/spaces_query_service_impl.dart';
-import 'package:mobile/spaces/domain/services/spaces.command-service.dart';
-import 'package:mobile/spaces/domain/services/spaces.query-service.dart';
-import 'package:mobile/spaces/infrastructure/api/gateways/spaces.gateway.dart';
-import 'package:mobile/spaces/infrastructure/api/gateways/spaces_http.gateway.dart';
-import 'package:mobile/spaces/interfaces/pages/spaces_cubit.dart';
+import 'package:mobile/devices/application/internal/commandservices/spaces_command_service_impl.dart';
+import 'package:mobile/devices/application/internal/queryservices/spaces_query_service_impl.dart';
+import 'package:mobile/devices/domain/services/spaces.command-service.dart';
+import 'package:mobile/devices/domain/services/spaces.query-service.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/spaces.gateway.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/spaces_http.gateway.dart';
+import 'package:mobile/devices/interfaces/pages/spaces/spaces_cubit.dart';
+import 'package:mobile/devices/application/internal/commandservices/device_threshold_command_service_impl.dart';
+import 'package:mobile/devices/application/internal/queryservices/device_threshold_query_service_impl.dart';
+import 'package:mobile/devices/domain/services/device_threshold.command-service.dart';
+import 'package:mobile/devices/domain/services/device_threshold.query-service.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/device_thresholds.gateway.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/device_thresholds_http.gateway.dart';
+import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -138,6 +147,20 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<DevicesQueryService>(
     () => DevicesQueryServiceImpl(getIt<DevicesGateway>()),
   );
+  getIt.registerLazySingleton<DevicesCommandService>(
+    () => DevicesCommandServiceImpl(getIt<DevicesGateway>()),
+  );
+
+  // Device Thresholds
+  getIt.registerLazySingleton<DeviceThresholdsGateway>(
+    () => DeviceThresholdsHttpGateway(getIt<DioClient>().client),
+  );
+  getIt.registerLazySingleton<DeviceThresholdQueryService>(
+    () => DeviceThresholdQueryServiceImpl(getIt<DeviceThresholdsGateway>()),
+  );
+  getIt.registerLazySingleton<DeviceThresholdCommandService>(
+    () => DeviceThresholdCommandServiceImpl(getIt<DeviceThresholdsGateway>()),
+  );
 
   // Interface Controllers (Cubits)
   getIt.registerFactory<LoginCubit>(
@@ -176,7 +199,18 @@ void setupServiceLocator() {
   );
 
   getIt.registerFactory<SpaceDevicesCubit>(
-    () => SpaceDevicesCubit(getIt<DevicesQueryService>()),
+    () => SpaceDevicesCubit(
+      getIt<DevicesQueryService>(),
+      getIt<DevicesCommandService>(),
+    ),
+  );
+
+  getIt.registerFactory<DeviceDetailCubit>(
+    () => DeviceDetailCubit(
+      getIt<DevicesQueryService>(),
+      getIt<DeviceThresholdQueryService>(),
+      getIt<DeviceThresholdCommandService>(),
+    ),
   );
 
   getIt.registerFactory<SettingsCubit>(

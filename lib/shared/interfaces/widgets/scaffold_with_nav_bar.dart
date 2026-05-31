@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile/shared/interfaces/widgets/air_quality_icon.dart';
-import 'package:mobile/shared/interfaces/widgets/alerts_icon.dart';
-import 'package:mobile/shared/interfaces/widgets/space_devices_icon.dart';
+import 'package:mobile/shared/interfaces/widgets/icons/air_quality_icon.dart';
+import 'package:mobile/shared/interfaces/widgets/icons/alerts_icon.dart';
+import 'package:mobile/shared/interfaces/widgets/icons/space_devices_icon.dart';
 
 class ScaffoldWithNavBar extends StatelessWidget {
   final Widget child;

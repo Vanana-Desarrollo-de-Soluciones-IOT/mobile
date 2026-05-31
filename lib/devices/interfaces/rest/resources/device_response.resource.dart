@@ -6,6 +6,7 @@ class DeviceResponseResource {
   final String? spaceId;
   final String? ownerUserId;
   final Map<String, String> configuration;
+  final List<dynamic> thresholds;
   final String hardwareId;
   final String deviceType;
   final DateTime? activatedAt;
@@ -21,6 +22,7 @@ class DeviceResponseResource {
     required this.spaceId,
     required this.ownerUserId,
     required this.configuration,
+    required this.thresholds,
     required this.hardwareId,
     required this.deviceType,
     required this.activatedAt,
@@ -40,6 +42,12 @@ class DeviceResponseResource {
       }
     }
 
+    final thresholdsRaw = json['thresholds'];
+    final thresholds = <dynamic>[];
+    if (thresholdsRaw is List) {
+      thresholds.addAll(thresholdsRaw);
+    }
+
     return DeviceResponseResource(
       id: (json['id'] ?? '').toString(),
       serialNumber: (json['serialNumber'] ?? '').toString(),
@@ -48,6 +56,7 @@ class DeviceResponseResource {
       spaceId: json['spaceId']?.toString(),
       ownerUserId: json['ownerUserId']?.toString(),
       configuration: config,
+      thresholds: thresholds,
       hardwareId: (json['hardwareId'] ?? '').toString(),
       deviceType: (json['deviceType'] ?? '').toString(),
       activatedAt: _tryParseDateTime(json['activatedAt']),
