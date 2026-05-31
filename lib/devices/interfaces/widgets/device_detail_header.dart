@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/devices/interfaces/rest/resources/device_detail.resource.dart';
-import 'package:mobile/devices/interfaces/widgets/device_power_status_badge.dart';
 import 'package:mobile/shared/interfaces/widgets/icons/clair_device_icon.dart';
 
 class DeviceDetailHeader extends StatelessWidget {

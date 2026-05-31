@@ -3,7 +3,7 @@ import 'package:mobile/devices/interfaces/rest/resources/device_detail.resource.
 import 'package:mobile/devices/interfaces/widgets/device_threshold_card.dart';
 
 class DeviceThresholdsSection extends StatelessWidget {
-  final List<DeviceThresholdResource> thresholds;
+  final List<DeviceDetailThresholdResource> thresholds;
   final VoidCallback? onEditTap;
 
   const DeviceThresholdsSection({
@@ -66,12 +66,19 @@ class DeviceThresholdsSection extends StatelessWidget {
             final t = thresholds[index];
             return DeviceThresholdCard(
               label: t.label,
-              value: t.value,
+              value: _formatThresholdValue(t.value),
               unit: t.unit,
             );
           },
         ),
       ],
     );
+  }
+
+  String _formatThresholdValue(double value) {
+    if (value == value.roundToDouble()) {
+      return value.toStringAsFixed(0);
+    }
+    return value.toStringAsFixed(1);
   }
 }

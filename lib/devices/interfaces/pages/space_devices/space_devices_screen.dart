@@ -247,7 +247,7 @@ class _SpaceDevicesScreenState extends State<SpaceDevicesScreen> {
                               : ListView.separated(
                                   padding: const EdgeInsets.only(top: 2),
                                   itemCount: state.devices.length,
-                                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                                  separatorBuilder: (_, _) => const SizedBox(height: 10),
                                   itemBuilder: (context, index) {
                                     return DeviceListTile(device: state.devices[index]);
                                   },

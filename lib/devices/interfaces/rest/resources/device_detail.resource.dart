@@ -1,14 +1,18 @@
-import 'package:flutter/material.dart';
+import 'package:mobile/devices/domain/model/valueobjects/metric_threshold.valueobject.dart';
 
-class DeviceThresholdResource {
+class DeviceDetailThresholdResource {
+  final MetricThreshold metric;
   final String label;
-  final String value;
+  final double value;
   final String unit;
+  final bool enabled;
 
-  const DeviceThresholdResource({
+  const DeviceDetailThresholdResource({
+    required this.metric,
     required this.label,
     required this.value,
     required this.unit,
+    required this.enabled,
   });
 }
 
@@ -21,7 +25,7 @@ class DeviceDetailResource {
   final int uptimeHours;
   final double deviceHealthPercent;
   final int lastUpdateHours;
-  final List<DeviceThresholdResource> thresholds;
+  final List<DeviceDetailThresholdResource> thresholds;
 
   const DeviceDetailResource({
     required this.id,

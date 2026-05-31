@@ -1,33 +1,169 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile/devices/domain/model/commands/write_device_threshold.command.dart';
+import 'package:mobile/devices/domain/model/queries/get_device_thresholds.query.dart';
+import 'package:mobile/devices/domain/model/valueobjects/metric_threshold.valueobject.dart';
+import 'package:mobile/devices/domain/services/device_threshold.command-service.dart';
+import 'package:mobile/devices/domain/services/device_threshold.query-service.dart';
+import 'package:mobile/devices/domain/services/devices.query-service.dart';
 import 'package:mobile/devices/interfaces/rest/resources/device_detail.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/device_threshold.resource.dart';
+import 'package:mobile/devices/interfaces/rest/transform/device_detail_threshold_defaults_transform.dart';
+import 'package:mobile/devices/interfaces/rest/transform/device_thresholds_transform.dart';
 
 part 'device_detail_state.dart';
 
 class DeviceDetailCubit extends Cubit<DeviceDetailState> {
-  DeviceDetailCubit() : super(const DeviceDetailState());
+  final DevicesQueryService _devicesQueryService;
+  final DeviceThresholdQueryService _thresholdQueryService;
+  final DeviceThresholdCommandService _thresholdCommandService;
+
+  DeviceDetailCubit(
+    this._devicesQueryService,
+    this._thresholdQueryService,
+    this._thresholdCommandService,
+  ) : super(const DeviceDetailState());
 
   Future<void> loadDeviceDetail(String deviceId) async {
-    emit(state.copyWith(isLoading: true));
+    emit(state.copyWith(isLoading: true, errorMessage: null));
 
-    await Future.delayed(const Duration(milliseconds: 300));
+    final deviceResult = await _devicesQueryService.handleGetDeviceById(deviceId);
+    await deviceResult.fold(
+      (failure) async {
+        emit(state.copyWith(isLoading: false, errorMessage: failure.message));
+      },
+      (device) async {
+        final thresholds = await _loadThresholds(deviceId);
 
-    final detail = DeviceDetailResource(
-      id: deviceId,
-      name: 'Clair-01',
-      status: 'ONLINE',
-      isPoweredOn: true,
-      connectivityDbm: 60,
-      uptimeHours: 101,
-      deviceHealthPercent: 92,
-      lastUpdateHours: 2,
-      thresholds: const [
-        DeviceThresholdResource(label: 'PM2.5', value: '60', unit: 'µg/m³'),
-        DeviceThresholdResource(label: 'CO₂', value: '1000', unit: 'ppm'),
-        DeviceThresholdResource(label: 'TEMP', value: '26', unit: '°C'),
-        DeviceThresholdResource(label: 'HUMIDITY', value: '85', unit: '%'),
-      ],
+        final detail = DeviceDetailResource(
+          id: device.id,
+          name: device.name.isNotEmpty ? device.name : 'Device',
+          status: device.status,
+          isPoweredOn: device.status.toUpperCase() == 'ONLINE',
+          connectivityDbm: _readDouble(device.configuration, ['connectivityDbm'], 60),
+          uptimeHours: _readInt(device.configuration, ['uptimeHours'], 101),
+          deviceHealthPercent: _readDouble(device.configuration, ['deviceHealthPercent'], 92),
+          lastUpdateHours: _calculateLastUpdateHours(device.lastSeenAt),
+          thresholds: thresholds,
+        );
+
+        emit(state.copyWith(isLoading: false, device: detail, errorMessage: null));
+      },
+    );
+  }
+
+  Future<bool> saveThresholds({
+    required String deviceId,
+    required List<DeviceDetailThresholdResource> thresholds,
+  }) async {
+    if (thresholds.isEmpty) {
+      emit(state.copyWith(errorMessage: 'No thresholds to save.'));
+      return false;
+    }
+
+    emit(state.copyWith(isSavingThresholds: true, errorMessage: null));
+
+    final existingResult = await _thresholdQueryService.handleGetDeviceThresholds(
+      GetDeviceThresholdsQuery(deviceId: deviceId),
     );
 
-    emit(state.copyWith(isLoading: false, device: detail));
+    final existingMetrics = existingResult.fold(
+      (_) => <MetricThreshold>{},
+      (items) => items.map((e) => e.metric).toSet(),
+    );
+
+    for (final threshold in thresholds) {
+      final intent = existingMetrics.contains(threshold.metric)
+          ? DeviceThresholdWriteIntent.update
+          : DeviceThresholdWriteIntent.create;
+
+      final command = toWriteDeviceThresholdCommand(
+        deviceId: deviceId,
+        metric: threshold.metric,
+        value: threshold.value,
+        enabled: threshold.enabled,
+        intent: intent,
+      );
+
+      final saveResult = await _thresholdCommandService.handleWriteThreshold(command);
+      final failedMessage = saveResult.fold((failure) => failure.message, (_) => null);
+
+      if (failedMessage != null) {
+        emit(state.copyWith(isSavingThresholds: false, errorMessage: failedMessage));
+        return false;
+      }
+    }
+
+    await loadDeviceDetail(deviceId);
+    emit(state.copyWith(isSavingThresholds: false, errorMessage: null));
+    return true;
+  }
+
+  Future<List<DeviceDetailThresholdResource>> _loadThresholds(String deviceId) async {
+    final query = GetDeviceThresholdsQuery(deviceId: deviceId);
+    final result = await _thresholdQueryService.handleGetDeviceThresholds(query);
+
+    return result.fold(
+      (_) => buildDefaultDeviceDetailThresholdResources(),
+      (items) => _mergeWithDefaults(items),
+    );
+  }
+
+  List<DeviceDetailThresholdResource> _mergeWithDefaults(List<DeviceThresholdResource> backendItems) {
+    final map = <MetricThreshold, DeviceDetailThresholdResource>{
+      for (final t in buildDefaultDeviceDetailThresholdResources()) t.metric: t,
+    };
+
+    for (final item in backendItems) {
+      map[item.metric] = DeviceDetailThresholdResource(
+        metric: item.metric,
+        label: item.metricLabel.isNotEmpty ? item.metricLabel : _labelFor(item.metric),
+        value: item.value,
+        unit: item.metricUnit.isNotEmpty ? item.metricUnit : item.metric.unit,
+        enabled: item.enabled,
+      );
+    }
+
+    return MetricThreshold.values
+        .where(map.containsKey)
+        .map((metric) => map[metric]!)
+        .toList();
+  }
+
+  String _labelFor(MetricThreshold metric) {
+    switch (metric) {
+      case MetricThreshold.pm25:
+        return 'PM2.5';
+      case MetricThreshold.co2:
+        return 'CO₂';
+      case MetricThreshold.temperature:
+        return 'TEMP';
+      case MetricThreshold.humidity:
+        return 'HUMIDITY';
+    }
+  }
+
+  double _readDouble(Map<String, String> config, List<String> keys, double fallback) {
+    for (final key in keys) {
+      final raw = config[key];
+      final parsed = raw != null ? double.tryParse(raw) : null;
+      if (parsed != null) return parsed;
+    }
+    return fallback;
+  }
+
+  int _readInt(Map<String, String> config, List<String> keys, int fallback) {
+    for (final key in keys) {
+      final raw = config[key];
+      final parsed = raw != null ? int.tryParse(raw) : null;
+      if (parsed != null) return parsed;
+    }
+    return fallback;
+  }
+
+  int _calculateLastUpdateHours(DateTime? lastSeenAt) {
+    if (lastSeenAt == null) return 2;
+    final diff = DateTime.now().difference(lastSeenAt).inHours;
+    if (diff < 0) return 0;
+    return diff;
   }
 }

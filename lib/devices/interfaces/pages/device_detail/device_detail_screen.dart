@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_cubit.dart';
 import 'package:mobile/devices/interfaces/widgets/device_detail_header.dart';
 import 'package:mobile/devices/interfaces/widgets/device_detail_metrics_grid.dart';
+import 'package:mobile/devices/interfaces/widgets/device_thresholds_editor_dialog.dart';
 import 'package:mobile/devices/interfaces/widgets/device_thresholds_section.dart';
 import 'package:mobile/shared/interfaces/widgets/widgets.dart';
 
@@ -31,7 +32,15 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
     return Scaffold(
       appBar: const ClairAppBar(),
       body: SafeArea(
-        child: BlocBuilder<DeviceDetailCubit, DeviceDetailState>(
+        child: BlocConsumer<DeviceDetailCubit, DeviceDetailState>(
+          listenWhen: (previous, current) => previous.errorMessage != current.errorMessage,
+          listener: (context, state) {
+            final message = state.errorMessage;
+            if (message == null || message.isEmpty) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(message)),
+            );
+          },
           builder: (context, state) {
             if (state.isLoading) {
               return const Center(child: CircularProgressIndicator());
@@ -77,7 +86,27 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                   const SizedBox(height: 28),
                   DeviceThresholdsSection(
                     thresholds: device.thresholds,
-                    onEditTap: () {},
+                    onEditTap: () async {
+                      final saved = await showDialog<bool>(
+                        context: context,
+                        barrierDismissible: !state.isSavingThresholds,
+                        builder: (_) => DeviceThresholdsEditorDialog(
+                          initialThresholds: device.thresholds,
+                          onSave: (thresholds) {
+                            return context.read<DeviceDetailCubit>().saveThresholds(
+                                  deviceId: device.id,
+                                  thresholds: thresholds,
+                                );
+                          },
+                        ),
+                      );
+
+                      if (saved == true && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Thresholds saved successfully.')),
+                        );
+                      }
+                    },
                   ),
                 ],
               ),

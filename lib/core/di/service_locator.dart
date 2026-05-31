@@ -51,6 +51,12 @@ import 'package:mobile/devices/domain/services/spaces.query-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/spaces.gateway.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/spaces_http.gateway.dart';
 import 'package:mobile/devices/interfaces/pages/spaces/spaces_cubit.dart';
+import 'package:mobile/devices/application/internal/commandservices/device_threshold_command_service_impl.dart';
+import 'package:mobile/devices/application/internal/queryservices/device_threshold_query_service_impl.dart';
+import 'package:mobile/devices/domain/services/device_threshold.command-service.dart';
+import 'package:mobile/devices/domain/services/device_threshold.query-service.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/device_thresholds.gateway.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/device_thresholds_http.gateway.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_cubit.dart';
 
 final getIt = GetIt.instance;
@@ -145,6 +151,17 @@ void setupServiceLocator() {
     () => DevicesCommandServiceImpl(getIt<DevicesGateway>()),
   );
 
+  // Device Thresholds
+  getIt.registerLazySingleton<DeviceThresholdsGateway>(
+    () => DeviceThresholdsHttpGateway(getIt<DioClient>().client),
+  );
+  getIt.registerLazySingleton<DeviceThresholdQueryService>(
+    () => DeviceThresholdQueryServiceImpl(getIt<DeviceThresholdsGateway>()),
+  );
+  getIt.registerLazySingleton<DeviceThresholdCommandService>(
+    () => DeviceThresholdCommandServiceImpl(getIt<DeviceThresholdsGateway>()),
+  );
+
   // Interface Controllers (Cubits)
   getIt.registerFactory<LoginCubit>(
     () => LoginCubit(
@@ -188,7 +205,13 @@ void setupServiceLocator() {
     ),
   );
 
-  getIt.registerFactory<DeviceDetailCubit>(() => DeviceDetailCubit());
+  getIt.registerFactory<DeviceDetailCubit>(
+    () => DeviceDetailCubit(
+      getIt<DevicesQueryService>(),
+      getIt<DeviceThresholdQueryService>(),
+      getIt<DeviceThresholdCommandService>(),
+    ),
+  );
 
   getIt.registerFactory<SettingsCubit>(
     () => SettingsCubit(
