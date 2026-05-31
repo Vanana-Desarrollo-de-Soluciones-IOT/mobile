@@ -125,29 +125,38 @@ class _DeviceThresholdsEditorDialogState extends State<DeviceThresholdsEditorDia
             Row(
               children: [
                 Expanded(
+                  flex: 3,
                   child: OutlinedButton(
                     onPressed: _isSaving ? null : _resetValues,
                     style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(0, 44),
-                      side: BorderSide(color: Colors.white.withValues(alpha: 0.45)),
+                      minimumSize: const Size(0, 46),
+                      side: BorderSide(color: Colors.white.withValues(alpha: 0.35)),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(99),
+                      ),
                     ),
                     child: const Text('RESET'),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
+                  flex: 1,
                   child: FilledButton(
                     onPressed: _isSaving ? null : _saveValues,
                     style: FilledButton.styleFrom(
-                      minimumSize: const Size(0, 44),
-                      backgroundColor: const Color(0xFFECECEC),
+                      minimumSize: const Size(0, 46),
+                      backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(99),
+                      ),
                     ),
                     child: _isSaving
                         ? const SizedBox(
                             width: 18,
                             height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
                           )
                         : const Text('SAVE'),
                   ),
@@ -201,15 +210,15 @@ class _ThresholdEditorColumn extends StatelessWidget {
             label,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Container(
             height: 1,
-            margin: const EdgeInsets.symmetric(horizontal: 10),
-            color: Colors.white.withValues(alpha: 0.28),
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            color: Colors.white.withValues(alpha: 0.25),
           ),
           const SizedBox(height: 10),
           RichText(
@@ -217,7 +226,7 @@ class _ThresholdEditorColumn extends StatelessWidget {
               text: _formatValue(value),
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 44,
+                fontSize: 22,
                 fontWeight: FontWeight.w700,
                 height: 1,
               ),
@@ -225,23 +234,23 @@ class _ThresholdEditorColumn extends StatelessWidget {
                 TextSpan(
                   text: ' $unit',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                    color: Colors.white.withValues(alpha: 0.65),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
             'max',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.5),
-              fontSize: 18,
+              color: Colors.white.withValues(alpha: 0.45),
+              fontSize: 13,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           Expanded(
             child: _VerticalThresholdSlider(
               value: value,
@@ -278,8 +287,11 @@ class _VerticalThresholdSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const sliderHeight = 260.0;
-    const sliderWidth = 34.0;
+    const sliderHeight = 280.0;
+    const sliderWidth = 32.0;
+    const trackWidth = 3.0;
+    const thumbWidth = 24.0;
+    const thumbHeight = 6.0;
 
     double clampValue(double input) {
       if (input < min) return min;
@@ -305,24 +317,23 @@ class _VerticalThresholdSlider extends StatelessWidget {
         width: sliderWidth,
         height: sliderHeight,
         child: Stack(
+          alignment: Alignment.center,
           children: [
             Positioned(
-              left: (sliderWidth - 4) / 2,
               top: 0,
               child: Container(
-                width: 4,
+                width: trackWidth,
                 height: thumbY,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.26),
+                  color: Colors.white.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(99),
                 ),
               ),
             ),
             Positioned(
-              left: (sliderWidth - 4) / 2,
               top: thumbY,
               child: Container(
-                width: 4,
+                width: trackWidth,
                 height: sliderHeight - thumbY,
                 decoration: BoxDecoration(
                   color: const Color(0xFF00D18F),
@@ -331,11 +342,10 @@ class _VerticalThresholdSlider extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: thumbY - 4,
-              left: 2,
-              right: 2,
+              top: thumbY - (thumbHeight / 2),
               child: Container(
-                height: 8,
+                width: thumbWidth,
+                height: thumbHeight,
                 decoration: BoxDecoration(
                   color: const Color(0xFF00D18F),
                   borderRadius: BorderRadius.circular(99),
