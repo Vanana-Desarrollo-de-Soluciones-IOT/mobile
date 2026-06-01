@@ -6,6 +6,7 @@ import 'package:mobile/devices/interfaces/widgets/device_detail_header.dart';
 import 'package:mobile/devices/interfaces/widgets/device_detail_metrics_grid.dart';
 import 'package:mobile/devices/interfaces/widgets/device_thresholds_editor_dialog.dart';
 import 'package:mobile/devices/interfaces/widgets/device_thresholds_section.dart';
+import 'package:mobile/devices/interfaces/widgets/edit_device_name_form.dart';
 import 'package:mobile/shared/interfaces/widgets/widgets.dart';
 
 class DeviceDetailScreen extends StatefulWidget {
@@ -27,6 +28,120 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
     context.read<DeviceDetailCubit>().loadDeviceDetail(widget.deviceId);
   }
 
+  void _showDeviceMenu(BuildContext context) {
+    final cubit = context.read<DeviceDetailCubit>();
+    final device = cubit.state.device;
+    if (device == null) return;
+
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        MediaQuery.of(context).size.width - 60,
+        kToolbarHeight + 20,
+        0,
+        0,
+      ),
+      color: const Color(0xFF1E1E1E),
+      items: [
+        PopupMenuItem(
+          value: 'edit',
+          child: Row(
+            children: [
+              Icon(Icons.edit, size: 18, color: Colors.white70),
+              const SizedBox(width: 12),
+              const Text('Edit', style: TextStyle(color: Colors.white)),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: Row(
+            children: [
+              Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
+              const SizedBox(width: 12),
+              const Text('Delete', style: TextStyle(color: Colors.redAccent)),
+            ],
+          ),
+        ),
+      ],
+    ).then((value) {
+      if (value == 'edit' && context.mounted) {
+        _openEditDeviceNameSheet(context, device.id, device.name);
+      } else if (value == 'delete' && context.mounted) {
+        _confirmDeleteDevice(context, device.id, device.name);
+      }
+    });
+  }
+
+  Future<void> _openEditDeviceNameSheet(BuildContext context, String deviceId, String currentName) async {
+    final cubit = context.read<DeviceDetailCubit>();
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF121212),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return BlocProvider.value(
+          value: cubit,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: 16 + MediaQuery.of(sheetContext).viewInsets.bottom,
+            ),
+            child: BlocBuilder<DeviceDetailCubit, DeviceDetailState>(
+              builder: (context, state) {
+                return EditDeviceNameForm(
+                  isLoading: state.isLoading,
+                  initialName: currentName,
+                  onSubmit: (name) async {
+                    await cubit.updateDeviceName(deviceId, name);
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _confirmDeleteDevice(BuildContext context, String deviceId, String deviceName) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF1E1E1E),
+          title: const Text('Delete device', style: TextStyle(color: Colors.white)),
+          content: Text(
+            'Are you sure you want to delete "$deviceName"? This action will reset the device assignment.',
+            style: const TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Delete', style: TextStyle(color: Colors.redAccent)),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true && context.mounted) {
+      await context.read<DeviceDetailCubit>().deleteDevice(deviceId);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +157,15 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
             );
           },
           builder: (context, state) {
+            if (state.deleted) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (context.mounted) {
+                  context.go('/spaces');
+                }
+              });
+              return const Center(child: CircularProgressIndicator());
+            }
+
             if (state.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -79,7 +203,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                   DeviceDetailHeader(
                     device: device,
                     onPowerToggle: () {},
-                    onMenuTap: () {},
+                    onMenuTap: () => _showDeviceMenu(context),
                   ),
                   const SizedBox(height: 20),
                   DeviceDetailMetricsGrid(device: device),

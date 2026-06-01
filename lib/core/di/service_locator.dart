@@ -208,6 +208,7 @@ void setupServiceLocator() {
   getIt.registerFactory<DeviceDetailCubit>(
     () => DeviceDetailCubit(
       getIt<DevicesQueryService>(),
+      getIt<DevicesCommandService>(),
       getIt<DeviceThresholdQueryService>(),
       getIt<DeviceThresholdCommandService>(),
     ),

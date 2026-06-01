@@ -16,8 +16,6 @@ class DeviceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final label = buildDeviceChipLabel(device);
     final updatedLabel = buildDeviceUpdatedLabel(device);
-    // Backend status is often OFFLINE until presence pings arrive;
-    // show a "recently seen" dot to match the UI expectations.
     final isOnline = device.status.toUpperCase() == 'ONLINE';
     final isRecentlySeen = device.lastSeenAt != null &&
         DateTime.now().difference(device.lastSeenAt!).inMinutes < 2;

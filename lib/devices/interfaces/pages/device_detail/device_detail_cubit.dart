@@ -4,6 +4,7 @@ import 'package:mobile/devices/domain/model/queries/get_device_thresholds.query.
 import 'package:mobile/devices/domain/model/valueobjects/metric_threshold.valueobject.dart';
 import 'package:mobile/devices/domain/services/device_threshold.command-service.dart';
 import 'package:mobile/devices/domain/services/device_threshold.query-service.dart';
+import 'package:mobile/devices/domain/services/devices.command-service.dart';
 import 'package:mobile/devices/domain/services/devices.query-service.dart';
 import 'package:mobile/devices/interfaces/rest/resources/device_detail.resource.dart';
 import 'package:mobile/devices/interfaces/rest/resources/device_threshold.resource.dart';
@@ -14,16 +15,20 @@ part 'device_detail_state.dart';
 
 class DeviceDetailCubit extends Cubit<DeviceDetailState> {
   final DevicesQueryService _devicesQueryService;
+  final DevicesCommandService _devicesCommandService;
   final DeviceThresholdQueryService _thresholdQueryService;
   final DeviceThresholdCommandService _thresholdCommandService;
+  String? _currentDeviceId;
 
   DeviceDetailCubit(
     this._devicesQueryService,
+    this._devicesCommandService,
     this._thresholdQueryService,
     this._thresholdCommandService,
   ) : super(const DeviceDetailState());
 
   Future<void> loadDeviceDetail(String deviceId) async {
+    _currentDeviceId = deviceId;
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
     final deviceResult = await _devicesQueryService.handleGetDeviceById(deviceId);
@@ -165,5 +170,35 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
     final diff = DateTime.now().difference(lastSeenAt).inHours;
     if (diff < 0) return 0;
     return diff;
+  }
+
+  Future<void> updateDeviceName(String deviceId, String name) async {
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+    try {
+      final result = await _devicesCommandService.handleUpdateDeviceName(deviceId, name);
+      result.fold(
+        (failure) => emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+        (_) async {
+          if (_currentDeviceId != null) {
+            await loadDeviceDetail(_currentDeviceId!);
+          }
+        },
+      );
+    } on ArgumentError catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.message as String?));
+    }
+  }
+
+  Future<void> deleteDevice(String deviceId) async {
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+    try {
+      final result = await _devicesCommandService.handleDeleteDevice(deviceId);
+      result.fold(
+        (failure) => emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+        (_) => emit(state.copyWith(isLoading: false, deleted: true)),
+      );
+    } on ArgumentError catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.message as String?));
+    }
   }
 }

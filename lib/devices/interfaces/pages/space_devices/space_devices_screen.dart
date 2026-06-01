@@ -236,7 +236,6 @@ class _SpaceDevicesScreenState extends State<SpaceDevicesScreen> {
                                     crossAxisCount: 2,
                                     crossAxisSpacing: 12,
                                     mainAxisSpacing: 12,
-                                    // Slightly wider than tall to match the design.
                                     childAspectRatio: 1.12,
                                   ),
                                   itemCount: state.devices.length,
