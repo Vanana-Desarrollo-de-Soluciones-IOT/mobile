@@ -79,6 +79,7 @@ class DeviceThresholdsSection extends StatelessWidget {
     if (value == value.roundToDouble()) {
       return value.toStringAsFixed(0);
     }
-    return value.toStringAsFixed(1);
+    final s = value.toStringAsFixed(2);
+    return s.replaceAll(RegExp(r'0+$'), '').replaceAll(RegExp(r'\.$'), '');
   }
 }
