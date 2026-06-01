@@ -4,12 +4,12 @@ import 'package:mobile/devices/domain/model/commands/create_space.command.dart';
 import 'package:mobile/devices/domain/model/commands/delete_space.command.dart';
 import 'package:mobile/devices/domain/model/commands/update_space_name.command.dart';
 import 'package:mobile/devices/domain/model/queries/get_spaces_by_organization.query.dart';
+import 'package:mobile/devices/domain/model/readmodels/space.read_model.dart';
 import 'package:mobile/devices/domain/model/valueobjects/organization_id.valueobject.dart';
 import 'package:mobile/devices/domain/model/valueobjects/space_id.valueobject.dart';
 import 'package:mobile/devices/domain/model/valueobjects/space_name.valueobject.dart';
 import 'package:mobile/devices/domain/services/spaces.command-service.dart';
 import 'package:mobile/devices/domain/services/spaces.query-service.dart';
-import 'package:mobile/devices/interfaces/rest/resources/space_response.resource.dart';
 
 part 'spaces_state.dart';
 
@@ -91,7 +91,7 @@ class SpacesCubit extends Cubit<SpacesState> {
         (_) {
           final updated = state.spaces
               .map((s) => s.id == spaceId
-                  ? SpaceResponseResource(
+                  ? SpaceReadModel(
                       id: s.id,
                       name: name,
                       organizationId: s.organizationId,
@@ -109,7 +109,7 @@ class SpacesCubit extends Cubit<SpacesState> {
     }
   }
 
-  Future<void> _loadDeviceCounts(List<SpaceResponseResource> spaces) async {
+  Future<void> _loadDeviceCounts(List<SpaceReadModel> spaces) async {
     final counts = Map<String, int>.from(state.deviceCountsBySpaceId);
 
     final futures = spaces.map((space) async {

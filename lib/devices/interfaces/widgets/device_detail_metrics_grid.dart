@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/devices/interfaces/rest/resources/device_detail.resource.dart';
+import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_view_model.dart';
 
 class DeviceDetailMetricsGrid extends StatelessWidget {
-  final DeviceDetailResource device;
+  final DeviceDetailViewModel device;
 
   const DeviceDetailMetricsGrid({
     super.key,

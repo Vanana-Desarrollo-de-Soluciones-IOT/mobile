@@ -1,4 +1,4 @@
-import 'package:mobile/devices/interfaces/rest/resources/device_response.resource.dart';
+import 'package:mobile/devices/infrastructure/api/resources/device_response.resource.dart';
 
 class DevicePageResponseResource {
   final List<DeviceResponseResource> content;

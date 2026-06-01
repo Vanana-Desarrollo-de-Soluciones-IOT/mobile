@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/devices/interfaces/rest/resources/device_detail.resource.dart';
+import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_view_model.dart';
 import 'package:mobile/devices/interfaces/widgets/device_threshold_card.dart';
 
 class DeviceThresholdsSection extends StatelessWidget {
-  final List<DeviceDetailThresholdResource> thresholds;
+  final List<DeviceDetailThresholdViewModel> thresholds;
   final VoidCallback? onEditTap;
 
   const DeviceThresholdsSection({

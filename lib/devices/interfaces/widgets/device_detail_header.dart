@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/devices/interfaces/rest/resources/device_detail.resource.dart';
+import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_view_model.dart';
 import 'package:mobile/shared/interfaces/widgets/icons/clair_device_icon.dart';
 
 class DeviceDetailHeader extends StatelessWidget {
-  final DeviceDetailResource device;
+  final DeviceDetailViewModel device;
   final VoidCallback? onPowerToggle;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;

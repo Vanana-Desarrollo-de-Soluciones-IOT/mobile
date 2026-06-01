@@ -4,7 +4,7 @@ class DeviceDetailState {
   final bool isLoading;
   final bool isSavingThresholds;
   final bool deleted;
-  final DeviceDetailResource? device;
+  final DeviceDetailViewModel? device;
   final String? errorMessage;
 
   const DeviceDetailState({
@@ -19,7 +19,7 @@ class DeviceDetailState {
     bool? isLoading,
     bool? isSavingThresholds,
     bool? deleted,
-    DeviceDetailResource? device,
+    DeviceDetailViewModel? device,
     String? errorMessage,
   }) {
     return DeviceDetailState(

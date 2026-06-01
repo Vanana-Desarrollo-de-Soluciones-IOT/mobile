@@ -1,14 +1,14 @@
-class DevicePairingResourceResource {
+class DevicePairingResource {
   final String deviceId;
   final String? claimToken;
 
-  const DevicePairingResourceResource({
+  const DevicePairingResource({
     required this.deviceId,
     required this.claimToken,
   });
 
-  factory DevicePairingResourceResource.fromJson(Map<String, dynamic> json) {
-    return DevicePairingResourceResource(
+  factory DevicePairingResource.fromJson(Map<String, dynamic> json) {
+    return DevicePairingResource(
       deviceId: (json['deviceId'] ?? '').toString(),
       claimToken: json['claimToken']?.toString(),
     );

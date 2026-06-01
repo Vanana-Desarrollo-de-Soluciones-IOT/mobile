@@ -11,7 +11,7 @@ class DeviceStatusResponseResource {
 
   factory DeviceStatusResponseResource.fromJson(Map<String, dynamic> json) {
     return DeviceStatusResponseResource(
-      deviceId: json['deviceId'] as String,
+      deviceId: (json['deviceId'] ?? json['id'] ?? '').toString(),
       status: (json['status'] ?? '').toString(),
       lastSeenAt: _tryParseDateTime(json['lastSeenAt']),
     );

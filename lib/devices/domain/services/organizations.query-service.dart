@@ -1,12 +1,12 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
+import 'package:mobile/devices/domain/model/readmodels/organization.read_model.dart';
 import 'package:mobile/devices/domain/model/queries/get_user_organizations.query.dart';
-import 'package:mobile/devices/interfaces/rest/resources/organization_response.resource.dart';
 
 abstract class OrganizationsQueryService {
-  Future<Either<Failure, List<OrganizationResponseResource>>> handleGetUserOrganizations(
+  Future<Either<Failure, List<OrganizationReadModel>>> handleGetUserOrganizations(
     GetUserOrganizationsQuery query,
   );
 
-  Future<Either<Failure, OrganizationResponseResource>> handleGetOrganizationById(String organizationId);
+  Future<Either<Failure, OrganizationReadModel>> handleGetOrganizationById(String organizationId);
 }

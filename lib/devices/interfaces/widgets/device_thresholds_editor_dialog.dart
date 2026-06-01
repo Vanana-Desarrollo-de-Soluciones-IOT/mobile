@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/devices/domain/model/valueobjects/metric_threshold.valueobject.dart';
-import 'package:mobile/devices/interfaces/rest/resources/device_detail.resource.dart';
+import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_view_model.dart';
 import 'package:mobile/devices/interfaces/rest/transform/device_detail_threshold_defaults_transform.dart';
 
 class DeviceThresholdsEditorDialog extends StatefulWidget {
-  final List<DeviceDetailThresholdResource> initialThresholds;
-  final Future<bool> Function(List<DeviceDetailThresholdResource> thresholds) onSave;
+  final List<DeviceDetailThresholdViewModel> initialThresholds;
+  final Future<bool> Function(List<DeviceDetailThresholdViewModel> thresholds) onSave;
 
   const DeviceThresholdsEditorDialog({
     super.key,
@@ -27,7 +27,7 @@ class _DeviceThresholdsEditorDialogState extends State<DeviceThresholdsEditorDia
     _values = _buildMergedValues(widget.initialThresholds);
   }
 
-  Map<MetricThreshold, double> _buildMergedValues(List<DeviceDetailThresholdResource> items) {
+  Map<MetricThreshold, double> _buildMergedValues(List<DeviceDetailThresholdViewModel> items) {
     final defaults = buildDefaultDeviceDetailThresholdResources();
     final map = <MetricThreshold, double>{for (final item in defaults) item.metric: item.value};
     for (final item in items) {
@@ -56,11 +56,11 @@ class _DeviceThresholdsEditorDialogState extends State<DeviceThresholdsEditorDia
     }
   }
 
-  List<DeviceDetailThresholdResource> _buildUpdatedThresholds() {
+  List<DeviceDetailThresholdViewModel> _buildUpdatedThresholds() {
     final defaults = buildDefaultDeviceDetailThresholdResources();
     return defaults
         .map(
-          (item) => DeviceDetailThresholdResource(
+          (item) => DeviceDetailThresholdViewModel(
             metric: item.metric,
             label: item.label,
             value: _values[item.metric] ?? item.value,

@@ -5,7 +5,7 @@ class SpaceDevicesState {
   final bool isLoadingMore;
   final String? errorMessage;
   final bool isGrid;
-  final List<DeviceResponseResource> devices;
+  final List<DeviceReadModel> devices;
   final int totalDevices;
   final int currentPage;
   final bool hasMore;
@@ -26,7 +26,7 @@ class SpaceDevicesState {
     bool? isLoadingMore,
     String? errorMessage,
     bool? isGrid,
-    List<DeviceResponseResource>? devices,
+    List<DeviceReadModel>? devices,
     int? totalDevices,
     int? currentPage,
     bool? hasMore,

@@ -4,9 +4,10 @@ import 'package:mobile/core/failure.dart';
 import 'package:mobile/devices/domain/model/commands/create_space.command.dart';
 import 'package:mobile/devices/domain/model/commands/delete_space.command.dart';
 import 'package:mobile/devices/domain/model/commands/update_space_name.command.dart';
+import 'package:mobile/devices/domain/model/readmodels/space.read_model.dart';
 import 'package:mobile/devices/domain/services/spaces.command-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/spaces.gateway.dart';
-import 'package:mobile/devices/interfaces/rest/resources/space_response.resource.dart';
+import 'package:mobile/devices/infrastructure/api/resources/space_response.resource.dart';
 import 'package:mobile/devices/interfaces/rest/transform/spaces_transform.dart';
 
 class SpacesCommandServiceImpl implements SpacesCommandService {
@@ -15,17 +16,28 @@ class SpacesCommandServiceImpl implements SpacesCommandService {
   SpacesCommandServiceImpl(this._gateway);
 
   @override
-  Future<Either<Failure, SpaceResponseResource>> handleCreateSpace(CreateSpaceCommand command) async {
+  Future<Either<Failure, SpaceReadModel>> handleCreateSpace(CreateSpaceCommand command) async {
     try {
       final resource = toCreateSpaceRequestResource(command);
       final result = await _gateway.createSpace(
         organizationId: command.organizationId.value,
         resource: resource,
       );
-      return Right(result);
+      return Right(_toReadModel(result));
     } catch (e) {
       return Left(Failure(_mapError(e)));
     }
+  }
+
+  SpaceReadModel _toReadModel(SpaceResponseResource resource) {
+    return SpaceReadModel(
+      id: resource.id,
+      name: resource.name,
+      organizationId: resource.organizationId,
+      ownerUserId: resource.ownerUserId,
+      createdAt: resource.createdAt,
+      updatedAt: resource.updatedAt,
+    );
   }
 
   @override

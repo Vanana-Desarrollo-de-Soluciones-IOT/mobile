@@ -1,13 +1,18 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile/devices/domain/model/commands/delete_device.command.dart';
+import 'package:mobile/devices/domain/model/commands/update_device_name.command.dart';
 import 'package:mobile/devices/domain/model/commands/write_device_threshold.command.dart';
+import 'package:mobile/devices/domain/model/queries/get_device_by_id.query.dart';
 import 'package:mobile/devices/domain/model/queries/get_device_thresholds.query.dart';
+import 'package:mobile/devices/domain/model/readmodels/device_threshold.read_model.dart';
 import 'package:mobile/devices/domain/model/valueobjects/metric_threshold.valueobject.dart';
+import 'package:mobile/devices/domain/model/valueobjects/device_id.valueobject.dart';
+import 'package:mobile/devices/domain/model/valueobjects/device_name.valueobject.dart';
 import 'package:mobile/devices/domain/services/device_threshold.command-service.dart';
 import 'package:mobile/devices/domain/services/device_threshold.query-service.dart';
 import 'package:mobile/devices/domain/services/devices.command-service.dart';
 import 'package:mobile/devices/domain/services/devices.query-service.dart';
-import 'package:mobile/devices/interfaces/rest/resources/device_detail.resource.dart';
-import 'package:mobile/devices/interfaces/rest/resources/device_threshold.resource.dart';
+import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_view_model.dart';
 import 'package:mobile/devices/interfaces/rest/transform/device_detail_threshold_defaults_transform.dart';
 import 'package:mobile/devices/interfaces/rest/transform/device_thresholds_transform.dart';
 
@@ -31,7 +36,9 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
     _currentDeviceId = deviceId;
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
-    final deviceResult = await _devicesQueryService.handleGetDeviceById(deviceId);
+    final deviceResult = await _devicesQueryService.handleGetDeviceById(
+      GetDeviceByIdQuery(deviceId: DeviceId(deviceId)),
+    );
     await deviceResult.fold(
       (failure) async {
         emit(state.copyWith(isLoading: false, errorMessage: failure.message));
@@ -39,7 +46,7 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
       (device) async {
         final thresholds = await _loadThresholds(deviceId);
 
-        final detail = DeviceDetailResource(
+        final detail = DeviceDetailViewModel(
           id: device.id,
           name: device.name.isNotEmpty ? device.name : 'Device',
           status: device.status,
@@ -58,7 +65,7 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
 
   Future<bool> saveThresholds({
     required String deviceId,
-    required List<DeviceDetailThresholdResource> thresholds,
+    required List<DeviceDetailThresholdViewModel> thresholds,
   }) async {
     if (thresholds.isEmpty) {
       emit(state.copyWith(errorMessage: 'No thresholds to save.'));
@@ -103,7 +110,7 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
     return true;
   }
 
-  Future<List<DeviceDetailThresholdResource>> _loadThresholds(String deviceId) async {
+  Future<List<DeviceDetailThresholdViewModel>> _loadThresholds(String deviceId) async {
     final query = GetDeviceThresholdsQuery(deviceId: deviceId);
     final result = await _thresholdQueryService.handleGetDeviceThresholds(query);
 
@@ -113,13 +120,13 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
     );
   }
 
-  List<DeviceDetailThresholdResource> _mergeWithDefaults(List<DeviceThresholdResource> backendItems) {
-    final map = <MetricThreshold, DeviceDetailThresholdResource>{
+  List<DeviceDetailThresholdViewModel> _mergeWithDefaults(List<DeviceThresholdReadModel> backendItems) {
+    final map = <MetricThreshold, DeviceDetailThresholdViewModel>{
       for (final t in buildDefaultDeviceDetailThresholdResources()) t.metric: t,
     };
 
     for (final item in backendItems) {
-      map[item.metric] = DeviceDetailThresholdResource(
+      map[item.metric] = DeviceDetailThresholdViewModel(
         metric: item.metric,
         label: item.metricLabel.isNotEmpty ? item.metricLabel : _labelFor(item.metric),
         value: item.value,
@@ -175,7 +182,12 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
   Future<void> updateDeviceName(String deviceId, String name) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
-      final result = await _devicesCommandService.handleUpdateDeviceName(deviceId, name);
+      final result = await _devicesCommandService.handleUpdateDeviceName(
+        UpdateDeviceNameCommand(
+          deviceId: DeviceId(deviceId),
+          name: DeviceName(name),
+        ),
+      );
       result.fold(
         (failure) => emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
         (_) async {
@@ -192,7 +204,9 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
   Future<void> deleteDevice(String deviceId) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
-      final result = await _devicesCommandService.handleDeleteDevice(deviceId);
+      final result = await _devicesCommandService.handleDeleteDevice(
+        DeleteDeviceCommand(deviceId: DeviceId(deviceId)),
+      );
       result.fold(
         (failure) => emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
         (_) => emit(state.copyWith(isLoading: false, deleted: true)),

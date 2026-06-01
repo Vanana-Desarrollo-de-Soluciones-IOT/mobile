@@ -1,6 +1,6 @@
-import 'package:mobile/devices/interfaces/rest/resources/create_organization_request.resource.dart';
-import 'package:mobile/devices/interfaces/rest/resources/organization_response.resource.dart';
-import 'package:mobile/devices/interfaces/rest/resources/update_organization_name_request.resource.dart';
+import 'package:mobile/devices/infrastructure/api/resources/create_organization_request.resource.dart';
+import 'package:mobile/devices/infrastructure/api/resources/organization_response.resource.dart';
+import 'package:mobile/devices/infrastructure/api/resources/update_organization_name_request.resource.dart';
 
 abstract class OrganizationsGateway {
   Future<OrganizationResponseResource> createOrganization(

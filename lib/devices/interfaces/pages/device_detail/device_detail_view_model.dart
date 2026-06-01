@@ -1,13 +1,13 @@
 import 'package:mobile/devices/domain/model/valueobjects/metric_threshold.valueobject.dart';
 
-class DeviceDetailThresholdResource {
+class DeviceDetailThresholdViewModel {
   final MetricThreshold metric;
   final String label;
   final double value;
   final String unit;
   final bool enabled;
 
-  const DeviceDetailThresholdResource({
+  const DeviceDetailThresholdViewModel({
     required this.metric,
     required this.label,
     required this.value,
@@ -16,7 +16,7 @@ class DeviceDetailThresholdResource {
   });
 }
 
-class DeviceDetailResource {
+class DeviceDetailViewModel {
   final String id;
   final String name;
   final String status;
@@ -25,9 +25,9 @@ class DeviceDetailResource {
   final int uptimeHours;
   final double deviceHealthPercent;
   final int lastUpdateHours;
-  final List<DeviceDetailThresholdResource> thresholds;
+  final List<DeviceDetailThresholdViewModel> thresholds;
 
-  const DeviceDetailResource({
+  const DeviceDetailViewModel({
     required this.id,
     required this.name,
     required this.status,
