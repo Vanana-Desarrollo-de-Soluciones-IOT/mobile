@@ -45,6 +45,7 @@ dependencies:
   flutter_svg: ^2.2.4
   flutter_dotenv: ^6.0.1
   google_sign_in: ^6.3.0
+  eventflux: ^2.2.1
 
 dev_dependencies:
   flutter_test:
