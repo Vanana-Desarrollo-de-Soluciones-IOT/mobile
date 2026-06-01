@@ -96,7 +96,7 @@ void setupServiceLocator() {
 
   // Analytics Context
   getIt.registerLazySingleton<AnalyticsGateway>(
-    () => AnalyticsHttpGateway(getIt<DioClient>().client),
+    () => AnalyticsHttpGateway(getIt<DioClient>().client, getIt<TokenLocalStorage>()),
   );
   getIt.registerLazySingleton<AnalyticsQueryService>(
     () => AnalyticsQueryServiceImpl(getIt<AnalyticsGateway>()),
