@@ -16,7 +16,7 @@ class AlertsCommandServiceImpl implements AlertsCommandService {
     AcknowledgeAlertCommand command,
   ) async {
     try {
-      await _gateway.acknowledgeAlert(command.alertId.id);
+      await _gateway.acknowledgeAlert(command.alertId.value);
       return const Right(unit);
     } catch (e) {
       return Left(Failure(_mapError(e)));

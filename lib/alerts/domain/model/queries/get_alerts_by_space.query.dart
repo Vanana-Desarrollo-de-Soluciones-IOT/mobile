@@ -1,11 +1,17 @@
-class GetAlertsQuery {
+class GetAlertsBySpaceQuery {
+  final String spaceId;
   final int page;
   final int size;
 
-  GetAlertsQuery({
+  GetAlertsBySpaceQuery({
+    required this.spaceId,
     this.page = 0,
     this.size = 20,
   }) {
+    if (spaceId.trim().isEmpty) {
+      throw ArgumentError('spaceId cannot be empty');
+    }
+
     if (page < 0) {
       throw ArgumentError('page must be >= 0');
     }

@@ -1,15 +1,12 @@
 class AlertId {
-  final String id;
+  final String value;
 
-  factory AlertId(String id) {
-    if (id.isEmpty) {
-      throw ArgumentError('Alert ID cannot be empty');
+  factory AlertId(String value) {
+    if (value.trim().isEmpty) {
+      throw ArgumentError('Alert ID is required');
     }
-    return AlertId._(id);
+    return AlertId._(value);
   }
 
-  const AlertId._(this.id);
-
-  @override
-  String toString() => id;
+  const AlertId._(this.value);
 }
