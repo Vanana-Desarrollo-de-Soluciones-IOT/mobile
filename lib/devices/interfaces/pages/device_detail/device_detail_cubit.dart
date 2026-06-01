@@ -12,6 +12,7 @@ import 'package:mobile/devices/domain/services/device_threshold.command-service.
 import 'package:mobile/devices/domain/services/device_threshold.query-service.dart';
 import 'package:mobile/devices/domain/services/devices.command-service.dart';
 import 'package:mobile/devices/domain/services/devices.query-service.dart';
+import 'package:mobile/devices/application/internal/acl/device_vitals_acl.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_view_model.dart';
 import 'package:mobile/devices/interfaces/rest/transform/device_detail_threshold_defaults_transform.dart';
 import 'package:mobile/devices/interfaces/rest/transform/device_thresholds_transform.dart';
@@ -23,6 +24,7 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
   final DevicesCommandService _devicesCommandService;
   final DeviceThresholdQueryService _thresholdQueryService;
   final DeviceThresholdCommandService _thresholdCommandService;
+  final DeviceVitalsAcl _vitalsAcl;
   String? _currentDeviceId;
 
   DeviceDetailCubit(
@@ -30,14 +32,16 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
     this._devicesCommandService,
     this._thresholdQueryService,
     this._thresholdCommandService,
+    this._vitalsAcl,
   ) : super(const DeviceDetailState());
 
   Future<void> loadDeviceDetail(String deviceId) async {
     _currentDeviceId = deviceId;
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
+    final deviceIdVo = DeviceId(deviceId);
     final deviceResult = await _devicesQueryService.handleGetDeviceById(
-      GetDeviceByIdQuery(deviceId: DeviceId(deviceId)),
+      GetDeviceByIdQuery(deviceId: deviceIdVo),
     );
     await deviceResult.fold(
       (failure) async {
@@ -45,16 +49,25 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
       },
       (device) async {
         final thresholds = await _loadThresholds(deviceId);
+        final vitalsResult = await _vitalsAcl.fetchLatestVitals(deviceIdVo);
+        final vitals = vitalsResult.getOrElse(
+          (_) => const DeviceVitalsSnapshot(
+            connectivityDbm: 0,
+            uptimeHours: 0,
+            deviceHealthPercent: 0,
+            lastUpdateHours: 0,
+          ),
+        );
 
         final detail = DeviceDetailViewModel(
           id: device.id,
           name: device.name.isNotEmpty ? device.name : 'Device',
           status: device.status,
           isPoweredOn: device.status.toUpperCase() == 'ONLINE',
-          connectivityDbm: _readDouble(device.configuration, ['connectivityDbm'], 60),
-          uptimeHours: _readInt(device.configuration, ['uptimeHours'], 101),
-          deviceHealthPercent: _readDouble(device.configuration, ['deviceHealthPercent'], 92),
-          lastUpdateHours: _calculateLastUpdateHours(device.lastSeenAt),
+          connectivityDbm: vitals.connectivityDbm,
+          uptimeHours: vitals.uptimeHours,
+          deviceHealthPercent: vitals.deviceHealthPercent,
+          lastUpdateHours: vitals.lastUpdateHours,
           thresholds: thresholds,
         );
 
@@ -154,30 +167,7 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
     }
   }
 
-  double _readDouble(Map<String, String> config, List<String> keys, double fallback) {
-    for (final key in keys) {
-      final raw = config[key];
-      final parsed = raw != null ? double.tryParse(raw) : null;
-      if (parsed != null) return parsed;
-    }
-    return fallback;
-  }
-
-  int _readInt(Map<String, String> config, List<String> keys, int fallback) {
-    for (final key in keys) {
-      final raw = config[key];
-      final parsed = raw != null ? int.tryParse(raw) : null;
-      if (parsed != null) return parsed;
-    }
-    return fallback;
-  }
-
-  int _calculateLastUpdateHours(DateTime? lastSeenAt) {
-    if (lastSeenAt == null) return 2;
-    final diff = DateTime.now().difference(lastSeenAt).inHours;
-    if (diff < 0) return 0;
-    return diff;
-  }
+  // vitals are provided by Evaluation BC via ACL
 
   Future<void> updateDeviceName(String deviceId, String name) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));

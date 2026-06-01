@@ -58,6 +58,11 @@ import 'package:mobile/devices/domain/services/device_threshold.query-service.da
 import 'package:mobile/devices/infrastructure/api/gateways/device_thresholds.gateway.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/device_thresholds_http.gateway.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_cubit.dart';
+import 'package:mobile/devices/application/internal/acl/device_vitals_acl.dart';
+import 'package:mobile/evaluation/application/internal/queryservices/telemetry_evaluation_query_service_impl.dart';
+import 'package:mobile/evaluation/domain/services/telemetry_evaluation.query-service.dart';
+import 'package:mobile/evaluation/infrastructure/api/gateways/telemetry_evaluation.gateway.dart';
+import 'package:mobile/evaluation/infrastructure/api/gateways/telemetry_evaluation_http.gateway.dart';
 
 final getIt = GetIt.instance;
 
@@ -162,6 +167,19 @@ void setupServiceLocator() {
     () => DeviceThresholdCommandServiceImpl(getIt<DeviceThresholdsGateway>()),
   );
 
+  // Evaluation Context
+  getIt.registerLazySingleton<TelemetryEvaluationGateway>(
+    () => TelemetryEvaluationHttpGateway(getIt<DioClient>().client),
+  );
+  getIt.registerLazySingleton<TelemetryEvaluationQueryService>(
+    () => TelemetryEvaluationQueryServiceImpl(getIt<TelemetryEvaluationGateway>()),
+  );
+
+  // Devices ACLs
+  getIt.registerLazySingleton<DeviceVitalsAcl>(
+    () => DeviceVitalsAcl(getIt<TelemetryEvaluationQueryService>()),
+  );
+
   // Interface Controllers (Cubits)
   getIt.registerFactory<LoginCubit>(
     () => LoginCubit(
@@ -211,6 +229,7 @@ void setupServiceLocator() {
       getIt<DevicesCommandService>(),
       getIt<DeviceThresholdQueryService>(),
       getIt<DeviceThresholdCommandService>(),
+      getIt<DeviceVitalsAcl>(),
     ),
   );
 
