@@ -8,9 +8,9 @@ import 'package:mobile/devices/domain/model/readmodels/device_page.read_model.da
 import 'package:mobile/devices/domain/model/readmodels/device_status.read_model.dart';
 import 'package:mobile/devices/domain/services/devices.query-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/devices.gateway.dart';
-import 'package:mobile/devices/infrastructure/api/resources/device_page_response.resource.dart';
-import 'package:mobile/devices/infrastructure/api/resources/device_response.resource.dart';
-import 'package:mobile/devices/infrastructure/api/resources/device_status_response.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/device_page_response.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/device_response.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/device_status_response.resource.dart';
 
 class DevicesQueryServiceImpl implements DevicesQueryService {
   final DevicesGateway _gateway;

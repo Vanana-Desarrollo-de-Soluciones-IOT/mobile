@@ -1,6 +1,6 @@
 import 'package:mobile/devices/domain/model/commands/write_device_threshold.command.dart';
 import 'package:mobile/devices/domain/model/valueobjects/metric_threshold.valueobject.dart';
-import 'package:mobile/devices/infrastructure/api/resources/update_device_threshold.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/update_device_threshold.resource.dart';
 
 UpdateDeviceThresholdResource toUpdateDeviceThresholdResource(WriteDeviceThresholdCommand command) {
   return UpdateDeviceThresholdResource(

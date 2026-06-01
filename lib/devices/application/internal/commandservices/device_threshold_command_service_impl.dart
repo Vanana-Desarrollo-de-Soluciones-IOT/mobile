@@ -7,7 +7,7 @@ import 'package:mobile/devices/domain/model/readmodels/device_threshold.read_mod
 import 'package:mobile/devices/domain/services/device_threshold.command-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/device_thresholds.gateway.dart';
 import 'package:mobile/devices/interfaces/rest/transform/device_thresholds_transform.dart';
-import 'package:mobile/devices/infrastructure/api/resources/device_threshold.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/device_threshold.resource.dart';
 
 class DeviceThresholdCommandServiceImpl implements DeviceThresholdCommandService {
   final DeviceThresholdsGateway _gateway;

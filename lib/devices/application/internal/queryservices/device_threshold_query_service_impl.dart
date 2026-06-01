@@ -5,7 +5,7 @@ import 'package:mobile/devices/domain/model/queries/get_device_threshold_by_metr
 import 'package:mobile/devices/domain/model/queries/get_device_thresholds.query.dart';
 import 'package:mobile/devices/domain/services/device_threshold.query-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/device_thresholds.gateway.dart';
-import 'package:mobile/devices/infrastructure/api/resources/device_threshold.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/device_threshold.resource.dart';
 
 class DeviceThresholdQueryServiceImpl implements DeviceThresholdQueryService {
   final DeviceThresholdsGateway _gateway;

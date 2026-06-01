@@ -6,7 +6,7 @@ import 'package:mobile/devices/domain/model/commands/update_organization_name.co
 import 'package:mobile/devices/domain/model/readmodels/organization.read_model.dart';
 import 'package:mobile/devices/domain/services/organizations.command-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/organizations.gateway.dart';
-import 'package:mobile/devices/infrastructure/api/resources/organization_response.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/organization_response.resource.dart';
 import 'package:mobile/devices/interfaces/rest/transform/organizations_transform.dart';
 
 class OrganizationsCommandServiceImpl implements OrganizationsCommandService {

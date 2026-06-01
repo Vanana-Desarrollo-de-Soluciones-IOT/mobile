@@ -18,6 +18,11 @@ class DeviceDetailHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final status = device.status.toUpperCase();
+    final statusColor = _statusDotColor(status);
+    final powerBg = status == 'ONLINE' ? const Color(0xFF21D07A) : Colors.white.withValues(alpha: 0.20);
+    final powerFg = status == 'ONLINE' ? Colors.black : Colors.white;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 12, 32),
       decoration: BoxDecoration(
@@ -45,7 +50,7 @@ class DeviceDetailHeader extends StatelessWidget {
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF21D07A),
+                        color: statusColor,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -54,13 +59,13 @@ class DeviceDetailHeader extends StatelessWidget {
               ),
               IconButton(
                 onPressed: onPowerToggle,
-                icon: const Icon(
+                icon: Icon(
                   Icons.power_settings_new,
                   size: 14,
-                  color: Colors.black,
+                  color: powerFg,
                 ),
                 style: IconButton.styleFrom(
-                  backgroundColor: const Color(0xFF21D07A),
+                  backgroundColor: powerBg,
                   minimumSize: const Size(28, 28),
                   maximumSize: const Size(28, 28),
                   padding: EdgeInsets.zero,
@@ -114,5 +119,20 @@ class DeviceDetailHeader extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color _statusDotColor(String status) {
+    switch (status) {
+      case 'ONLINE':
+        return const Color(0xFF21D07A);
+      case 'ERROR':
+        return Colors.redAccent;
+      case 'MAINTENANCE':
+        return Colors.orangeAccent;
+      case 'STANDBY':
+      case 'OFFLINE':
+      default:
+        return Colors.white.withValues(alpha: 0.45);
+    }
   }
 }

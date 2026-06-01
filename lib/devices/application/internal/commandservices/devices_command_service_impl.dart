@@ -9,8 +9,8 @@ import 'package:mobile/devices/domain/model/readmodels/device.read_model.dart';
 import 'package:mobile/devices/domain/model/readmodels/device_pairing.read_model.dart';
 import 'package:mobile/devices/domain/services/devices.command-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/devices.gateway.dart';
-import 'package:mobile/devices/infrastructure/api/resources/device_pairing.resource.dart';
-import 'package:mobile/devices/infrastructure/api/resources/device_response.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/device_pairing.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/device_response.resource.dart';
 import 'package:mobile/devices/interfaces/rest/transform/devices_transform.dart';
 
 class DevicesCommandServiceImpl implements DevicesCommandService {

@@ -103,13 +103,37 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
       appBar: const ClairAppBar(),
       body: SafeArea(
         child: BlocConsumer<DeviceDetailCubit, DeviceDetailState>(
-          listenWhen: (previous, current) => previous.errorMessage != current.errorMessage,
+          listenWhen: (previous, current) {
+            return previous.errorMessage != current.errorMessage ||
+                previous.notificationMessage != current.notificationMessage;
+          },
           listener: (context, state) {
-            final message = state.errorMessage;
-            if (message == null || message.isEmpty) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message)),
-            );
+            final error = state.errorMessage;
+            if (error != null && error.isNotEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                _clairSnackBar(
+                  context,
+                  message: error,
+                  variant: _ClairSnackBarVariant.error,
+                ),
+              );
+            }
+
+            final note = state.notificationMessage;
+            if (note != null && note.isNotEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                _clairSnackBar(context, message: note),
+              );
+              context.read<DeviceDetailCubit>().clearNotification();
+            }
+          },
+          buildWhen: (previous, current) {
+            // Avoid rebuilding the whole page for transient snackbars.
+            return previous.isTogglingPower != current.isTogglingPower ||
+                previous.isSavingThresholds != current.isSavingThresholds ||
+                previous.isLoading != current.isLoading ||
+                previous.deleted != current.deleted ||
+                previous.device != current.device;
           },
           builder: (context, state) {
             if (state.deleted) {
@@ -121,7 +145,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (state.isLoading) {
+            if (state.isLoading && state.device == null) {
               return const Center(child: CircularProgressIndicator());
             }
 
@@ -157,7 +181,9 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                   const SizedBox(height: 12),
                   DeviceDetailHeader(
                     device: device,
-                    onPowerToggle: () {},
+                    onPowerToggle: state.isTogglingPower
+                        ? null
+                        : () => context.read<DeviceDetailCubit>().toggleDevicePower(device.id),
                     onEdit: () {
                       final device = state.device;
                       if (device != null) {
@@ -206,4 +232,39 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
       ),
     );
   }
+
+  SnackBar _clairSnackBar(
+    BuildContext context, {
+    required String message,
+    _ClairSnackBarVariant variant = _ClairSnackBarVariant.info,
+  }) {
+    final bg = switch (variant) {
+      _ClairSnackBarVariant.info => const Color(0xFF151515),
+      _ClairSnackBarVariant.error => const Color(0xFF2A1111),
+    };
+
+    return SnackBar(
+      content: Text(
+        message,
+        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+      ),
+      duration: const Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: bg,
+      margin: const EdgeInsets.all(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      action: SnackBarAction(
+        label: 'Close',
+        textColor: Colors.white70,
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    );
+  }
+}
+
+enum _ClairSnackBarVariant {
+  info,
+  error,
 }

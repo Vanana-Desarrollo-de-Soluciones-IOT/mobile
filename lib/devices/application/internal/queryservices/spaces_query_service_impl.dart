@@ -5,7 +5,7 @@ import 'package:mobile/devices/domain/model/readmodels/space.read_model.dart';
 import 'package:mobile/devices/domain/model/queries/get_spaces_by_organization.query.dart';
 import 'package:mobile/devices/domain/services/spaces.query-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/spaces.gateway.dart';
-import 'package:mobile/devices/infrastructure/api/resources/space_response.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/space_response.resource.dart';
 
 class SpacesQueryServiceImpl implements SpacesQueryService {
   final SpacesGateway _gateway;

@@ -1,5 +1,5 @@
-import 'package:mobile/devices/infrastructure/api/resources/device_threshold.resource.dart';
-import 'package:mobile/devices/infrastructure/api/resources/update_device_threshold.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/device_threshold.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/update_device_threshold.resource.dart';
 import 'package:mobile/devices/domain/model/valueobjects/metric_threshold.valueobject.dart';
 
 abstract class DeviceThresholdsGateway {

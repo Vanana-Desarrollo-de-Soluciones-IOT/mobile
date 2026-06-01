@@ -1,10 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/devices/domain/model/commands/delete_device.command.dart';
+import 'package:mobile/devices/domain/model/commands/queue_device_command.command.dart';
 import 'package:mobile/devices/domain/model/commands/update_device_name.command.dart';
 import 'package:mobile/devices/domain/model/commands/write_device_threshold.command.dart';
 import 'package:mobile/devices/domain/model/queries/get_device_by_id.query.dart';
 import 'package:mobile/devices/domain/model/queries/get_device_thresholds.query.dart';
 import 'package:mobile/devices/domain/model/readmodels/device_threshold.read_model.dart';
+import 'package:mobile/devices/domain/model/valueobjects/device_command_type.valueobject.dart';
 import 'package:mobile/devices/domain/model/valueobjects/metric_threshold.valueobject.dart';
 import 'package:mobile/devices/domain/model/valueobjects/device_id.valueobject.dart';
 import 'package:mobile/devices/domain/model/valueobjects/device_name.valueobject.dart';
@@ -12,6 +14,7 @@ import 'package:mobile/devices/domain/services/device_threshold.command-service.
 import 'package:mobile/devices/domain/services/device_threshold.query-service.dart';
 import 'package:mobile/devices/domain/services/devices.command-service.dart';
 import 'package:mobile/devices/domain/services/devices.query-service.dart';
+import 'package:mobile/devices/domain/services/device_commands.command-service.dart';
 import 'package:mobile/devices/application/internal/acl/device_vitals_acl.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_view_model.dart';
 import 'package:mobile/devices/interfaces/rest/transform/device_detail_threshold_defaults_transform.dart';
@@ -25,6 +28,7 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
   final DeviceThresholdQueryService _thresholdQueryService;
   final DeviceThresholdCommandService _thresholdCommandService;
   final DeviceVitalsAcl _vitalsAcl;
+  final DeviceCommandsCommandService _deviceCommandsCommandService;
   String? _currentDeviceId;
 
   DeviceDetailCubit(
@@ -33,11 +37,12 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
     this._thresholdQueryService,
     this._thresholdCommandService,
     this._vitalsAcl,
+    this._deviceCommandsCommandService,
   ) : super(const DeviceDetailState());
 
   Future<void> loadDeviceDetail(String deviceId) async {
     _currentDeviceId = deviceId;
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    emit(state.copyWith(isLoading: true, errorMessage: null, notificationMessage: null));
 
     final deviceIdVo = DeviceId(deviceId);
     final deviceResult = await _devicesQueryService.handleGetDeviceById(
@@ -170,7 +175,7 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
   // vitals are provided by Evaluation BC via ACL
 
   Future<void> updateDeviceName(String deviceId, String name) async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    emit(state.copyWith(isLoading: true, errorMessage: null, notificationMessage: null));
     try {
       final result = await _devicesCommandService.handleUpdateDeviceName(
         UpdateDeviceNameCommand(
@@ -192,7 +197,7 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
   }
 
   Future<void> deleteDevice(String deviceId) async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    emit(state.copyWith(isLoading: true, errorMessage: null, notificationMessage: null));
     try {
       final result = await _devicesCommandService.handleDeleteDevice(
         DeleteDeviceCommand(deviceId: DeviceId(deviceId)),
@@ -204,5 +209,39 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
     } on ArgumentError catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.message as String?));
     }
+  }
+
+  Future<void> toggleDevicePower(String deviceId) async {
+    final device = state.device;
+    if (device == null) return;
+    if (state.isTogglingPower) return;
+    emit(state.copyWith(isTogglingPower: true, errorMessage: null, notificationMessage: null));
+
+    final type = device.status.toUpperCase() == 'ONLINE'
+        ? DeviceCommandType.standby
+        : DeviceCommandType.wake;
+
+    final result = await _deviceCommandsCommandService.handleQueueDeviceCommand(
+      QueueDeviceCommandCommand(
+        deviceId: DeviceId(deviceId),
+        type: type,
+        payload: null,
+      ),
+    );
+
+    result.fold(
+      (failure) => emit(state.copyWith(isTogglingPower: false, errorMessage: failure.message)),
+      (created) => emit(
+        state.copyWith(
+          isTogglingPower: false,
+          notificationMessage: 'Command queued: ${created.type.apiValue}',
+        ),
+      ),
+    );
+  }
+
+  void clearNotification() {
+    if (state.notificationMessage == null) return;
+    emit(state.copyWith(notificationMessage: null));
   }
 }

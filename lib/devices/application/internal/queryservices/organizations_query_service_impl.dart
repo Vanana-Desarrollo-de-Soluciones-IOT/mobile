@@ -4,7 +4,7 @@ import 'package:mobile/devices/domain/model/readmodels/organization.read_model.d
 import 'package:mobile/devices/domain/model/queries/get_user_organizations.query.dart';
 import 'package:mobile/devices/domain/services/organizations.query-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/organizations.gateway.dart';
-import 'package:mobile/devices/infrastructure/api/resources/organization_response.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/organization_response.resource.dart';
 
 class OrganizationsQueryServiceImpl implements OrganizationsQueryService {
   final OrganizationsGateway _gateway;
