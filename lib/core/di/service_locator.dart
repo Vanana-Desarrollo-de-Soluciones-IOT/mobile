@@ -12,9 +12,7 @@ import 'package:mobile/iam/infrastructure/oauth/google/google_id_token_provider.
 import 'package:mobile/iam/infrastructure/oauth/google/google_sign_in_id_token_provider.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/registration_session_local_storage.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/token_local_storage.dart';
-import 'package:mobile/analytics/application/internal/commandservices/analytics_command_service_impl.dart';
 import 'package:mobile/analytics/application/internal/queryservices/analytics_query_service_impl.dart';
-import 'package:mobile/analytics/domain/services/analytics.command-service.dart';
 import 'package:mobile/analytics/domain/services/analytics.query-service.dart';
 import 'package:mobile/analytics/infrastructure/api/gateways/analytics.gateway.dart';
 import 'package:mobile/analytics/infrastructure/api/gateways/analytics_http.gateway.dart';
@@ -100,9 +98,6 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<AnalyticsGateway>(
     () => AnalyticsHttpGateway(getIt<DioClient>().client),
   );
-  getIt.registerLazySingleton<AnalyticsCommandService>(
-    () => AnalyticsCommandServiceImpl(getIt<AnalyticsGateway>()),
-  );
   getIt.registerLazySingleton<AnalyticsQueryService>(
     () => AnalyticsQueryServiceImpl(getIt<AnalyticsGateway>()),
   );
@@ -182,7 +177,14 @@ void setupServiceLocator() {
     ),
   );
 
-  getIt.registerFactory<AnalyticsCubit>(() => AnalyticsCubit());
+  getIt.registerFactory<AnalyticsCubit>(
+    () => AnalyticsCubit(
+      getIt<AnalyticsQueryService>(),
+      getIt<OrganizationsQueryService>(),
+      getIt<SpacesQueryService>(),
+      getIt<DevicesQueryService>(),
+    ),
+  );
   getIt.registerFactory<AlertsCubit>(() => AlertsCubit());
   getIt.registerFactory<SpacesCubit>(
     () => SpacesCubit(
