@@ -3,10 +3,10 @@ import 'package:mobile/core/failure.dart';
 import 'package:mobile/devices/domain/model/commands/create_organization.command.dart';
 import 'package:mobile/devices/domain/model/commands/delete_organization.command.dart';
 import 'package:mobile/devices/domain/model/commands/update_organization_name.command.dart';
-import 'package:mobile/devices/interfaces/rest/resources/organization_response.resource.dart';
+import 'package:mobile/devices/domain/model/readmodels/organization.read_model.dart';
 
 abstract class OrganizationsCommandService {
-  Future<Either<Failure, OrganizationResponseResource>> handleCreateOrganization(
+  Future<Either<Failure, OrganizationReadModel>> handleCreateOrganization(
     CreateOrganizationCommand command,
   );
 

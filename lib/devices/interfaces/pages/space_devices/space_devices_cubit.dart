@@ -1,13 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/devices/domain/model/commands/claim_device_to_space.command.dart';
+import 'package:mobile/devices/domain/model/commands/delete_device.command.dart';
 import 'package:mobile/devices/domain/model/commands/pair_device.command.dart';
 import 'package:mobile/devices/domain/model/queries/get_devices_by_space.query.dart';
+import 'package:mobile/devices/domain/model/readmodels/device.read_model.dart';
+import 'package:mobile/devices/domain/model/readmodels/device_pairing.read_model.dart';
 import 'package:mobile/devices/domain/model/valueobjects/claim_token.valueobject.dart';
+import 'package:mobile/devices/domain/model/valueobjects/device_id.valueobject.dart';
 import 'package:mobile/devices/domain/model/valueobjects/hardware_id.valueobject.dart';
 import 'package:mobile/devices/domain/services/devices.command-service.dart';
 import 'package:mobile/devices/domain/services/devices.query-service.dart';
-import 'package:mobile/devices/interfaces/rest/resources/device_response.resource.dart';
-import 'package:mobile/devices/interfaces/rest/resources/device_pairing_resource.resource.dart';
 import 'package:mobile/devices/domain/model/valueobjects/space_id.valueobject.dart';
 
 part 'space_devices_state.dart';
@@ -70,7 +72,7 @@ class SpaceDevicesCubit extends Cubit<SpaceDevicesState> {
     emit(state.copyWith(isGrid: isGrid));
   }
 
-  Future<DevicePairingResourceResource?> pairDevice({required String hardwareId}) async {
+  Future<DevicePairingReadModel?> pairDevice({required String hardwareId}) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
       final command = PairDeviceCommand(hardwareId: HardwareId(hardwareId));
@@ -91,7 +93,7 @@ class SpaceDevicesCubit extends Cubit<SpaceDevicesState> {
     }
   }
 
-  Future<DeviceResponseResource?> claimDeviceToSpace({
+  Future<DeviceReadModel?> claimDeviceToSpace({
     required String claimToken,
     required String spaceId,
   }) async {
@@ -121,7 +123,9 @@ class SpaceDevicesCubit extends Cubit<SpaceDevicesState> {
   Future<void> deleteDevice(String deviceId) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
-      final result = await _commandService.handleDeleteDevice(deviceId);
+      final result = await _commandService.handleDeleteDevice(
+        DeleteDeviceCommand(deviceId: DeviceId(deviceId)),
+      );
       return result.fold(
         (failure) async {
           emit(state.copyWith(isLoading: false, errorMessage: failure.message));

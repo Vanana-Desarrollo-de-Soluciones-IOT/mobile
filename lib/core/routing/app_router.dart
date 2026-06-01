@@ -28,9 +28,11 @@ import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_scre
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _authSession = AuthSession();
+  static final routeObserver = RouteObserver<PageRoute>();
 
   static GoRouter get router => GoRouter(
         navigatorKey: _rootNavigatorKey,
+        observers: [routeObserver],
         initialLocation: '/login',
         refreshListenable: _authSession,
         redirect: (context, state) {

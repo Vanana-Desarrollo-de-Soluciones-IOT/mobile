@@ -3,11 +3,11 @@ import 'package:mobile/devices/domain/model/commands/create_organization.command
 import 'package:mobile/devices/domain/model/commands/delete_organization.command.dart';
 import 'package:mobile/devices/domain/model/commands/update_organization_name.command.dart';
 import 'package:mobile/devices/domain/model/queries/get_user_organizations.query.dart';
+import 'package:mobile/devices/domain/model/readmodels/organization.read_model.dart';
 import 'package:mobile/devices/domain/model/valueobjects/organization_id.valueobject.dart';
 import 'package:mobile/devices/domain/model/valueobjects/organization_name.valueobject.dart';
 import 'package:mobile/devices/domain/services/organizations.command-service.dart';
 import 'package:mobile/devices/domain/services/organizations.query-service.dart';
-import 'package:mobile/devices/interfaces/rest/resources/organization_response.resource.dart';
 
 part 'organizations_state.dart';
 
@@ -80,7 +80,7 @@ class OrganizationsCubit extends Cubit<OrganizationsState> {
         (_) {
           final updated = state.organizations
               .map((o) => o.id == organizationId
-                  ? OrganizationResponseResource(
+                  ? OrganizationReadModel(
                       id: o.id,
                       name: name,
                       ownerUserId: o.ownerUserId,

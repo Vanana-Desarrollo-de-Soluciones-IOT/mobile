@@ -1,12 +1,12 @@
-import 'package:mobile/devices/interfaces/rest/resources/device_response.resource.dart';
+import 'package:mobile/devices/domain/model/readmodels/device.read_model.dart';
 
-String buildDeviceChipLabel(DeviceResponseResource device) {
+String buildDeviceChipLabel(DeviceReadModel device) {
   if (device.serialNumber.isNotEmpty) return device.serialNumber;
   if (device.hardwareId.isNotEmpty) return device.hardwareId;
   return 'DEVICE';
 }
 
-String buildDeviceUpdatedLabel(DeviceResponseResource device, {DateTime? now}) {
+String buildDeviceUpdatedLabel(DeviceReadModel device, {DateTime? now}) {
   final ts = device.lastSeenAt ?? device.updatedAt ?? device.createdAt;
   if (ts == null) return 'Updated recently';
 

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/devices/domain/model/valueobjects/metric_threshold.valueobject.dart';
-import 'package:mobile/devices/interfaces/rest/resources/device_detail.resource.dart';
+import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_view_model.dart';
 import 'package:mobile/devices/interfaces/rest/transform/device_detail_threshold_defaults_transform.dart';
 
 class DeviceThresholdsEditorDialog extends StatefulWidget {
-  final List<DeviceDetailThresholdResource> initialThresholds;
-  final Future<bool> Function(List<DeviceDetailThresholdResource> thresholds) onSave;
+  final List<DeviceDetailThresholdViewModel> initialThresholds;
+  final Future<bool> Function(List<DeviceDetailThresholdViewModel> thresholds) onSave;
 
   const DeviceThresholdsEditorDialog({
     super.key,
@@ -27,7 +27,7 @@ class _DeviceThresholdsEditorDialogState extends State<DeviceThresholdsEditorDia
     _values = _buildMergedValues(widget.initialThresholds);
   }
 
-  Map<MetricThreshold, double> _buildMergedValues(List<DeviceDetailThresholdResource> items) {
+  Map<MetricThreshold, double> _buildMergedValues(List<DeviceDetailThresholdViewModel> items) {
     final defaults = buildDefaultDeviceDetailThresholdResources();
     final map = <MetricThreshold, double>{for (final item in defaults) item.metric: item.value};
     for (final item in items) {
@@ -56,11 +56,11 @@ class _DeviceThresholdsEditorDialogState extends State<DeviceThresholdsEditorDia
     }
   }
 
-  List<DeviceDetailThresholdResource> _buildUpdatedThresholds() {
+  List<DeviceDetailThresholdViewModel> _buildUpdatedThresholds() {
     final defaults = buildDefaultDeviceDetailThresholdResources();
     return defaults
         .map(
-          (item) => DeviceDetailThresholdResource(
+          (item) => DeviceDetailThresholdViewModel(
             metric: item.metric,
             label: item.label,
             value: _values[item.metric] ?? item.value,
@@ -99,7 +99,7 @@ class _DeviceThresholdsEditorDialogState extends State<DeviceThresholdsEditorDia
             ),
             const SizedBox(height: 8),
             SizedBox(
-              height: 460,
+              height: 400,
               child: Row(
                 children: items
                     .map(
@@ -108,8 +108,9 @@ class _DeviceThresholdsEditorDialogState extends State<DeviceThresholdsEditorDia
                           label: item.label,
                           unit: item.unit,
                           value: item.value,
-                          min: _rangeFor(item.metric).$1,
-                          max: _rangeFor(item.metric).$2,
+                          min: _configFor(item.metric).min,
+                          max: _configFor(item.metric).max,
+                          step: _configFor(item.metric).step,
                           onChanged: (next) {
                             setState(() {
                               _values[item.metric] = next;
@@ -169,16 +170,16 @@ class _DeviceThresholdsEditorDialogState extends State<DeviceThresholdsEditorDia
     );
   }
 
-  (double, double) _rangeFor(MetricThreshold metric) {
+  ({double min, double max, double step, double defaultValue}) _configFor(MetricThreshold metric) {
     switch (metric) {
       case MetricThreshold.pm25:
-        return (0, 120);
+        return (min: 1, max: 250, step: 1, defaultValue: 60);
       case MetricThreshold.co2:
-        return (400, 2000);
+        return (min: 100, max: 5000, step: 10, defaultValue: 1000);
       case MetricThreshold.temperature:
-        return (10, 45);
+        return (min: 5, max: 60, step: 0.1, defaultValue: 28.7);
       case MetricThreshold.humidity:
-        return (0, 100);
+        return (min: 1, max: 100, step: 1, defaultValue: 80);
     }
   }
 }
@@ -189,6 +190,7 @@ class _ThresholdEditorColumn extends StatelessWidget {
   final double value;
   final double min;
   final double max;
+  final double step;
   final ValueChanged<double> onChanged;
 
   const _ThresholdEditorColumn({
@@ -197,6 +199,7 @@ class _ThresholdEditorColumn extends StatelessWidget {
     required this.value,
     required this.min,
     required this.max,
+    required this.step,
     required this.onChanged,
   });
 
@@ -221,25 +224,22 @@ class _ThresholdEditorColumn extends StatelessWidget {
             color: Colors.white.withValues(alpha: 0.25),
           ),
           const SizedBox(height: 10),
-          RichText(
-            text: TextSpan(
-              text: _formatValue(value),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                height: 1,
-              ),
-              children: [
-                TextSpan(
-                  text: ' $unit',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.65),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
+          Text(
+            _formatValue(value),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              height: 1,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            unit,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.55),
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 6),
@@ -250,12 +250,13 @@ class _ThresholdEditorColumn extends StatelessWidget {
               fontSize: 13,
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
           Expanded(
             child: _VerticalThresholdSlider(
               value: value,
               min: min,
               max: max,
+              step: step,
               onChanged: onChanged,
             ),
           ),
@@ -268,7 +269,8 @@ class _ThresholdEditorColumn extends StatelessWidget {
     if (value == value.roundToDouble()) {
       return value.toStringAsFixed(0);
     }
-    return value.toStringAsFixed(1);
+    final s = value.toStringAsFixed(2);
+    return s.replaceAll(RegExp(r'0+$'), '').replaceAll(RegExp(r'\.$'), '');
   }
 }
 
@@ -276,18 +278,20 @@ class _VerticalThresholdSlider extends StatelessWidget {
   final double value;
   final double min;
   final double max;
+  final double step;
   final ValueChanged<double> onChanged;
 
   const _VerticalThresholdSlider({
     required this.value,
     required this.min,
     required this.max,
+    required this.step,
     required this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    const sliderHeight = 280.0;
+    const sliderHeight = 240.0;
     const sliderWidth = 32.0;
     const trackWidth = 3.0;
     const thumbWidth = 24.0;
@@ -299,11 +303,18 @@ class _VerticalThresholdSlider extends StatelessWidget {
       return input;
     }
 
+    double roundToStep(double input) {
+      final stepped = (input / step).round() * step;
+      final decimals = step < 1 ? 2 : 0;
+      final clamped = clampValue(stepped);
+      return double.parse(clamped.toStringAsFixed(decimals));
+    }
+
     void updateFromDy(double localDy) {
       final clamped = localDy.clamp(0, sliderHeight);
       final progressFromTop = clamped / sliderHeight;
-      final next = max - ((max - min) * progressFromTop);
-      onChanged(clampValue(next));
+      final rawValue = max - ((max - min) * progressFromTop);
+      onChanged(roundToStep(rawValue));
     }
 
     final ratio = (value - min) / (max - min);

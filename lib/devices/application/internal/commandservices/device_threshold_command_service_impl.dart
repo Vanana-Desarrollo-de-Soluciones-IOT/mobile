@@ -3,10 +3,11 @@ import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
 import 'package:mobile/devices/domain/model/commands/remove_device_threshold.command.dart';
 import 'package:mobile/devices/domain/model/commands/write_device_threshold.command.dart';
+import 'package:mobile/devices/domain/model/readmodels/device_threshold.read_model.dart';
 import 'package:mobile/devices/domain/services/device_threshold.command-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/device_thresholds.gateway.dart';
-import 'package:mobile/devices/interfaces/rest/resources/device_threshold.resource.dart';
 import 'package:mobile/devices/interfaces/rest/transform/device_thresholds_transform.dart';
+import 'package:mobile/devices/interfaces/rest/resources/device_threshold.resource.dart';
 
 class DeviceThresholdCommandServiceImpl implements DeviceThresholdCommandService {
   final DeviceThresholdsGateway _gateway;
@@ -14,7 +15,7 @@ class DeviceThresholdCommandServiceImpl implements DeviceThresholdCommandService
   DeviceThresholdCommandServiceImpl(this._gateway);
 
   @override
-  Future<Either<Failure, DeviceThresholdResource>> handleWriteThreshold(
+  Future<Either<Failure, DeviceThresholdReadModel>> handleWriteThreshold(
     WriteDeviceThresholdCommand command,
   ) async {
     try {
@@ -22,10 +23,21 @@ class DeviceThresholdCommandServiceImpl implements DeviceThresholdCommandService
       final result = command.intent == DeviceThresholdWriteIntent.create
           ? await _gateway.createThreshold(command.deviceId, resource)
           : await _gateway.updateThreshold(command.deviceId, resource);
-      return Right(result);
+      return Right(_toReadModel(result));
     } catch (e) {
       return Left(Failure(_mapError(e)));
     }
+  }
+
+  DeviceThresholdReadModel _toReadModel(DeviceThresholdResource resource) {
+    return DeviceThresholdReadModel(
+      deviceId: resource.deviceId,
+      metric: resource.metric,
+      value: resource.value,
+      enabled: resource.enabled,
+      metricLabel: resource.metricLabel,
+      metricUnit: resource.metricUnit,
+    );
   }
 
   @override

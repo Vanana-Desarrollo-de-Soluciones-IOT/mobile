@@ -1,9 +1,9 @@
 class OrganizationResponseResource {
   final String id;
   final String name;
-  final String ownerUserId;
-  final String createdAt;
-  final String updatedAt;
+  final String? ownerUserId;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const OrganizationResponseResource({
     required this.id,
@@ -15,11 +15,16 @@ class OrganizationResponseResource {
 
   factory OrganizationResponseResource.fromJson(Map<String, dynamic> json) {
     return OrganizationResponseResource(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      ownerUserId: json['ownerUserId'] as String,
-      createdAt: json['createdAt'] as String,
-      updatedAt: json['updatedAt'] as String,
+      id: (json['id'] ?? '').toString(),
+      name: (json['name'] ?? '').toString(),
+      ownerUserId: json['ownerUserId']?.toString(),
+      createdAt: _tryParseDateTime(json['createdAt']),
+      updatedAt: _tryParseDateTime(json['updatedAt']),
     );
+  }
+
+  static DateTime? _tryParseDateTime(Object? value) {
+    if (value == null) return null;
+    return DateTime.tryParse(value.toString());
   }
 }

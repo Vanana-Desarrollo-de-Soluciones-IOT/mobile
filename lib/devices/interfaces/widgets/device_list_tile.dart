@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile/devices/interfaces/rest/resources/device_response.resource.dart';
+import 'package:mobile/devices/domain/model/readmodels/device.read_model.dart';
 import 'package:mobile/devices/interfaces/widgets/device_list_item_labels.dart';
 import 'package:mobile/devices/interfaces/widgets/device_power_status_badge.dart';
 
 class DeviceListTile extends StatelessWidget {
-  final DeviceResponseResource device;
+  final DeviceReadModel device;
 
   const DeviceListTile({
     super.key,

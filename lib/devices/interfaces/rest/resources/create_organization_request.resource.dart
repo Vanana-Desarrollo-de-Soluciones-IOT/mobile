@@ -3,5 +3,9 @@ class CreateOrganizationRequestResource {
 
   const CreateOrganizationRequestResource({required this.name});
 
-  Map<String, dynamic> toJson() => {'name': name};
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+    };
+  }
 }
