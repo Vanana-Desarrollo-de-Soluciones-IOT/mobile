@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/analytics/interfaces/pages/analytics_cubit.dart';
 import 'package:mobile/analytics/interfaces/rest/transform/analytics_presentation.dart';
 import 'package:mobile/analytics/interfaces/widgets/aqi_gauge_card.dart';
+// Calendar/date-range selector disabled — analytics is live-stream only.
+// import 'package:mobile/analytics/interfaces/widgets/calendar_selector.dart';
+import 'package:mobile/analytics/interfaces/widgets/live_indicator.dart';
 import 'package:mobile/analytics/interfaces/widgets/metric_card.dart';
 import 'package:mobile/analytics/interfaces/widgets/trend_chart_card.dart';
 import 'package:mobile/shared/interfaces/widgets/widgets.dart';
@@ -15,13 +18,6 @@ class AnalyticsScreen extends StatefulWidget {
 }
 
 class _AnalyticsScreenState extends State<AnalyticsScreen> {
-  static const List<({String label, String value})> _periods = [
-    (label: 'LIVE', value: 'LIVE'),
-    (label: 'Day', value: 'Day'),
-    (label: 'Week', value: 'Week'),
-    (label: 'Month', value: 'Month'),
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -43,7 +39,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 children: [
                   _header(context, state, cubit),
                   const SizedBox(height: 20),
-                  _dropdowns(context, state, cubit),
+                  _DropdownsRow(state: state, cubit: cubit),
                   const SizedBox(height: 20),
                   _body(context, state, cubit),
                 ],
@@ -56,59 +52,35 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }
 
   Widget _header(BuildContext context, AnalyticsState state, AnalyticsCubit cubit) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text(
-          'Air Quality',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 28,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.5,
+        const Expanded(
+          child: Text(
+            'Air Quality',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.5,
+            ),
           ),
         ),
-        const SizedBox(height: 16),
-        _PeriodSelector(
-          periods: _periods,
-          selected: state.selectedPeriod,
-          onSelect: cubit.selectPeriod,
+        const SizedBox(width: 12),
+        LiveIndicator(
+          active: state.isLive,
+          onTap: () => cubit.selectPeriod('LIVE'),
         ),
       ],
     );
-  }
-
-  Widget _dropdowns(BuildContext context, AnalyticsState state, AnalyticsCubit cubit) {
-    return Column(
-      children: [
-        _Dropdown(
-          label: 'ORGANIZATION',
-          value: state.selectedOrgId,
-          options: state.organizations,
-          onChanged: (id) {
-            if (id != null) cubit.selectOrganization(id);
-          },
-        ),
-        const SizedBox(height: 12),
-        _Dropdown(
-          label: 'SPACE',
-          value: state.selectedSpaceId,
-          options: state.spaces,
-          onChanged: (id) {
-            if (id != null) cubit.selectSpace(id);
-          },
-        ),
-        const SizedBox(height: 12),
-        _Dropdown(
-          label: 'DEVICE',
-          value: state.selectedDeviceId,
-          options: state.devices,
-          onChanged: (id) {
-            if (id != null) cubit.selectDevice(id);
-          },
-        ),
-      ],
-    );
+    // Calendar / date-range picker removed — live-stream only.
+    // CalendarSelector(
+    //   selectedPeriod: state.selectedPeriod,
+    //   startDate: state.startDate,
+    //   endDate: state.endDate,
+    //   onSelectPreset: cubit.selectPeriod,
+    //   onSelectCustom: cubit.selectCustomRange,
+    // );
   }
 
   Widget _body(BuildContext context, AnalyticsState state, AnalyticsCubit cubit) {
@@ -243,52 +215,50 @@ class _Dashboard extends StatelessWidget {
   }
 }
 
-class _PeriodSelector extends StatelessWidget {
-  final List<({String label, String value})> periods;
-  final String selected;
-  final ValueChanged<String> onSelect;
+class _DropdownsRow extends StatelessWidget {
+  final AnalyticsState state;
+  final AnalyticsCubit cubit;
 
-  const _PeriodSelector({
-    required this.periods,
-    required this.selected,
-    required this.onSelect,
-  });
+  const _DropdownsRow({required this.state, required this.cubit});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        color: const Color(0xFF141414),
-        borderRadius: BorderRadius.circular(9999),
-        border: Border.all(color: const Color(0xFF2A2A2A)),
-      ),
-      child: Row(
-        children: periods.map((p) {
-          final isActive = selected.toUpperCase() == p.value.toUpperCase();
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => onSelect(p.value),
-              child: Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                decoration: BoxDecoration(
-                  color: isActive ? const Color(0xFF2A2A2A) : Colors.transparent,
-                  borderRadius: BorderRadius.circular(9999),
-                ),
-                child: Text(
-                  p.label,
-                  style: TextStyle(
-                    color: isActive ? Colors.white : const Color(0xFF9CA3AF),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: _Dropdown(
+            label: 'ORGANIZATION',
+            value: state.selectedOrgId,
+            options: state.organizations,
+            onChanged: (id) {
+              if (id != null) cubit.selectOrganization(id);
+            },
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: _Dropdown(
+            label: 'SPACE',
+            value: state.selectedSpaceId,
+            options: state.spaces,
+            onChanged: (id) {
+              if (id != null) cubit.selectSpace(id);
+            },
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: _Dropdown(
+            label: 'DEVICE',
+            value: state.selectedDeviceId,
+            options: state.devices,
+            onChanged: (id) {
+              if (id != null) cubit.selectDevice(id);
+            },
+          ),
+        ),
+      ],
     );
   }
 }
@@ -315,16 +285,19 @@ class _Dropdown extends StatelessWidget {
       children: [
         Text(
           label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             color: Color(0xFF9CA3AF),
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: FontWeight.w700,
-            letterSpacing: 0.8,
+            letterSpacing: 0.6,
           ),
         ),
         const SizedBox(height: 6),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          height: 46,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             color: const Color(0xFF101010),
             borderRadius: BorderRadius.circular(12),
@@ -334,15 +307,20 @@ class _Dropdown extends StatelessWidget {
             child: DropdownButton<String>(
               value: hasValue ? value : null,
               isExpanded: true,
+              isDense: true,
               dropdownColor: const Color(0xFF1A1A1A),
-              icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF9CA3AF)),
+              icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF9CA3AF), size: 18),
               hint: Text(
-                options.isEmpty ? 'None available' : 'Select',
-                style: const TextStyle(color: Color(0xFF6B7280), fontSize: 14),
+                options.isEmpty ? 'None' : 'Select',
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: Color(0xFF6B7280), fontSize: 13),
               ),
-              style: const TextStyle(color: Colors.white, fontSize: 14),
+              style: const TextStyle(color: Colors.white, fontSize: 13),
               items: options
-                  .map((o) => DropdownMenuItem(value: o.id, child: Text(o.name)))
+                  .map((o) => DropdownMenuItem(
+                        value: o.id,
+                        child: Text(o.name, overflow: TextOverflow.ellipsis),
+                      ))
                   .toList(),
               onChanged: options.isEmpty ? null : onChanged,
             ),

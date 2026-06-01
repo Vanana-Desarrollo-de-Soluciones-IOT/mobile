@@ -76,6 +76,44 @@ double getMetricValue(TrendPoint point, String metric) {
   }
 }
 
+/// US EPA AQI from a PM2.5 reading (µg/m³). Ported from the web app so the
+/// SSE telemetry stream (which carries raw pollutants, not an AQI) can render.
+({double value, String category}) calculateAqiFromPm25(double pm25) {
+  double aqi;
+  if (pm25 <= 12.0) {
+    aqi = (50 / 12.0) * pm25;
+  } else if (pm25 <= 35.4) {
+    aqi = ((100 - 51) / (35.4 - 12.1)) * (pm25 - 12.1) + 51;
+  } else if (pm25 <= 55.4) {
+    aqi = ((150 - 101) / (55.4 - 35.5)) * (pm25 - 35.5) + 101;
+  } else if (pm25 <= 150.4) {
+    aqi = ((200 - 151) / (150.4 - 55.5)) * (pm25 - 55.5) + 151;
+  } else if (pm25 <= 250.4) {
+    aqi = ((300 - 201) / (250.4 - 150.5)) * (pm25 - 150.5) + 201;
+  } else if (pm25 <= 350.4) {
+    aqi = ((400 - 301) / (350.4 - 250.5)) * (pm25 - 250.5) + 301;
+  } else {
+    aqi = ((500 - 401) / (500.4 - 350.5)) * (pm25 - 350.5) + 401;
+  }
+
+  final value = aqi.roundToDouble();
+  String category;
+  if (value <= 50) {
+    category = 'Good';
+  } else if (value <= 100) {
+    category = 'Moderate';
+  } else if (value <= 150) {
+    category = 'Unhealthy for Sensitive';
+  } else if (value <= 200) {
+    category = 'Unhealthy';
+  } else if (value <= 300) {
+    category = 'Very Unhealthy';
+  } else {
+    category = 'Hazardous';
+  }
+  return (value: value, category: category);
+}
+
 /// Mirrors the web app: aqiValue surfaces the pm2_5 delta.
 double? getActiveMetricDelta(DashboardMetrics? liveData, String selectedMetric) {
   if (liveData == null) return null;

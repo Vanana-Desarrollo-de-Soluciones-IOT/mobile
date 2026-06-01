@@ -1,11 +1,16 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/analytics/domain/model/queries/get_dashboard_metrics.query.dart';
 import 'package:mobile/analytics/domain/model/queries/get_trends.query.dart';
+import 'package:mobile/analytics/domain/model/valueobjects/aqi.valueobject.dart';
 import 'package:mobile/analytics/domain/model/valueobjects/dashboard_metrics.valueobject.dart';
+import 'package:mobile/analytics/domain/model/valueobjects/live_telemetry.valueobject.dart';
+import 'package:mobile/analytics/domain/model/valueobjects/metric_delta.valueobject.dart';
 import 'package:mobile/analytics/domain/model/valueobjects/trend_point.valueobject.dart';
 import 'package:mobile/analytics/domain/services/analytics.query-service.dart';
+import 'package:mobile/analytics/interfaces/rest/transform/analytics_presentation.dart';
 import 'package:mobile/devices/domain/model/queries/get_devices_by_space.query.dart';
 import 'package:mobile/devices/domain/model/queries/get_spaces_by_organization.query.dart';
 import 'package:mobile/devices/domain/model/queries/get_user_organizations.query.dart';
@@ -25,6 +30,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
   Timer? _pollTimer;
   Timer? _secondsTimer;
+  StreamSubscription<LiveTelemetry>? _liveSub;
 
   AnalyticsCubit(
     this._analytics,
@@ -149,12 +155,26 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     _startPolling();
   }
 
+  /// LIVE / Day / Week / Month — clears any custom range.
   void selectPeriod(String period) {
     _stopPolling();
-    emit(state.copyWith(selectedPeriod: period));
+    emit(state.copyWith(selectedPeriod: period, clearDateRange: true));
     fetchData();
     _startPolling();
   }
+
+  // DATE-RANGE SELECTION DISABLED — analytics is live-stream only.
+  // Backend kept for future re-enable; do not delete.
+  // void selectCustomRange(DateTime start, DateTime end) {
+  //   _stopPolling();
+  //   emit(state.copyWith(
+  //     selectedPeriod: 'CUSTOM',
+  //     startDate: start,
+  //     endDate: end,
+  //   ));
+  //   fetchData();
+  //   _startPolling();
+  // }
 
   void selectMetric(String metric) {
     emit(state.copyWith(selectedMetric: metric));
@@ -166,15 +186,42 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
     emit(state.copyWith(isLoading: true, clearError: true, liveUnavailable: false));
 
-    final period = state.selectedPeriod;
-    // Metrics: 'LIVE' / 'Day' / 'Week' / 'Month' (gateway routes live vs historical).
+    // DATE-RANGE SELECTION DISABLED — live-stream only, so period is always LIVE.
+    // Original date-aware logic kept for future re-enable; do not delete.
+    // final period = state.selectedPeriod;
+    // final isCustom = period == 'CUSTOM';
+    // final startIso = isCustom ? state.startDate?.toUtc().toIso8601String() : null;
+    // final endIso = isCustom ? state.endDate?.toUtc().toIso8601String() : null;
+    // // Metrics: 'LIVE'/'Day'/'Week'/'Month'; CUSTOM passes null period + dates.
+    // final metricsPeriod = isCustom ? null : period;
+    // // Trends: LIVE falls back to DAY; CUSTOM null period + dates; else uppercase.
+    // final trendPeriod = period == 'LIVE'
+    //     ? 'DAY'
+    //     : isCustom
+    //         ? null
+    //         : period.toUpperCase();
+
+    const metricsPeriod = 'LIVE';
+    const trendPeriod = 'DAY';
+    const startIso = null;
+    const endIso = null;
+
     final metricsFuture = _analytics.handleGetDashboardMetrics(
-      GetDashboardMetricsQuery(deviceId: deviceId, period: period),
+      GetDashboardMetricsQuery(
+        deviceId: deviceId,
+        period: metricsPeriod,
+        startDate: startIso,
+        endDate: endIso,
+      ),
     );
-    // Trends: LIVE falls back to DAY; otherwise uppercased period.
-    final trendPeriod = period == 'LIVE' ? 'DAY' : period.toUpperCase();
+
     final trendsFuture = _analytics.handleGetTrends(
-      GetTrendsQuery(deviceId: deviceId, period: trendPeriod),
+      GetTrendsQuery(
+        deviceId: deviceId,
+        period: trendPeriod,
+        startDate: startIso,
+        endDate: endIso,
+      ),
     );
 
     final metricsResult = await metricsFuture;
@@ -212,16 +259,73 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   void _startPolling() {
     _stopPolling();
     if (state.selectedDeviceId == null) return;
-    // SSE live-stream is not consumed on mobile; poll instead.
-    final interval = state.selectedPeriod == 'LIVE'
-        ? const Duration(seconds: 5)
-        : const Duration(seconds: 30);
-    _pollTimer = Timer.periodic(interval, (_) => fetchData());
+    // Live-stream only. Historical/custom 30s polling disabled (kept for re-enable).
+    _startLiveStream();
+    // if (state.selectedPeriod == 'LIVE') {
+    //   _startLiveStream();
+    // } else {
+    //   // Historical / custom: periodic re-fetch.
+    //   _pollTimer = Timer.periodic(const Duration(seconds: 30), (_) => fetchData());
+    // }
   }
 
   void _stopPolling() {
     _pollTimer?.cancel();
     _pollTimer = null;
+    _liveSub?.cancel();
+    _liveSub = null;
+  }
+
+  void _startLiveStream() {
+    final deviceId = state.selectedDeviceId;
+    if (deviceId == null) return;
+
+    _liveSub?.cancel();
+    _liveSub = _analytics.handleStreamLiveTelemetry(deviceId).listen(_onTelemetry);
+  }
+
+  void _onTelemetry(LiveTelemetry t) {
+    // Live stream carries raw pollutants; derive AQI like the web app.
+    final aqi = calculateAqiFromPm25(t.pm2_5);
+    final prev = state.liveData;
+
+    final merged = DashboardMetrics(
+      aqi: Aqi(aqi.value, aqi.category),
+      co2: MetricDelta(t.co2, prev?.co2.deltaPercentage),
+      pm2_5: MetricDelta(t.pm2_5, prev?.pm2_5.deltaPercentage),
+      temperature: MetricDelta(t.temperature, prev?.temperature.deltaPercentage),
+      humidity: MetricDelta(t.humidity, prev?.humidity.deltaPercentage),
+      calculatedAt: t.timestamp,
+    );
+
+    final newPoint = TrendPoint(
+      timestamp: t.timestamp,
+      aqiValue: aqi.value,
+      co2: t.co2,
+      pm2_5: t.pm2_5,
+      temperature: t.temperature,
+      humidity: t.humidity,
+    );
+
+    final existing = state.trendDataPoints;
+    final List<TrendPoint> points;
+    if (existing.isNotEmpty) {
+      final limit = math.max(30, existing.length);
+      final appended = [...existing, newPoint];
+      points = appended.length > limit
+          ? appended.sublist(appended.length - limit)
+          : appended;
+    } else {
+      points = [newPoint];
+    }
+
+    emit(state.copyWith(
+      liveData: merged,
+      trendDataPoints: points,
+      liveUnavailable: false,
+      isLoading: false,
+      secondsSinceUpdate: 0,
+    ));
   }
 
   void _startSecondsCounter() {
@@ -236,6 +340,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   Future<void> close() {
     _pollTimer?.cancel();
     _secondsTimer?.cancel();
+    _liveSub?.cancel();
     return super.close();
   }
 }

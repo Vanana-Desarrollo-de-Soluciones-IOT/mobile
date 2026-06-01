@@ -4,6 +4,7 @@ import 'package:mobile/core/failure.dart';
 import 'package:mobile/analytics/domain/model/queries/get_dashboard_metrics.query.dart';
 import 'package:mobile/analytics/domain/model/queries/get_trends.query.dart';
 import 'package:mobile/analytics/domain/model/valueobjects/dashboard_metrics.valueobject.dart';
+import 'package:mobile/analytics/domain/model/valueobjects/live_telemetry.valueobject.dart';
 import 'package:mobile/analytics/domain/model/valueobjects/trend_point.valueobject.dart';
 import 'package:mobile/analytics/domain/services/analytics.query-service.dart';
 import 'package:mobile/analytics/infrastructure/api/gateways/analytics.gateway.dart';
@@ -48,6 +49,11 @@ class AnalyticsQueryServiceImpl implements AnalyticsQueryService {
     } catch (_) {
       return const Left(Failure('An unexpected error occurred'));
     }
+  }
+
+  @override
+  Stream<LiveTelemetry> handleStreamLiveTelemetry(String deviceId) {
+    return _gateway.streamLiveTelemetry(deviceId);
   }
 
   Failure _mapError(DioException error) {

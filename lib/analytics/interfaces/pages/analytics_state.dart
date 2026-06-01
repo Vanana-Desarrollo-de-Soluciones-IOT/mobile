@@ -24,6 +24,9 @@ class AnalyticsState {
   final String selectedPeriod;
   final String selectedMetric;
 
+  final DateTime? startDate;
+  final DateTime? endDate;
+
   final DashboardMetrics? liveData;
   final List<TrendPoint> trendDataPoints;
 
@@ -42,12 +45,15 @@ class AnalyticsState {
     this.selectedDeviceId,
     this.selectedPeriod = 'LIVE',
     this.selectedMetric = 'aqiValue',
+    this.startDate,
+    this.endDate,
     this.liveData,
     this.trendDataPoints = const [],
     this.secondsSinceUpdate = 0,
   });
 
   bool get hasData => liveData != null || trendDataPoints.isNotEmpty;
+  bool get isLive => selectedPeriod == 'LIVE';
 
   AnalyticsState copyWith({
     bool? isLoading,
@@ -65,6 +71,9 @@ class AnalyticsState {
     bool clearSelectedDeviceId = false,
     String? selectedPeriod,
     String? selectedMetric,
+    DateTime? startDate,
+    DateTime? endDate,
+    bool clearDateRange = false,
     DashboardMetrics? liveData,
     bool clearLiveData = false,
     List<TrendPoint>? trendDataPoints,
@@ -83,6 +92,8 @@ class AnalyticsState {
       selectedDeviceId: clearSelectedDeviceId ? null : (selectedDeviceId ?? this.selectedDeviceId),
       selectedPeriod: selectedPeriod ?? this.selectedPeriod,
       selectedMetric: selectedMetric ?? this.selectedMetric,
+      startDate: clearDateRange ? null : (startDate ?? this.startDate),
+      endDate: clearDateRange ? null : (endDate ?? this.endDate),
       liveData: clearLiveData ? null : (liveData ?? this.liveData),
       trendDataPoints: trendDataPoints ?? this.trendDataPoints,
       secondsSinceUpdate: secondsSinceUpdate ?? this.secondsSinceUpdate,
