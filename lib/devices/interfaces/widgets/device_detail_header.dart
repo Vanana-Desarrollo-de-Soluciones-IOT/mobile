@@ -5,13 +5,15 @@ import 'package:mobile/shared/interfaces/widgets/icons/clair_device_icon.dart';
 class DeviceDetailHeader extends StatelessWidget {
   final DeviceDetailResource device;
   final VoidCallback? onPowerToggle;
-  final VoidCallback? onMenuTap;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const DeviceDetailHeader({
     super.key,
     required this.device,
     this.onPowerToggle,
-    this.onMenuTap,
+    this.onEdit,
+    this.onDelete,
   });
 
   @override
@@ -66,9 +68,41 @@ class DeviceDetailHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              IconButton(
-                onPressed: onMenuTap,
+              PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert, color: Colors.white70),
+                color: const Color(0xFF1E1E1E),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                onSelected: (value) {
+                  if (value == 'edit') {
+                    onEdit?.call();
+                  } else if (value == 'delete') {
+                    onDelete?.call();
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit_outlined, size: 18, color: Colors.white70),
+                        const SizedBox(width: 12),
+                        const Text('Edit', style: TextStyle(color: Colors.white)),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
+                        const SizedBox(width: 12),
+                        const Text('Delete', style: TextStyle(color: Colors.redAccent)),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

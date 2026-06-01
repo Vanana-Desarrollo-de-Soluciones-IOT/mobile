@@ -28,51 +28,6 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
     context.read<DeviceDetailCubit>().loadDeviceDetail(widget.deviceId);
   }
 
-  void _showDeviceMenu(BuildContext context) {
-    final cubit = context.read<DeviceDetailCubit>();
-    final device = cubit.state.device;
-    if (device == null) return;
-
-    showMenu(
-      context: context,
-      position: RelativeRect.fromLTRB(
-        MediaQuery.of(context).size.width - 60,
-        kToolbarHeight + 20,
-        0,
-        0,
-      ),
-      color: const Color(0xFF1E1E1E),
-      items: [
-        PopupMenuItem(
-          value: 'edit',
-          child: Row(
-            children: [
-              Icon(Icons.edit, size: 18, color: Colors.white70),
-              const SizedBox(width: 12),
-              const Text('Edit', style: TextStyle(color: Colors.white)),
-            ],
-          ),
-        ),
-        PopupMenuItem(
-          value: 'delete',
-          child: Row(
-            children: [
-              Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
-              const SizedBox(width: 12),
-              const Text('Delete', style: TextStyle(color: Colors.redAccent)),
-            ],
-          ),
-        ),
-      ],
-    ).then((value) {
-      if (value == 'edit' && context.mounted) {
-        _openEditDeviceNameSheet(context, device.id, device.name);
-      } else if (value == 'delete' && context.mounted) {
-        _confirmDeleteDevice(context, device.id, device.name);
-      }
-    });
-  }
-
   Future<void> _openEditDeviceNameSheet(BuildContext context, String deviceId, String currentName) async {
     final cubit = context.read<DeviceDetailCubit>();
     await showModalBottomSheet<void>(
@@ -203,7 +158,18 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                   DeviceDetailHeader(
                     device: device,
                     onPowerToggle: () {},
-                    onMenuTap: () => _showDeviceMenu(context),
+                    onEdit: () {
+                      final device = state.device;
+                      if (device != null) {
+                        _openEditDeviceNameSheet(context, device.id, device.name);
+                      }
+                    },
+                    onDelete: () {
+                      final device = state.device;
+                      if (device != null) {
+                        _confirmDeleteDevice(context, device.id, device.name);
+                      }
+                    },
                   ),
                   const SizedBox(height: 20),
                   DeviceDetailMetricsGrid(device: device),

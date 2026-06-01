@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/core/routing/app_router.dart';
 import 'package:mobile/devices/interfaces/pages/space_devices/space_devices_cubit.dart';
 import 'package:mobile/devices/interfaces/widgets/claim_device_form.dart';
 import 'package:mobile/devices/interfaces/widgets/device_card.dart';
@@ -23,7 +24,27 @@ class SpaceDevicesScreen extends StatefulWidget {
   State<SpaceDevicesScreen> createState() => _SpaceDevicesScreenState();
 }
 
-class _SpaceDevicesScreenState extends State<SpaceDevicesScreen> {
+class _SpaceDevicesScreenState extends State<SpaceDevicesScreen> with RouteAware {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      AppRouter.routeObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void dispose() {
+    AppRouter.routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    context.read<SpaceDevicesCubit>().loadDevices(spaceId: widget.spaceId);
+  }
+
   @override
   void initState() {
     super.initState();
