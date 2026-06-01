@@ -1,9 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
-import 'package:mobile/analytics/domain/model/queries/get_analytics_summary.query.dart';
+import 'package:mobile/analytics/domain/model/queries/get_dashboard_metrics.query.dart';
+import 'package:mobile/analytics/domain/model/queries/get_trends.query.dart';
+import 'package:mobile/analytics/domain/model/valueobjects/dashboard_metrics.valueobject.dart';
+import 'package:mobile/analytics/domain/model/valueobjects/trend_point.valueobject.dart';
 import 'package:mobile/analytics/domain/services/analytics.query-service.dart';
 import 'package:mobile/analytics/infrastructure/api/gateways/analytics.gateway.dart';
-import 'package:mobile/analytics/interfaces/rest/resources/analytics_summary_resource.resource.dart';
+import 'package:mobile/analytics/interfaces/rest/transform/analytics_transform.dart';
 
 class AnalyticsQueryServiceImpl implements AnalyticsQueryService {
   final AnalyticsGateway _gateway;
@@ -11,21 +15,57 @@ class AnalyticsQueryServiceImpl implements AnalyticsQueryService {
   AnalyticsQueryServiceImpl(this._gateway);
 
   @override
-  Future<Either<Failure, List<AnalyticsSummaryResource>>> handleGetAnalyticsSummary(
-    GetAnalyticsSummaryQuery query,
+  Future<Either<Failure, DashboardMetrics>> handleGetDashboardMetrics(
+    GetDashboardMetricsQuery query,
   ) async {
     try {
-      final result = await _gateway.getAnalyticsSummary(timeRange: query.timeRange);
-      return Right(result);
-    } catch (e) {
-      return Left(Failure(_mapError(e)));
+      final resource = await _gateway.getDashboardMetrics(
+        deviceId: query.deviceId,
+        period: query.period,
+        startDate: query.startDate,
+        endDate: query.endDate,
+      );
+      return Right(dashboardMetricsResourceToDomain(resource));
+    } on DioException catch (e) {
+      return Left(_mapError(e));
+    } catch (_) {
+      return const Left(Failure('An unexpected error occurred'));
     }
   }
 
-  String _mapError(Object error) {
-    if (error is Exception) {
-      return error.toString().replaceFirst('Exception: ', '');
+  @override
+  Future<Either<Failure, List<TrendPoint>>> handleGetTrends(GetTrendsQuery query) async {
+    try {
+      final resource = await _gateway.getTrends(
+        deviceId: query.deviceId,
+        period: query.period,
+        startDate: query.startDate,
+        endDate: query.endDate,
+      );
+      return Right(resource.dataPoints.map(trendDataPointResourceToDomain).toList());
+    } on DioException catch (e) {
+      return Left(_mapError(e));
+    } catch (_) {
+      return const Left(Failure('An unexpected error occurred'));
     }
-    return 'An unexpected error occurred';
+  }
+
+  Failure _mapError(DioException error) {
+    final status = error.response?.statusCode;
+    String? serverMessage;
+    final data = error.response?.data;
+    if (data is Map && data['message'] != null) {
+      serverMessage = data['message'].toString();
+    }
+    if (status == 404) {
+      return Failure(
+        serverMessage ?? 'Live data is not available right now.',
+        statusCode: 404,
+      );
+    }
+    return Failure(
+      serverMessage ?? error.message ?? 'An unexpected error occurred',
+      statusCode: status,
+    );
   }
 }

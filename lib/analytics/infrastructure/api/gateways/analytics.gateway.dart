@@ -1,7 +1,18 @@
-import 'package:mobile/analytics/interfaces/rest/resources/analytics_summary_resource.resource.dart';
+import 'package:mobile/analytics/interfaces/rest/resources/dashboard_metrics.resource.dart';
+import 'package:mobile/analytics/interfaces/rest/resources/trends.resource.dart';
 
 abstract class AnalyticsGateway {
-  Future<AnalyticsSummaryResource> refreshAnalytics(String analyticsId);
+  Future<DashboardMetricsResource> getDashboardMetrics({
+    required String deviceId,
+    String? period,
+    String? startDate,
+    String? endDate,
+  });
 
-  Future<List<AnalyticsSummaryResource>> getAnalyticsSummary({String? timeRange});
+  Future<TrendsResource> getTrends({
+    required String deviceId,
+    String? period,
+    String? startDate,
+    String? endDate,
+  });
 }
