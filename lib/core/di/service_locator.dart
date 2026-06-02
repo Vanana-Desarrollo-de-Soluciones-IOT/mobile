@@ -17,9 +17,7 @@ import 'package:mobile/analytics/domain/services/analytics.query-service.dart';
 import 'package:mobile/analytics/infrastructure/api/gateways/analytics.gateway.dart';
 import 'package:mobile/analytics/infrastructure/api/gateways/analytics_http.gateway.dart';
 import 'package:mobile/analytics/interfaces/pages/analytics_cubit.dart';
-import 'package:mobile/alerts/application/internal/commandservices/alerts_command_service_impl.dart';
 import 'package:mobile/alerts/application/internal/queryservices/alerts_query_service_impl.dart';
-import 'package:mobile/alerts/domain/services/alerts.command-service.dart';
 import 'package:mobile/alerts/domain/services/alerts.query-service.dart';
 import 'package:mobile/alerts/infrastructure/api/gateways/alerts.gateway.dart';
 import 'package:mobile/alerts/infrastructure/api/gateways/alerts_http.gateway.dart';
@@ -115,9 +113,7 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<AlertsGateway>(
     () => AlertsHttpGateway(getIt<DioClient>().client),
   );
-  getIt.registerLazySingleton<AlertsCommandService>(
-    () => AlertsCommandServiceImpl(getIt<AlertsGateway>()),
-  );
+
   getIt.registerLazySingleton<AlertsQueryService>(
     () => AlertsQueryServiceImpl(getIt<AlertsGateway>()),
   );
@@ -207,6 +203,10 @@ void setupServiceLocator() {
     ),
   );
 
+  getIt.registerFactory<AnalyticsCubit>(() => AnalyticsCubit());
+  getIt.registerFactory<AlertsCubit>(
+    () => AlertsCubit(getIt<AlertsQueryService>()),
+  );
   getIt.registerFactory<AnalyticsCubit>(
     () => AnalyticsCubit(
       getIt<AnalyticsQueryService>(),
