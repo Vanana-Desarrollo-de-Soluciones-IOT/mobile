@@ -1,10 +1,33 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
-import 'package:mobile/alerts/domain/model/queries/get_alerts.query.dart';
-import 'package:mobile/alerts/interfaces/rest/resources/alert_resource.resource.dart';
+
+import '../model/queries/get_alerts.query.dart';
+import '../model/queries/get_alerts_by_device.query.dart';
+import '../model/queries/get_alerts_by_space.query.dart';
+import '../model/queries/get_alerts_daily_summary.query.dart';
+
+import '../model/valueobjects/alert_page.valueobject.dart';
+import '../model/valueobjects/daily_alert_count.valueobject.dart';
 
 abstract class AlertsQueryService {
-  Future<Either<Failure, List<AlertResource>>> handleGetAlerts(
-    GetAlertsQuery query,
-  );
+  Future<Either<Failure, AlertPage>> handleGetAlerts(
+      GetAlertsQuery query,
+      );
+
+  Future<Either<Failure, AlertPage>> handleGetAlertsByDevice(
+      GetAlertsByDeviceQuery query,
+      );
+
+  Future<Either<Failure, AlertPage>> handleGetAlertsBySpace(
+      GetAlertsBySpaceQuery query,
+      );
+
+  Future<Either<Failure, List<DailyAlertCount>>> handleGetDailySummary(
+      GetAlertDailySummaryQuery query,
+      );
+
+  Future<Either<Failure, List<DailyAlertCount>>> handleGetDailySummaryBySpace(
+      String spaceId,
+      int days,
+      );
 }
