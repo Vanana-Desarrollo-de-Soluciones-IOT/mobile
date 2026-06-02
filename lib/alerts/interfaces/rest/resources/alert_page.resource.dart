@@ -18,18 +18,22 @@ class AlertPageResource {
   factory AlertPageResource.fromJson(
       Map<String, dynamic> json,
       ) {
+    final contentRaw = json['content'];
     return AlertPageResource(
-      content: (json['content'] as List)
-          .map(
-            (e) => AlertResponseResource.fromJson(
-          e as Map<String, dynamic>,
-        ),
-      )
-          .toList(),
-      totalElements: json['totalElements'],
-      totalPages: json['totalPages'],
-      size: json['size'],
-      number: json['number'],
+      content: contentRaw is List
+          ? contentRaw
+              .whereType<Map>()
+              .map(
+                (e) => AlertResponseResource.fromJson(
+                  e.cast<String, dynamic>(),
+                ),
+              )
+              .toList()
+          : const [],
+      totalElements: (json['totalElements'] as num?)?.toInt() ?? 0,
+      totalPages: (json['totalPages'] as num?)?.toInt() ?? 0,
+      size: (json['size'] as num?)?.toInt() ?? 0,
+      number: (json['number'] as num?)?.toInt() ?? 0,
     );
   }
 }

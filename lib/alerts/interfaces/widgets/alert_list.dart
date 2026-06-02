@@ -29,6 +29,7 @@ class AlertList extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (!isMobile)
@@ -36,8 +37,7 @@ class AlertList extends StatelessWidget {
             viewMode: viewMode,
             onViewModeChanged: onViewModeChanged,
           ),
-
-        if (loading)
+        if (loading && (alerts == null || alerts!.isEmpty))
           const _StateMessage(
             icon: Icons.hourglass_empty,
             text: 'Loading alerts...',
@@ -51,16 +51,16 @@ class AlertList extends StatelessWidget {
             color: const Color(0xFFEF4444),
           )
         else if (alerts == null || alerts!.isEmpty)
-            const _StateMessage(
-              icon: Icons.notifications_off,
-              text: 'No alerts found',
-              color: Color(0xFF9CA3AF),
-            )
-          else
-            _AlertItems(
-              alerts: alerts!,
-              viewMode: viewMode,
-            ),
+          const _StateMessage(
+            icon: Icons.notifications_off,
+            text: 'No alerts',
+            color: Color(0xFF9CA3AF),
+          )
+        else
+          _AlertItems(
+            alerts: alerts!,
+            viewMode: viewMode,
+          ),
       ],
     );
   }
@@ -156,12 +156,19 @@ class _StateMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(
         vertical: 48,
         horizontal: 16,
       ),
+      decoration: BoxDecoration(
+        color: const Color(0xFF141414),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF2A2A2A)),
+      ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
@@ -177,11 +184,12 @@ class _StateMessage extends StatelessWidget {
           ),
           if (showSpinner) ...[
             const SizedBox(height: 12),
-            const SizedBox(
+            SizedBox(
               width: 20,
               height: 20,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
+                color: color,
               ),
             ),
           ],
@@ -204,9 +212,9 @@ class _AlertItems extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
-    // Mobile = siempre una columna
     if (viewMode == AlertViewMode.list || width < 600) {
       return Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           for (final alert in alerts) ...[
             AlertCard(alert: alert),
@@ -219,8 +227,8 @@ class _AlertItems extends StatelessWidget {
     final crossAxisCount = width >= 1200
         ? 3
         : width >= 800
-        ? 2
-        : 1;
+            ? 2
+            : 1;
 
     return GridView.builder(
       shrinkWrap: true,

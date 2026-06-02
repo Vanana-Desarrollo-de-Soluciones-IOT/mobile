@@ -39,22 +39,27 @@ class AlertResponseResource {
       Map<String, dynamic> json,
       ) {
     return AlertResponseResource(
-      id: json['id'],
-      deviceId: json['deviceId'],
-      spaceId: json['spaceId'],
-      spaceName: json['spaceName'],
-      deviceName: json['deviceName'],
-      metric: json['metric'],
-      metricLabel: json['metricLabel'],
-      metricUnit: json['metricUnit'],
-      thresholdValue: json['thresholdValue'],
-      actualValue: json['actualValue'],
-      message: json['message'],
-      status: json['status'],
-      severity: json['severity'],
-      occurredAt: json['occurredAt'],
-      resolvedAt: json['resolvedAt'],
-      createdAt: json['createdAt'],
+      id: (json['id'] ?? '').toString(),
+      deviceId: (json['deviceId'] ?? '').toString(),
+      spaceId: json['spaceId']?.toString(),
+      spaceName: json['spaceName']?.toString(),
+      deviceName: json['deviceName']?.toString(),
+      metric: (json['metric'] ?? '').toString(),
+      metricLabel: (json['metricLabel'] ?? '').toString(),
+      metricUnit: (json['metricUnit'] ?? '').toString(),
+      thresholdValue: _toNum(json['thresholdValue']),
+      actualValue: _toNum(json['actualValue']),
+      message: (json['message'] ?? '').toString(),
+      status: (json['status'] ?? '').toString(),
+      severity: (json['severity'] ?? '').toString(),
+      occurredAt: (json['occurredAt'] ?? '').toString(),
+      resolvedAt: json['resolvedAt']?.toString(),
+      createdAt: (json['createdAt'] ?? '').toString(),
     );
+  }
+
+  static num _toNum(Object? value) {
+    if (value is num) return value;
+    return num.tryParse(value?.toString() ?? '') ?? 0;
   }
 }

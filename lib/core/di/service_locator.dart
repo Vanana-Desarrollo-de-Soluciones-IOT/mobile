@@ -203,10 +203,14 @@ void setupServiceLocator() {
     ),
   );
 
-  getIt.registerFactory<AnalyticsCubit>(() => AnalyticsCubit());
   getIt.registerFactory<AlertsCubit>(
-    () => AlertsCubit(getIt<AlertsQueryService>()),
+        () => AlertsCubit(
+      getIt<AlertsQueryService>(),
+      getIt<OrganizationsQueryService>(),
+      getIt<SpacesQueryService>(),
+    ),
   );
+
   getIt.registerFactory<AnalyticsCubit>(
     () => AnalyticsCubit(
       getIt<AnalyticsQueryService>(),
@@ -215,7 +219,6 @@ void setupServiceLocator() {
       getIt<DevicesQueryService>(),
     ),
   );
-  getIt.registerFactory<AlertsCubit>(() => AlertsCubit());
   getIt.registerFactory<SpacesCubit>(
     () => SpacesCubit(
       getIt<SpacesQueryService>(),
