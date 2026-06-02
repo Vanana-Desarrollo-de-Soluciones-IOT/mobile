@@ -34,4 +34,27 @@ class AlertResponseResource {
     this.resolvedAt,
     required this.createdAt,
   });
+
+  factory AlertResponseResource.fromJson(
+      Map<String, dynamic> json,
+      ) {
+    return AlertResponseResource(
+      id: json['id'],
+      deviceId: json['deviceId'],
+      spaceId: json['spaceId'],
+      spaceName: json['spaceName'],
+      deviceName: json['deviceName'],
+      metric: json['metric'],
+      metricLabel: json['metricLabel'],
+      metricUnit: json['metricUnit'],
+      thresholdValue: json['thresholdValue'],
+      actualValue: json['actualValue'],
+      message: json['message'],
+      status: json['status'],
+      severity: json['severity'],
+      occurredAt: json['occurredAt'],
+      resolvedAt: json['resolvedAt'],
+      createdAt: json['createdAt'],
+    );
+  }
 }

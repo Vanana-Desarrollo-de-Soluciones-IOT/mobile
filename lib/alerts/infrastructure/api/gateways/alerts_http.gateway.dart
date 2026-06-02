@@ -1,39 +1,118 @@
 import 'package:dio/dio.dart';
 import 'package:mobile/core/constants/api_constants.dart';
 import 'package:mobile/alerts/infrastructure/api/gateways/alerts.gateway.dart';
-import 'package:mobile/alerts/interfaces/rest/resources/alert_resource.resource.dart';
+import 'package:mobile/alerts/interfaces/rest/resources/alert_page.resource.dart';
+import 'package:mobile/alerts/interfaces/rest/resources/daily_alert_summary.resource.dart';
 
 class AlertsHttpGateway implements AlertsGateway {
   final Dio _dio;
 
   AlertsHttpGateway(this._dio);
 
+  static const String _path = '${ApiConstants.apiPrefix}/alerts';
+
   @override
-  Future<void> acknowledgeAlert(String alertId) async {
-    await _dio.post('${ApiConstants.apiPrefix}/alerts/$alertId/acknowledge');
+  Future<AlertPageResource> getAlerts({
+    required int page,
+    required int size,
+    List<String>? status,
+  }) async {
+    final response = await _dio.get(
+      _path,
+      queryParameters: _buildPageParams(page, size, status),
+    );
+
+    return AlertPageResource.fromJson(
+      response.data as Map<String, dynamic>,
+    );
   }
 
   @override
-  Future<List<AlertResource>> refreshAlerts({String? severity}) async {
+  Future<AlertPageResource> getAlertsByDevice({
+    required String deviceId,
+    required int page,
+    required int size,
+    List<String>? status,
+  }) async {
     final response = await _dio.get(
-      '${ApiConstants.apiPrefix}/alerts/refresh',
-      queryParameters: severity != null ? {'severity': severity} : null,
+      '${ApiConstants.apiPrefix}/devices/$deviceId/alerts',
+      queryParameters: _buildPageParams(page, size, status),
     );
-    final list = response.data as List<dynamic>;
-    return list.map((e) => AlertResource.fromJson(e as Map<String, dynamic>)).toList();
+
+    return AlertPageResource.fromJson(
+      response.data as Map<String, dynamic>,
+    );
   }
 
   @override
-  Future<List<AlertResource>> getAlerts({String? severity, bool? acknowledged}) async {
-    final queryParameters = <String, dynamic>{};
-    if (severity != null) queryParameters['severity'] = severity;
-    if (acknowledged != null) queryParameters['acknowledged'] = acknowledged;
-
+  Future<AlertPageResource> getAlertsBySpace({
+    required String spaceId,
+    required int page,
+    required int size,
+    List<String>? status,
+  }) async {
     final response = await _dio.get(
-      '${ApiConstants.apiPrefix}/alerts',
-      queryParameters: queryParameters.isNotEmpty ? queryParameters : null,
+      '${ApiConstants.apiPrefix}/spaces/$spaceId/alerts',
+      queryParameters: _buildPageParams(page, size, status),
     );
-    final list = response.data as List<dynamic>;
-    return list.map((e) => AlertResource.fromJson(e as Map<String, dynamic>)).toList();
+
+    return AlertPageResource.fromJson(
+      response.data as Map<String, dynamic>,
+    );
+  }
+
+  @override
+  Future<List<DailyAlertSummaryResource>>
+  getCurrentUserDailyAlertSummary({
+    required int days,
+  }) async {
+    final response = await _dio.get(
+      '$_path/daily-summary',
+      queryParameters: {'days': days},
+    );
+
+    return (response.data as List)
+        .map(
+          (e) => DailyAlertSummaryResource.fromJson(
+        e as Map<String, dynamic>,
+      ),
+    )
+        .toList();
+  }
+
+  @override
+  Future<List<DailyAlertSummaryResource>> getDailyAlertSummary({
+    required String spaceId,
+    required int days,
+  }) async {
+    final response = await _dio.get(
+      '${ApiConstants.apiPrefix}/spaces/$spaceId/alerts/daily-summary',
+      queryParameters: {'days': days},
+    );
+
+    return (response.data as List)
+        .map(
+          (e) => DailyAlertSummaryResource.fromJson(
+        e as Map<String, dynamic>,
+      ),
+    )
+        .toList();
+  }
+
+  Map<String, dynamic> _buildPageParams(
+      int page,
+      int size,
+      List<String>? status,
+      ) {
+    final params = <String, dynamic>{
+      'page': page,
+      'size': size,
+    };
+
+    if (status != null && status.isNotEmpty) {
+      params['status'] = status;
+    }
+
+    return params;
   }
 }

@@ -1,4 +1,4 @@
-import 'package:mobile/alerts/interfaces/rest/resources/alert_response.resource.dart';
+import 'alert_response.resource.dart';
 
 class AlertPageResource {
   final List<AlertResponseResource> content;
@@ -14,4 +14,22 @@ class AlertPageResource {
     required this.size,
     required this.number,
   });
+
+  factory AlertPageResource.fromJson(
+      Map<String, dynamic> json,
+      ) {
+    return AlertPageResource(
+      content: (json['content'] as List)
+          .map(
+            (e) => AlertResponseResource.fromJson(
+          e as Map<String, dynamic>,
+        ),
+      )
+          .toList(),
+      totalElements: json['totalElements'],
+      totalPages: json['totalPages'],
+      size: json['size'],
+      number: json['number'],
+    );
+  }
 }
