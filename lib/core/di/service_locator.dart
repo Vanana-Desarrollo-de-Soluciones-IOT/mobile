@@ -204,10 +204,8 @@ void setupServiceLocator() {
   );
 
   getIt.registerFactory<AlertsCubit>(
-        () => AlertsCubit(
+    () => AlertsCubit(
       getIt<AlertsQueryService>(),
-      getIt<OrganizationsQueryService>(),
-      getIt<SpacesQueryService>(),
     ),
   );
 

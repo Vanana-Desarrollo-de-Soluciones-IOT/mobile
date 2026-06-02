@@ -177,7 +177,7 @@ class _TableRow extends StatelessWidget {
           SizedBox(
             width: 130,
             child: Text(
-              alert.metric.label,
+              alert.metric.apiName,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
@@ -242,9 +242,9 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+      return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 16),
       decoration: BoxDecoration(
         color: const Color(0xFF141414),
         borderRadius: BorderRadius.circular(16),
@@ -254,13 +254,13 @@ class _EmptyState extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Icons.notifications_none_outlined,
-            size: 48,
-            color: Colors.white.withValues(alpha: 0.2),
+            Icons.notifications_off,
+            size: 36,
+            color: Color(0xFF9CA3AF),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           const Text(
-            'No active alerts',
+            'No alerts found',
             style: TextStyle(
               color: Color(0xFF9CA3AF),
               fontSize: 15,
@@ -335,7 +335,7 @@ class _LoadingState extends StatelessWidget {
               valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF9CA3AF)),
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           Text(
             'Loading alerts...',
             style: TextStyle(
