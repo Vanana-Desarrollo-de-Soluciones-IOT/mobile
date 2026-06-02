@@ -8,6 +8,7 @@ import 'package:mobile/alerts/domain/model/queries/get_alerts_by_space.query.dar
 import 'package:mobile/alerts/domain/model/queries/get_alerts_daily_summary.query.dart';
 
 import 'package:mobile/alerts/domain/model/valueobjects/alert_page.valueobject.dart';
+import 'package:mobile/alerts/domain/model/valueobjects/alert_status.valueobject.dart';
 import 'package:mobile/alerts/domain/model/valueobjects/daily_alert_count.valueobject.dart';
 
 import 'package:mobile/alerts/domain/services/alerts.query-service.dart';
@@ -22,12 +23,14 @@ class AlertsQueryServiceImpl implements AlertsQueryService {
 
   @override
   Future<Either<Failure, AlertPage>> handleGetAlerts(
-      GetAlertsQuery query,
-      ) async {
+    GetAlertsQuery query, {
+    List<AlertStatus>? status,
+  }) async {
     try {
       final resource = await _gateway.getAlerts(
         page: query.page,
         size: query.size,
+        status: _statusApiValues(status),
       );
 
       return Right(
@@ -44,13 +47,15 @@ class AlertsQueryServiceImpl implements AlertsQueryService {
 
   @override
   Future<Either<Failure, AlertPage>> handleGetAlertsByDevice(
-      GetAlertsByDeviceQuery query,
-      ) async {
+    GetAlertsByDeviceQuery query, {
+    List<AlertStatus>? status,
+  }) async {
     try {
       final resource = await _gateway.getAlertsByDevice(
         deviceId: query.deviceId,
         page: query.page,
         size: query.size,
+        status: _statusApiValues(status),
       );
 
       return Right(
@@ -67,13 +72,15 @@ class AlertsQueryServiceImpl implements AlertsQueryService {
 
   @override
   Future<Either<Failure, AlertPage>> handleGetAlertsBySpace(
-      GetAlertsBySpaceQuery query,
-      ) async {
+    GetAlertsBySpaceQuery query, {
+    List<AlertStatus>? status,
+  }) async {
     try {
       final resource = await _gateway.getAlertsBySpace(
         spaceId: query.spaceId,
         page: query.page,
         size: query.size,
+        status: _statusApiValues(status),
       );
 
       return Right(
@@ -151,5 +158,12 @@ class AlertsQueryServiceImpl implements AlertsQueryService {
       serverMessage ?? error.message ?? 'An unexpected error occurred',
       statusCode: status,
     );
+  }
+
+  List<String>? _statusApiValues(List<AlertStatus>? status) {
+    if (status == null || status.isEmpty) {
+      return null;
+    }
+    return status.map((s) => s.apiValue).toList();
   }
 }
