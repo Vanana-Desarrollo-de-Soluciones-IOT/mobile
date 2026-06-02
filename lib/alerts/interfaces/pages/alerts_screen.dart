@@ -5,7 +5,6 @@ import 'package:mobile/alerts/domain/model/valueobjects/alert_status.valueobject
 import 'package:mobile/alerts/domain/model/valueobjects/metric_type.valueobject.dart';
 import 'package:mobile/alerts/interfaces/pages/alerts_cubit.dart';
 import 'package:mobile/alerts/interfaces/widgets/alert_daily_chart.dart';
-import 'package:mobile/alerts/interfaces/widgets/alert_filters.dart';
 import 'package:mobile/alerts/interfaces/widgets/alert_list.dart';
 import 'package:mobile/alerts/interfaces/widgets/alert_table.dart';
 import 'package:mobile/shared/interfaces/widgets/widgets.dart';
@@ -58,12 +57,6 @@ class _AlertsScreenState extends State<AlertsScreen> {
                   const SizedBox(height: 12),
                   AlertDailyChart(data: state.dailySummary),
                   const SizedBox(height: 16),
-                  AlertFilters(
-                    selectedStatus: state.selectedStatus,
-                    selectedMetric: state.selectedMetric,
-                    onStatusChanged: context.read<AlertsCubit>().setStatusFilter,
-                    onMetricChanged: context.read<AlertsCubit>().setMetricFilter,
-                  ),
                   const SizedBox(height: 16),
                   _AlertsTabBar(
                     tab: state.tab,
