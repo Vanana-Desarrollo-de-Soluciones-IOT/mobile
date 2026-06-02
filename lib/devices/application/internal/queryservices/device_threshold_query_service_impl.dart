@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
+import 'package:mobile/devices/domain/model/readmodels/device_threshold.read_model.dart';
 import 'package:mobile/devices/domain/model/queries/get_device_threshold_by_metric.query.dart';
 import 'package:mobile/devices/domain/model/queries/get_device_thresholds.query.dart';
 import 'package:mobile/devices/domain/services/device_threshold.query-service.dart';
@@ -12,19 +13,19 @@ class DeviceThresholdQueryServiceImpl implements DeviceThresholdQueryService {
   DeviceThresholdQueryServiceImpl(this._gateway);
 
   @override
-  Future<Either<Failure, List<DeviceThresholdResource>>> handleGetDeviceThresholds(
+  Future<Either<Failure, List<DeviceThresholdReadModel>>> handleGetDeviceThresholds(
     GetDeviceThresholdsQuery query,
   ) async {
     try {
       final result = await _gateway.getThresholdsByDevice(query.deviceId);
-      return Right(result);
+      return Right(result.map(_toReadModel).toList());
     } catch (e) {
       return Left(Failure(_mapError(e)));
     }
   }
 
   @override
-  Future<Either<Failure, DeviceThresholdResource>> handleGetDeviceThresholdByMetric(
+  Future<Either<Failure, DeviceThresholdReadModel>> handleGetDeviceThresholdByMetric(
     GetDeviceThresholdByMetricQuery query,
   ) async {
     try {
@@ -32,10 +33,21 @@ class DeviceThresholdQueryServiceImpl implements DeviceThresholdQueryService {
         query.deviceId,
         query.metric,
       );
-      return Right(result);
+      return Right(_toReadModel(result));
     } catch (e) {
       return Left(Failure(_mapError(e)));
     }
+  }
+
+  DeviceThresholdReadModel _toReadModel(DeviceThresholdResource resource) {
+    return DeviceThresholdReadModel(
+      deviceId: resource.deviceId,
+      metric: resource.metric,
+      value: resource.value,
+      enabled: resource.enabled,
+      metricLabel: resource.metricLabel,
+      metricUnit: resource.metricUnit,
+    );
   }
 
   String _mapError(Object error) {

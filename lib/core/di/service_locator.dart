@@ -12,9 +12,7 @@ import 'package:mobile/iam/infrastructure/oauth/google/google_id_token_provider.
 import 'package:mobile/iam/infrastructure/oauth/google/google_sign_in_id_token_provider.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/registration_session_local_storage.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/token_local_storage.dart';
-import 'package:mobile/analytics/application/internal/commandservices/analytics_command_service_impl.dart';
 import 'package:mobile/analytics/application/internal/queryservices/analytics_query_service_impl.dart';
-import 'package:mobile/analytics/domain/services/analytics.command-service.dart';
 import 'package:mobile/analytics/domain/services/analytics.query-service.dart';
 import 'package:mobile/analytics/infrastructure/api/gateways/analytics.gateway.dart';
 import 'package:mobile/analytics/infrastructure/api/gateways/analytics_http.gateway.dart';
@@ -50,12 +48,21 @@ import 'package:mobile/devices/infrastructure/api/gateways/spaces.gateway.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/spaces_http.gateway.dart';
 import 'package:mobile/devices/interfaces/pages/spaces/spaces_cubit.dart';
 import 'package:mobile/devices/application/internal/commandservices/device_threshold_command_service_impl.dart';
+import 'package:mobile/devices/application/internal/commandservices/device_commands_command_service_impl.dart';
 import 'package:mobile/devices/application/internal/queryservices/device_threshold_query_service_impl.dart';
 import 'package:mobile/devices/domain/services/device_threshold.command-service.dart';
 import 'package:mobile/devices/domain/services/device_threshold.query-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/device_thresholds.gateway.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/device_thresholds_http.gateway.dart';
+import 'package:mobile/devices/domain/services/device_commands.command-service.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/device_commands.gateway.dart';
+import 'package:mobile/devices/infrastructure/api/gateways/device_commands_http.gateway.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_cubit.dart';
+import 'package:mobile/devices/application/internal/acl/device_vitals_acl.dart';
+import 'package:mobile/evaluation/application/internal/queryservices/telemetry_evaluation_query_service_impl.dart';
+import 'package:mobile/evaluation/domain/services/telemetry_evaluation.query-service.dart';
+import 'package:mobile/evaluation/infrastructure/api/gateways/telemetry_evaluation.gateway.dart';
+import 'package:mobile/evaluation/infrastructure/api/gateways/telemetry_evaluation_http.gateway.dart';
 
 final getIt = GetIt.instance;
 
@@ -96,10 +103,7 @@ void setupServiceLocator() {
 
   // Analytics Context
   getIt.registerLazySingleton<AnalyticsGateway>(
-    () => AnalyticsHttpGateway(getIt<DioClient>().client),
-  );
-  getIt.registerLazySingleton<AnalyticsCommandService>(
-    () => AnalyticsCommandServiceImpl(getIt<AnalyticsGateway>()),
+    () => AnalyticsHttpGateway(getIt<DioClient>().client, getIt<TokenLocalStorage>()),
   );
   getIt.registerLazySingleton<AnalyticsQueryService>(
     () => AnalyticsQueryServiceImpl(getIt<AnalyticsGateway>()),
@@ -147,6 +151,14 @@ void setupServiceLocator() {
     () => DevicesCommandServiceImpl(getIt<DevicesGateway>()),
   );
 
+  // Device Commands
+  getIt.registerLazySingleton<DeviceCommandsGateway>(
+    () => DeviceCommandsHttpGateway(getIt<DioClient>().client),
+  );
+  getIt.registerLazySingleton<DeviceCommandsCommandService>(
+    () => DeviceCommandsCommandServiceImpl(getIt<DeviceCommandsGateway>()),
+  );
+
   // Device Thresholds
   getIt.registerLazySingleton<DeviceThresholdsGateway>(
     () => DeviceThresholdsHttpGateway(getIt<DioClient>().client),
@@ -156,6 +168,19 @@ void setupServiceLocator() {
   );
   getIt.registerLazySingleton<DeviceThresholdCommandService>(
     () => DeviceThresholdCommandServiceImpl(getIt<DeviceThresholdsGateway>()),
+  );
+
+  // Evaluation Context
+  getIt.registerLazySingleton<TelemetryEvaluationGateway>(
+    () => TelemetryEvaluationHttpGateway(getIt<DioClient>().client),
+  );
+  getIt.registerLazySingleton<TelemetryEvaluationQueryService>(
+    () => TelemetryEvaluationQueryServiceImpl(getIt<TelemetryEvaluationGateway>()),
+  );
+
+  // Devices ACLs
+  getIt.registerLazySingleton<DeviceVitalsAcl>(
+    () => DeviceVitalsAcl(getIt<TelemetryEvaluationQueryService>()),
   );
 
   // Interface Controllers (Cubits)
@@ -182,6 +207,15 @@ void setupServiceLocator() {
   getIt.registerFactory<AlertsCubit>(
     () => AlertsCubit(getIt<AlertsQueryService>()),
   );
+  getIt.registerFactory<AnalyticsCubit>(
+    () => AnalyticsCubit(
+      getIt<AnalyticsQueryService>(),
+      getIt<OrganizationsQueryService>(),
+      getIt<SpacesQueryService>(),
+      getIt<DevicesQueryService>(),
+    ),
+  );
+  getIt.registerFactory<AlertsCubit>(() => AlertsCubit());
   getIt.registerFactory<SpacesCubit>(
     () => SpacesCubit(
       getIt<SpacesQueryService>(),
@@ -206,8 +240,11 @@ void setupServiceLocator() {
   getIt.registerFactory<DeviceDetailCubit>(
     () => DeviceDetailCubit(
       getIt<DevicesQueryService>(),
+      getIt<DevicesCommandService>(),
       getIt<DeviceThresholdQueryService>(),
       getIt<DeviceThresholdCommandService>(),
+      getIt<DeviceVitalsAcl>(),
+      getIt<DeviceCommandsCommandService>(),
     ),
   );
 

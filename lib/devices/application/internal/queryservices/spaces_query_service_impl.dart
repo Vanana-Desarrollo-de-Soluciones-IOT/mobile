@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
+import 'package:mobile/devices/domain/model/readmodels/space.read_model.dart';
 import 'package:mobile/devices/domain/model/queries/get_spaces_by_organization.query.dart';
 import 'package:mobile/devices/domain/services/spaces.query-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/spaces.gateway.dart';
@@ -12,27 +13,38 @@ class SpacesQueryServiceImpl implements SpacesQueryService {
   SpacesQueryServiceImpl(this._gateway);
 
   @override
-  Future<Either<Failure, List<SpaceResponseResource>>> handleGetSpacesByOrganization(
+  Future<Either<Failure, List<SpaceReadModel>>> handleGetSpacesByOrganization(
     GetSpacesByOrganizationQuery query,
   ) async {
     try {
       final result = await _gateway.getSpacesByOrganization(
         organizationId: query.organizationId.value,
       );
-      return Right(result);
+      return Right(result.map(_toReadModel).toList());
     } catch (e) {
       return Left(Failure(_mapError(e)));
     }
   }
 
   @override
-  Future<Either<Failure, SpaceResponseResource>> handleGetSpaceById(String spaceId) async {
+  Future<Either<Failure, SpaceReadModel>> handleGetSpaceById(String spaceId) async {
     try {
       final result = await _gateway.getSpaceById(spaceId);
-      return Right(result);
+      return Right(_toReadModel(result));
     } catch (e) {
       return Left(Failure(_mapError(e)));
     }
+  }
+
+  SpaceReadModel _toReadModel(SpaceResponseResource resource) {
+    return SpaceReadModel(
+      id: resource.id,
+      name: resource.name,
+      organizationId: resource.organizationId,
+      ownerUserId: resource.ownerUserId,
+      createdAt: resource.createdAt,
+      updatedAt: resource.updatedAt,
+    );
   }
 
   String _mapError(Object error) {

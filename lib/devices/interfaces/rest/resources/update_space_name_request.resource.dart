@@ -3,5 +3,9 @@ class UpdateSpaceNameRequestResource {
 
   const UpdateSpaceNameRequestResource({required this.name});
 
-  Map<String, dynamic> toJson() => {'name': name};
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+    };
+  }
 }

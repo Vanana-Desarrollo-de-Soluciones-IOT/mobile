@@ -3,7 +3,7 @@ part of 'organizations_cubit.dart';
 class OrganizationsState {
   final bool isLoading;
   final String? errorMessage;
-  final List<OrganizationResponseResource> organizations;
+  final List<OrganizationReadModel> organizations;
 
   const OrganizationsState({
     this.isLoading = false,
@@ -14,7 +14,7 @@ class OrganizationsState {
   OrganizationsState copyWith({
     bool? isLoading,
     String? errorMessage,
-    List<OrganizationResponseResource>? organizations,
+    List<OrganizationReadModel>? organizations,
   }) {
     return OrganizationsState(
       isLoading: isLoading ?? this.isLoading,

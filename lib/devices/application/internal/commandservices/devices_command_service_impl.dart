@@ -2,10 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mobile/core/failure.dart';
 import 'package:mobile/devices/domain/model/commands/claim_device_to_space.command.dart';
+import 'package:mobile/devices/domain/model/commands/delete_device.command.dart';
 import 'package:mobile/devices/domain/model/commands/pair_device.command.dart';
+import 'package:mobile/devices/domain/model/commands/update_device_name.command.dart';
+import 'package:mobile/devices/domain/model/readmodels/device.read_model.dart';
+import 'package:mobile/devices/domain/model/readmodels/device_pairing.read_model.dart';
 import 'package:mobile/devices/domain/services/devices.command-service.dart';
 import 'package:mobile/devices/infrastructure/api/gateways/devices.gateway.dart';
-import 'package:mobile/devices/interfaces/rest/resources/device_pairing_resource.resource.dart';
+import 'package:mobile/devices/interfaces/rest/resources/device_pairing.resource.dart';
 import 'package:mobile/devices/interfaces/rest/resources/device_response.resource.dart';
 import 'package:mobile/devices/interfaces/rest/transform/devices_transform.dart';
 
@@ -15,35 +19,54 @@ class DevicesCommandServiceImpl implements DevicesCommandService {
   DevicesCommandServiceImpl(this._gateway);
 
   @override
-  Future<Either<Failure, DevicePairingResourceResource>> handlePairDevice(
+  Future<Either<Failure, DevicePairingReadModel>> handlePairDevice(
     PairDeviceCommand command,
   ) async {
     try {
       final req = toPairDeviceRequestResource(command);
       final raw = await _gateway.pairDeviceRaw(requestBody: req.toJson());
-      return Right(DevicePairingResourceResource.fromJson(raw));
+      final resource = DevicePairingResource.fromJson(raw);
+      return Right(DevicePairingReadModel(deviceId: resource.deviceId, claimToken: resource.claimToken));
     } catch (e) {
       return Left(Failure(_mapError(e)));
     }
   }
 
   @override
-  Future<Either<Failure, DeviceResponseResource>> handleClaimDeviceToSpace(
+  Future<Either<Failure, DeviceReadModel>> handleClaimDeviceToSpace(
     ClaimDeviceToSpaceCommand command,
   ) async {
     try {
       final req = toClaimDeviceRequestResource(command);
       final raw = await _gateway.claimDeviceRaw(requestBody: req.toJson());
-      return Right(DeviceResponseResource.fromJson(raw));
+      final resource = DeviceResponseResource.fromJson(raw);
+      return Right(
+        DeviceReadModel(
+          id: resource.id,
+          serialNumber: resource.serialNumber,
+          name: resource.name,
+          status: resource.status,
+          spaceId: resource.spaceId,
+          ownerUserId: resource.ownerUserId,
+          configuration: resource.configuration,
+          thresholds: resource.thresholds,
+          hardwareId: resource.hardwareId,
+          deviceType: resource.deviceType,
+          activatedAt: resource.activatedAt,
+          lastSeenAt: resource.lastSeenAt,
+          createdAt: resource.createdAt,
+          updatedAt: resource.updatedAt,
+        ),
+      );
     } catch (e) {
       return Left(Failure(_mapError(e)));
     }
   }
 
   @override
-  Future<Either<Failure, void>> handleDeleteDevice(String deviceId) async {
+  Future<Either<Failure, void>> handleDeleteDevice(DeleteDeviceCommand command) async {
     try {
-      await _gateway.deleteDeviceRaw(deviceId);
+      await _gateway.deleteDeviceRaw(command.deviceId.value);
       return const Right(null);
     } catch (e) {
       return Left(Failure(_mapError(e)));
@@ -51,9 +74,12 @@ class DevicesCommandServiceImpl implements DevicesCommandService {
   }
 
   @override
-  Future<Either<Failure, void>> handleUpdateDeviceName(String deviceId, String name) async {
+  Future<Either<Failure, void>> handleUpdateDeviceName(UpdateDeviceNameCommand command) async {
     try {
-      await _gateway.updateDeviceNameRaw(deviceId, {'name': name});
+      await _gateway.updateDeviceNameRaw(
+        command.deviceId.value,
+        {'name': command.name.value},
+      );
       return const Right(null);
     } catch (e) {
       return Left(Failure(_mapError(e)));

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile/devices/interfaces/rest/resources/device_response.resource.dart';
+import 'package:mobile/devices/domain/model/readmodels/device.read_model.dart';
 import 'package:mobile/devices/interfaces/widgets/device_list_item_labels.dart';
 import 'package:mobile/devices/interfaces/widgets/device_power_status_badge.dart';
 
 class DeviceCard extends StatelessWidget {
-  final DeviceResponseResource device;
+  final DeviceReadModel device;
 
   const DeviceCard({
     super.key,
@@ -16,8 +16,6 @@ class DeviceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final label = buildDeviceChipLabel(device);
     final updatedLabel = buildDeviceUpdatedLabel(device);
-    // Backend status is often OFFLINE until presence pings arrive;
-    // show a "recently seen" dot to match the UI expectations.
     final isOnline = device.status.toUpperCase() == 'ONLINE';
     final isRecentlySeen = device.lastSeenAt != null &&
         DateTime.now().difference(device.lastSeenAt!).inMinutes < 2;

@@ -3,7 +3,7 @@ part of 'spaces_cubit.dart';
 class SpacesState {
   final bool isLoading;
   final String? errorMessage;
-  final List<SpaceResponseResource> spaces;
+  final List<SpaceReadModel> spaces;
   final Map<String, int> deviceCountsBySpaceId;
 
   const SpacesState({
@@ -16,7 +16,7 @@ class SpacesState {
   SpacesState copyWith({
     bool? isLoading,
     String? errorMessage,
-    List<SpaceResponseResource>? spaces,
+    List<SpaceReadModel>? spaces,
     Map<String, int>? deviceCountsBySpaceId,
   }) {
     return SpacesState(

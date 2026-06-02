@@ -2,9 +2,9 @@ class SpaceResponseResource {
   final String id;
   final String name;
   final String organizationId;
-  final String ownerUserId;
-  final String createdAt;
-  final String updatedAt;
+  final String? ownerUserId;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const SpaceResponseResource({
     required this.id,
@@ -17,12 +17,17 @@ class SpaceResponseResource {
 
   factory SpaceResponseResource.fromJson(Map<String, dynamic> json) {
     return SpaceResponseResource(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      organizationId: json['organizationId'] as String,
-      ownerUserId: json['ownerUserId'] as String,
-      createdAt: json['createdAt'] as String,
-      updatedAt: json['updatedAt'] as String,
+      id: (json['id'] ?? '').toString(),
+      name: (json['name'] ?? '').toString(),
+      organizationId: (json['organizationId'] ?? '').toString(),
+      ownerUserId: json['ownerUserId']?.toString(),
+      createdAt: _tryParseDateTime(json['createdAt']),
+      updatedAt: _tryParseDateTime(json['updatedAt']),
     );
+  }
+
+  static DateTime? _tryParseDateTime(Object? value) {
+    if (value == null) return null;
+    return DateTime.tryParse(value.toString());
   }
 }
