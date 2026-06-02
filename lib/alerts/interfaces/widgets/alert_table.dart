@@ -4,60 +4,68 @@ import '../../domain/model/valueobjects/alert.valueobject.dart';
 import 'alert_severity_badge.dart';
 import 'alert_status_badge.dart';
 
-class AlertTable extends StatefulWidget {
+class AlertTable extends StatelessWidget {
   final List<Alert>? alerts;
   final bool loading;
+  final String error;
 
   const AlertTable({
     super.key,
     this.alerts,
     this.loading = false,
+    this.error = '',
   });
 
   @override
-  State<AlertTable> createState() => _AlertTableState();
-}
-
-class _AlertTableState extends State<AlertTable> {
-  final ScrollController _scrollController = ScrollController();
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final alerts = widget.alerts;
+    if (error.isNotEmpty) {
+      return _ErrorState(message: error);
+    }
 
-    if (!widget.loading && (alerts == null || alerts.isEmpty)) {
+    if (loading && (alerts == null || alerts!.isEmpty)) {
+      return const _LoadingState();
+    }
+
+    if (!loading && (alerts == null || alerts!.isEmpty)) {
       return const _EmptyState();
     }
 
     return Container(
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: const Color(0xFF141414),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFF2A2A2A)),
       ),
-      child: Scrollbar(
-        controller: _scrollController,
-        thumbVisibility: false,
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          scrollDirection: Axis.horizontal,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minWidth: 850),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const _HeaderRow(),
-                if (alerts != null)
-                  for (final alert in alerts)
-                    _TableRow(alert: alert),
-              ],
-            ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 900),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _HeaderRow(),
+              if (alerts != null)
+                ...alerts!.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final alert = entry.value;
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (index > 0)
+                        const Divider(
+                          height: 1,
+                          color: Color(0xFF222222),
+                          indent: 16,
+                          endIndent: 16,
+                        ),
+                      _TableRow(alert: alert),
+                    ],
+                  );
+                }),
+            ],
           ),
         ),
       ),
@@ -71,7 +79,7 @@ class _HeaderRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: const BoxDecoration(
         color: Color(0xFF1C1C1E),
         border: Border(
@@ -80,12 +88,12 @@ class _HeaderRow extends StatelessWidget {
       ),
       child: const Row(
         children: [
-          _HeaderCell(width: 180, label: 'DEVICE'),
-          _HeaderCell(width: 100, label: 'SEVERITY'),
-          _HeaderCell(flex: 1, label: 'SPACE'),
-          _HeaderCell(width: 120, label: 'VARIABLE'),
-          _HeaderCell(width: 110, label: 'TIME'),
-          _HeaderCell(width: 110, label: 'STATUS'),
+          _HeaderCell(width: 160, label: 'DEVICE'),
+          _HeaderCell(width: 110, label: 'SEVERITY'),
+          _HeaderCell(width: 200, label: 'SPACE'),
+          _HeaderCell(width: 130, label: 'VARIABLE'),
+          _HeaderCell(width: 100, label: 'TIME'),
+          _HeaderCell(width: 120, label: 'STATUS'),
         ],
       ),
     );
@@ -93,33 +101,29 @@ class _HeaderRow extends StatelessWidget {
 }
 
 class _HeaderCell extends StatelessWidget {
-  final double? width;
-  final int? flex;
+  final double width;
   final String label;
 
   const _HeaderCell({
-    this.width,
-    this.flex,
+    required this.width,
     required this.label,
   });
 
   @override
   Widget build(BuildContext context) {
-    final text = Text(
-      label,
-      style: const TextStyle(
-        fontSize: 11.2,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.88,
-        color: Color(0xFF9CA3AF),
+    return SizedBox(
+      width: width,
+      child: Text(
+        label,
+        textAlign: TextAlign.start,
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.0,
+          color: Color(0xFF9CA3AF),
+        ),
       ),
     );
-
-    if (width != null) {
-      return SizedBox(width: width, child: text);
-    }
-
-    return Expanded(flex: flex ?? 1, child: text);
   }
 }
 
@@ -133,64 +137,72 @@ class _TableRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color(0xFF222222)),
-        ),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
         children: [
           SizedBox(
-            width: 180,
+            width: 160,
             child: Text(
               _displayDevice(alert),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.w700,
-                fontSize: 13.6,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 110,
+            child: Center(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: AlertSeverityBadge(severity: alert.severity),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 200,
+            child: Text(
+              alert.spaceName ?? '-',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Color(0xFF9CA3AF),
+                fontSize: 14,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 130,
+            child: Text(
+              alert.metric.label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Color(0xFFE5E7EB),
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
               ),
             ),
           ),
           SizedBox(
             width: 100,
-            child: AlertSeverityBadge(severity: alert.severity),
-          ),
-          Expanded(
             child: Text(
-              alert.spaceName ?? '-',
+              _formatTime(alert.occurredAt),
               style: const TextStyle(
                 color: Color(0xFF9CA3AF),
-                fontSize: 13.6,
+                fontSize: 14,
               ),
             ),
           ),
           SizedBox(
             width: 120,
-            child: Text(
-              alert.metric.apiName,
-              style: const TextStyle(
-                color: Color(0xFFE5E7EB),
-                fontWeight: FontWeight.w600,
-                fontSize: 12.8,
-              ),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: AlertStatusBadge(status: alert.status),
             ),
-          ),
-          SizedBox(
-            width: 110,
-            child: Text(
-              _formatTime(alert.occurredAt),
-              style: const TextStyle(
-                color: Color(0xFFE5E7EB),
-                fontSize: 13.6,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 110,
-            child: AlertStatusBadge(status: alert.status),
           ),
         ],
       ),
@@ -206,8 +218,7 @@ class _TableRow extends StatelessWidget {
     final local = parsed.toLocal();
     final hh = local.hour.toString().padLeft(2, '0');
     final mm = local.minute.toString().padLeft(2, '0');
-    final ss = local.second.toString().padLeft(2, '0');
-    return '$hh:$mm:$ss';
+    return '$hh:$mm';
   }
 
   String _displayDevice(Alert alert) {
@@ -219,10 +230,10 @@ class _TableRow extends StatelessWidget {
   }
 
   String _shortId(String value) {
-    if (value.length <= 4) {
+    if (value.length <= 6) {
       return value;
     }
-    return value.substring(value.length - 4);
+    return value.substring(value.length - 6);
   }
 }
 
@@ -232,24 +243,105 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 16),
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF141414),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF2A2A2A)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.notifications_none_outlined,
+            size: 48,
+            color: Colors.white.withValues(alpha: 0.2),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'No active alerts',
+            style: TextStyle(
+              color: Color(0xFF9CA3AF),
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ErrorState extends StatelessWidget {
+  final String message;
+
+  const _ErrorState({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF141414),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF2A2A2A)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.error_outline_rounded,
+            size: 48,
+            color: Color(0xFFEF4444),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Color(0xFFEF4444),
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LoadingState extends StatelessWidget {
+  const _LoadingState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
       decoration: BoxDecoration(
         color: const Color(0xFF141414),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFF2A2A2A)),
       ),
       child: const Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.notifications_off,
-            size: 36,
-            color: Color(0xFF9CA3AF),
+          SizedBox(
+            width: 32,
+            height: 32,
+            child: CircularProgressIndicator(
+              strokeWidth: 3,
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF9CA3AF)),
+            ),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 20),
           Text(
-            'No alerts found',
-            style: TextStyle(color: Color(0xFF9CA3AF)),
+            'Loading alerts...',
+            style: TextStyle(
+              color: Color(0xFF9CA3AF),
+              fontSize: 15,
+            ),
           ),
         ],
       ),

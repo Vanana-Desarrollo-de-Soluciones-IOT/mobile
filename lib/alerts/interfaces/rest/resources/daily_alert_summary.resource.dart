@@ -11,8 +11,8 @@ class DailyAlertSummaryResource {
       Map<String, dynamic> json,
       ) {
     return DailyAlertSummaryResource(
-      date: json['date'],
-      count: json['count'],
+      date: (json['date'] ?? '').toString(),
+      count: (json['count'] as num?) ?? num.tryParse(json['count']?.toString() ?? '') ?? 0,
     );
   }
 }
