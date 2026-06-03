@@ -7,6 +7,7 @@ import 'package:mobile/iam/domain/model/valueobjects/access_token.valueobject.da
 import 'package:mobile/iam/domain/services/authentication.query-service.dart';
 import 'package:mobile/iam/infrastructure/auth_session.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/token_local_storage.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,15 @@ Future<void> main() async {
   await _restoreSession();
 
   runApp(const MyApp());
+
+  // Enable verbose logging for debugging (remove in production)
+  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+  // Initialize with your OneSignal App ID from .env
+  final oneSignalAppId = dotenv.env['ONESIGNAL_APP_ID'] ?? 'YOUR_APP_ID';
+  OneSignal.initialize(oneSignalAppId);
+  // Use this method to prompt for push notifications.
+  // We recommend removing this method after testing and instead use In-App Messages to prompt for notification permission.
+  OneSignal.Notifications.requestPermission(false);
 }
 
 Future<void> _restoreSession() async {
