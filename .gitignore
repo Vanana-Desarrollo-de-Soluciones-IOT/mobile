@@ -51,3 +51,5 @@ files/
 /macos
 /web
 /windows
+
+*.json
