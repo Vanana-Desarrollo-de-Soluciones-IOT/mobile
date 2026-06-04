@@ -63,6 +63,11 @@ import 'package:mobile/evaluation/application/internal/queryservices/telemetry_e
 import 'package:mobile/evaluation/domain/services/telemetry_evaluation.query-service.dart';
 import 'package:mobile/evaluation/infrastructure/api/gateways/telemetry_evaluation.gateway.dart';
 import 'package:mobile/evaluation/infrastructure/api/gateways/telemetry_evaluation_http.gateway.dart';
+import 'package:mobile/notifications/application/internal/queryservices/notifications_query_service_impl.dart';
+import 'package:mobile/notifications/domain/services/notifications.query-service.dart';
+import 'package:mobile/notifications/infrastructure/api/gateways/notifications.gateway.dart';
+import 'package:mobile/notifications/infrastructure/api/gateways/notifications_http.gateway.dart';
+import 'package:mobile/notifications/interfaces/pages/notifications_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -116,6 +121,15 @@ void setupServiceLocator() {
 
   getIt.registerLazySingleton<AlertsQueryService>(
     () => AlertsQueryServiceImpl(getIt<AlertsGateway>()),
+  );
+
+  // Notifications Context
+  getIt.registerLazySingleton<NotificationsGateway>(
+    () => NotificationsHttpGateway(getIt<DioClient>().client),
+  );
+
+  getIt.registerLazySingleton<NotificationsQueryService>(
+    () => NotificationsQueryServiceImpl(getIt<NotificationsGateway>()),
   );
 
   // Spaces Context
@@ -254,5 +268,9 @@ void setupServiceLocator() {
       getIt<AuthenticationCommandService>(),
       getIt<TokenLocalStorage>(),
     ),
+  );
+
+  getIt.registerLazySingleton<NotificationsCubit>(
+    () => NotificationsCubit(getIt<NotificationsQueryService>()),
   );
 }

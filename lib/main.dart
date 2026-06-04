@@ -9,6 +9,7 @@ import 'package:mobile/iam/infrastructure/auth_session.dart';
 import 'package:mobile/iam/infrastructure/persistence/local/token_local_storage.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
@@ -24,7 +25,6 @@ Future<void> main() async {
   final oneSignalAppId = dotenv.env['ONESIGNAL_APP_ID'] ?? 'YOUR_APP_ID';
   OneSignal.initialize(oneSignalAppId);
   // Use this method to prompt for push notifications.
-  // We recommend removing this method after testing and instead use In-App Messages to prompt for notification permission.
   OneSignal.Notifications.requestPermission(false);
 }
 
