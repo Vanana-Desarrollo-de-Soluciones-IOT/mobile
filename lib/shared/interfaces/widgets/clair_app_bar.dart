@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/notifications/interfaces/widgets/notification_icon_button.dart';
 import 'package:mobile/shared/interfaces/widgets/clair_name.dart';
 
 class ClairAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -36,12 +37,7 @@ class ClairAppBar extends StatelessWidget implements PreferredSizeWidget {
           : null,
       title: const ClairName(height: 18),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.notifications_none),
-          onPressed: () {
-            // Notifications placeholder
-          },
-        ),
+        const NotificationIconButton(),
         IconButton(
           icon: const Icon(Icons.settings),
           onPressed: () {

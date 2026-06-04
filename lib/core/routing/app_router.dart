@@ -24,6 +24,7 @@ import 'package:mobile/devices/interfaces/pages/spaces/spaces_cubit.dart';
 import 'package:mobile/devices/interfaces/pages/spaces/spaces_screen.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_cubit.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_screen.dart';
+import 'package:mobile/notifications/interfaces/pages/notifications_screen.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -145,6 +146,10 @@ class AppRouter {
               create: (_) => getIt<SettingsCubit>(),
               child: const SettingsScreen(),
             ),
+          ),
+          GoRoute(
+            path: '/notifications',
+            builder: (context, state) => const NotificationsScreen(),
           ),
         ],
       );
