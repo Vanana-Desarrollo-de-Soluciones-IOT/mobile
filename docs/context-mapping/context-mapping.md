@@ -6,9 +6,9 @@ This document contains the Context Mapping diagram for the mobile (Flutter) appl
 
 ```mermaid
 flowchart LR
-    %% Context Mapping - Web Services (Mobile)
+    %% Context Mapping - Mobile
 
-    title["Context Mapping - Web Services (Mobile)"]
+    title["Context Mapping - Mobile"]
 
     IAM(("IAM"))
     Devices(("Devices"))
