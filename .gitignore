@@ -46,3 +46,10 @@ app.*.map.json
 
 files/
 .env
+
+/linux
+/macos
+/web
+/windows
+
+*.json
