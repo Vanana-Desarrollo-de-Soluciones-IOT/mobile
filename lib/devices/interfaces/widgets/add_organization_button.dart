@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 
 class AddOrganizationButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -16,7 +17,7 @@ class AddOrganizationButton extends StatelessWidget {
       child: OutlinedButton.icon(
         onPressed: onPressed,
         icon: const Icon(Icons.domain_outlined, size: 18),
-        label: const Text('Add Organization'),
+        label: Text(AppLocalizations.of(context)!.org_btn_add),
         style: OutlinedButton.styleFrom(
           foregroundColor: Colors.white,
           side: BorderSide(color: Colors.white.withValues(alpha: 0.22)),

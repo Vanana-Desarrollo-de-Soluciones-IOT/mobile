@@ -395,4 +395,85 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get notifications_empty_subtitle =>
       'Le avisaremos cuando ocurra algo importante.';
+
+  @override
+  String analytics_device_offline_message(String deviceName) {
+    return 'El dispositivo con ID \"$deviceName\" no tiene datos de telemetría en vivo recientes; podría estar apagado o desconectado.';
+  }
+
+  @override
+  String get alerts_last_30_days => 'Últimos 30 días';
+
+  @override
+  String get alerts_col_device => 'DISPOSITIVO';
+
+  @override
+  String get alerts_col_severity => 'SEVERIDAD';
+
+  @override
+  String get alerts_col_space => 'ESPACIO';
+
+  @override
+  String get alerts_col_variable => 'VARIABLE';
+
+  @override
+  String get alerts_col_time => 'HORA';
+
+  @override
+  String get alerts_col_status => 'ESTADO';
+
+  @override
+  String get alerts_no_alerts_found => 'No se encontraron alertas';
+
+  @override
+  String get alerts_loading => 'Cargando alertas...';
+
+  @override
+  String spaces_card_devices(String count) {
+    return '$count DISPOSITIVOS';
+  }
+
+  @override
+  String get common_open => 'Abrir';
+
+  @override
+  String get time_updated_recently => 'Actualizado recientemente';
+
+  @override
+  String time_updated_seconds_ago(int seconds) {
+    return 'Actualizado hace ${seconds}s';
+  }
+
+  @override
+  String time_updated_minutes_ago(int minutes) {
+    return 'Actualizado hace ${minutes}m';
+  }
+
+  @override
+  String time_updated_hours_ago(int hours) {
+    return 'Actualizado hace ${hours}h';
+  }
+
+  @override
+  String time_updated_days_ago(int days) {
+    return 'Actualizado hace ${days}d';
+  }
+
+  @override
+  String get devices_vitals_connectivity => 'CONECTIVIDAD';
+
+  @override
+  String get devices_vitals_uptime => 'TIEMPO DE ACTIVIDAD';
+
+  @override
+  String get devices_vitals_uptime_unit => 'horas';
+
+  @override
+  String get devices_vitals_health => 'SALUD DEL DISPOSITIVO';
+
+  @override
+  String get devices_vitals_last_update => 'ÚLTIMA ACTUALIZACIÓN';
+
+  @override
+  String get devices_vitals_last_update_unit => 'h';
 }

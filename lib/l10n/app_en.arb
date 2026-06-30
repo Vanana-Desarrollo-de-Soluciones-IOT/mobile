@@ -198,5 +198,76 @@
 
   "notifications_title": "Notifications",
   "notifications_empty_title": "No notifications yet",
-  "notifications_empty_subtitle": "We will let you know when something important happens."
+  "notifications_empty_subtitle": "We will let you know when something important happens.",
+
+  "analytics_device_offline_message": "Device with ID \"{deviceName}\" has no recent live telemetry data; it might be turned off or disconnected.",
+  "@analytics_device_offline_message": {
+    "placeholders": {
+      "deviceName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "alerts_last_30_days": "Last 30 days",
+  "alerts_col_device": "DEVICE",
+  "alerts_col_severity": "SEVERITY",
+  "alerts_col_space": "SPACE",
+  "alerts_col_variable": "VARIABLE",
+  "alerts_col_time": "TIME",
+  "alerts_col_status": "STATUS",
+  "alerts_no_alerts_found": "No alerts found",
+  "alerts_loading": "Loading alerts...",
+
+  "spaces_card_devices": "{count} DEVICES",
+  "@spaces_card_devices": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "common_open": "Open",
+
+  "time_updated_recently": "Updated recently",
+  "time_updated_just_now": "Updated just now",
+  "time_updated_seconds_ago": "Updated {seconds}s ago",
+  "@time_updated_seconds_ago": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "time_updated_minutes_ago": "Updated {minutes}m ago",
+  "@time_updated_minutes_ago": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "time_updated_hours_ago": "Updated {hours}h ago",
+  "@time_updated_hours_ago": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "time_updated_days_ago": "Updated {days}d ago",
+  "@time_updated_days_ago": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+
+  "devices_vitals_connectivity": "CONNECTIVITY",
+  "devices_vitals_uptime": "UPTIME",
+  "devices_vitals_uptime_unit": "hours",
+  "devices_vitals_health": "DEVICE HEALTH",
+  "devices_vitals_last_update": "LAST UPDATE",
+  "devices_vitals_last_update_unit": "h"
 }

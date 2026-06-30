@@ -391,4 +391,85 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notifications_empty_subtitle =>
       'We will let you know when something important happens.';
+
+  @override
+  String analytics_device_offline_message(String deviceName) {
+    return 'Device with ID \"$deviceName\" has no recent live telemetry data; it might be turned off or disconnected.';
+  }
+
+  @override
+  String get alerts_last_30_days => 'Last 30 days';
+
+  @override
+  String get alerts_col_device => 'DEVICE';
+
+  @override
+  String get alerts_col_severity => 'SEVERITY';
+
+  @override
+  String get alerts_col_space => 'SPACE';
+
+  @override
+  String get alerts_col_variable => 'VARIABLE';
+
+  @override
+  String get alerts_col_time => 'TIME';
+
+  @override
+  String get alerts_col_status => 'STATUS';
+
+  @override
+  String get alerts_no_alerts_found => 'No alerts found';
+
+  @override
+  String get alerts_loading => 'Loading alerts...';
+
+  @override
+  String spaces_card_devices(String count) {
+    return '$count DEVICES';
+  }
+
+  @override
+  String get common_open => 'Open';
+
+  @override
+  String get time_updated_recently => 'Updated recently';
+
+  @override
+  String time_updated_seconds_ago(int seconds) {
+    return 'Updated ${seconds}s ago';
+  }
+
+  @override
+  String time_updated_minutes_ago(int minutes) {
+    return 'Updated ${minutes}m ago';
+  }
+
+  @override
+  String time_updated_hours_ago(int hours) {
+    return 'Updated ${hours}h ago';
+  }
+
+  @override
+  String time_updated_days_ago(int days) {
+    return 'Updated ${days}d ago';
+  }
+
+  @override
+  String get devices_vitals_connectivity => 'CONNECTIVITY';
+
+  @override
+  String get devices_vitals_uptime => 'UPTIME';
+
+  @override
+  String get devices_vitals_uptime_unit => 'hours';
+
+  @override
+  String get devices_vitals_health => 'DEVICE HEALTH';
+
+  @override
+  String get devices_vitals_last_update => 'LAST UPDATE';
+
+  @override
+  String get devices_vitals_last_update_unit => 'h';
 }

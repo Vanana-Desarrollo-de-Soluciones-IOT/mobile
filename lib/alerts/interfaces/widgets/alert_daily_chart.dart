@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import '../../domain/model/valueobjects/daily_alert_count.valueobject.dart';
 
 class AlertDailyChart extends StatelessWidget {
@@ -23,9 +24,9 @@ class AlertDailyChart extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Last 30 days',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.alerts_last_30_days,
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: Color(0xFFE5E7EB),

@@ -101,12 +101,22 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     }
 
     if (state.liveUnavailable && !state.hasData) {
+      final l10n = AppLocalizations.of(context)!;
+      String message = state.liveUnavailableMessage;
+      if (message.contains('has no recent live telemetry') || message.contains('might be turned off')) {
+        final deviceId = state.selectedDeviceId;
+        final deviceName = state.devices.firstWhere(
+          (d) => d.id == deviceId,
+          orElse: () => const AnalyticsSelectOption(id: '', name: 'Device'),
+        ).name;
+        message = l10n.analytics_device_offline_message(deviceName);
+      }
       return _InfoState(
         icon: Icons.cloud_off,
         iconColor: const Color(0xFF6B7280),
-        message: state.liveUnavailableMessage.isEmpty
-            ? AppLocalizations.of(context)!.analytics_live_unavailable
-            : state.liveUnavailableMessage,
+        message: message.isEmpty
+            ? l10n.analytics_live_unavailable
+            : message,
       );
     }
 

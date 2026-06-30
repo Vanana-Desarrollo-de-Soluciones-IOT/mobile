@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 
 import '../../domain/model/valueobjects/alert.valueobject.dart';
 import 'alert_severity_badge.dart';
@@ -78,6 +79,7 @@ class _HeaderRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: const BoxDecoration(
@@ -86,14 +88,14 @@ class _HeaderRow extends StatelessWidget {
           bottom: BorderSide(color: Color(0xFF2A2A2A)),
         ),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          _HeaderCell(width: 160, label: 'DEVICE'),
-          _HeaderCell(width: 110, label: 'SEVERITY'),
-          _HeaderCell(width: 200, label: 'SPACE'),
-          _HeaderCell(width: 130, label: 'VARIABLE'),
-          _HeaderCell(width: 100, label: 'TIME'),
-          _HeaderCell(width: 120, label: 'STATUS'),
+          _HeaderCell(width: 160, label: l10n.alerts_col_device),
+          _HeaderCell(width: 110, label: l10n.alerts_col_severity),
+          _HeaderCell(width: 200, label: l10n.alerts_col_space),
+          _HeaderCell(width: 130, label: l10n.alerts_col_variable),
+          _HeaderCell(width: 100, label: l10n.alerts_col_time),
+          _HeaderCell(width: 120, label: l10n.alerts_col_status),
         ],
       ),
     );
@@ -259,9 +261,9 @@ class _EmptyState extends StatelessWidget {
             color: Color(0xFF9CA3AF),
           ),
           const SizedBox(height: 12),
-          const Text(
-            'No alerts found',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.alerts_no_alerts_found,
+            style: const TextStyle(
               color: Color(0xFF9CA3AF),
               fontSize: 15,
               fontWeight: FontWeight.w500,
@@ -324,10 +326,10 @@ class _LoadingState extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFF2A2A2A)),
       ),
-      child: const Column(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
+          const SizedBox(
             width: 32,
             height: 32,
             child: CircularProgressIndicator(
@@ -337,8 +339,8 @@ class _LoadingState extends StatelessWidget {
           ),
           SizedBox(height: 20),
           Text(
-            'Loading alerts...',
-            style: TextStyle(
+            AppLocalizations.of(context)!.alerts_loading,
+            style: const TextStyle(
               color: Color(0xFF9CA3AF),
               fontSize: 15,
             ),

@@ -15,7 +15,7 @@ class DeviceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final label = buildDeviceChipLabel(device);
-    final updatedLabel = buildDeviceUpdatedLabel(device);
+    final updatedLabel = buildDeviceUpdatedLabel(context, device);
     final isOnline = device.status.toUpperCase() == 'ONLINE';
     final isRecentlySeen = device.lastSeenAt != null &&
         DateTime.now().difference(device.lastSeenAt!).inMinutes < 2;

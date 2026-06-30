@@ -817,6 +817,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We will let you know when something important happens.'**
   String get notifications_empty_subtitle;
+
+  /// No description provided for @analytics_device_offline_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Device with ID \"{deviceName}\" has no recent live telemetry data; it might be turned off or disconnected.'**
+  String analytics_device_offline_message(String deviceName);
+
+  /// No description provided for @alerts_last_30_days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days'**
+  String get alerts_last_30_days;
+
+  /// No description provided for @alerts_col_device.
+  ///
+  /// In en, this message translates to:
+  /// **'DEVICE'**
+  String get alerts_col_device;
+
+  /// No description provided for @alerts_col_severity.
+  ///
+  /// In en, this message translates to:
+  /// **'SEVERITY'**
+  String get alerts_col_severity;
+
+  /// No description provided for @alerts_col_space.
+  ///
+  /// In en, this message translates to:
+  /// **'SPACE'**
+  String get alerts_col_space;
+
+  /// No description provided for @alerts_col_variable.
+  ///
+  /// In en, this message translates to:
+  /// **'VARIABLE'**
+  String get alerts_col_variable;
+
+  /// No description provided for @alerts_col_time.
+  ///
+  /// In en, this message translates to:
+  /// **'TIME'**
+  String get alerts_col_time;
+
+  /// No description provided for @alerts_col_status.
+  ///
+  /// In en, this message translates to:
+  /// **'STATUS'**
+  String get alerts_col_status;
+
+  /// No description provided for @alerts_no_alerts_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No alerts found'**
+  String get alerts_no_alerts_found;
+
+  /// No description provided for @alerts_loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading alerts...'**
+  String get alerts_loading;
+
+  /// No description provided for @spaces_card_devices.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} DEVICES'**
+  String spaces_card_devices(String count);
+
+  /// No description provided for @common_open.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get common_open;
+
+  /// No description provided for @time_updated_recently.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated recently'**
+  String get time_updated_recently;
+
+  /// No description provided for @time_updated_seconds_ago.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {seconds}s ago'**
+  String time_updated_seconds_ago(int seconds);
+
+  /// No description provided for @time_updated_minutes_ago.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {minutes}m ago'**
+  String time_updated_minutes_ago(int minutes);
+
+  /// No description provided for @time_updated_hours_ago.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {hours}h ago'**
+  String time_updated_hours_ago(int hours);
+
+  /// No description provided for @time_updated_days_ago.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {days}d ago'**
+  String time_updated_days_ago(int days);
+
+  /// No description provided for @devices_vitals_connectivity.
+  ///
+  /// In en, this message translates to:
+  /// **'CONNECTIVITY'**
+  String get devices_vitals_connectivity;
+
+  /// No description provided for @devices_vitals_uptime.
+  ///
+  /// In en, this message translates to:
+  /// **'UPTIME'**
+  String get devices_vitals_uptime;
+
+  /// No description provided for @devices_vitals_uptime_unit.
+  ///
+  /// In en, this message translates to:
+  /// **'hours'**
+  String get devices_vitals_uptime_unit;
+
+  /// No description provided for @devices_vitals_health.
+  ///
+  /// In en, this message translates to:
+  /// **'DEVICE HEALTH'**
+  String get devices_vitals_health;
+
+  /// No description provided for @devices_vitals_last_update.
+  ///
+  /// In en, this message translates to:
+  /// **'LAST UPDATE'**
+  String get devices_vitals_last_update;
+
+  /// No description provided for @devices_vitals_last_update_unit.
+  ///
+  /// In en, this message translates to:
+  /// **'h'**
+  String get devices_vitals_last_update_unit;
 }
 
 class _AppLocalizationsDelegate

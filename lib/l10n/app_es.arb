@@ -132,5 +132,34 @@
 
   "notifications_title": "Notificaciones",
   "notifications_empty_title": "Aún no hay notificaciones",
-  "notifications_empty_subtitle": "Le avisaremos cuando ocurra algo importante."
+  "notifications_empty_subtitle": "Le avisaremos cuando ocurra algo importante.",
+
+  "analytics_device_offline_message": "El dispositivo con ID \"{deviceName}\" no tiene datos de telemetría en vivo recientes; podría estar apagado o desconectado.",
+
+  "alerts_last_30_days": "Últimos 30 días",
+  "alerts_col_device": "DISPOSITIVO",
+  "alerts_col_severity": "SEVERIDAD",
+  "alerts_col_space": "ESPACIO",
+  "alerts_col_variable": "VARIABLE",
+  "alerts_col_time": "HORA",
+  "alerts_col_status": "ESTADO",
+  "alerts_no_alerts_found": "No se encontraron alertas",
+  "alerts_loading": "Cargando alertas...",
+
+  "spaces_card_devices": "{count} DISPOSITIVOS",
+  "common_open": "Abrir",
+
+  "time_updated_recently": "Actualizado recientemente",
+  "time_updated_just_now": "Actualizado hace un momento",
+  "time_updated_seconds_ago": "Actualizado hace {seconds}s",
+  "time_updated_minutes_ago": "Actualizado hace {minutes}m",
+  "time_updated_hours_ago": "Actualizado hace {hours}h",
+  "time_updated_days_ago": "Actualizado hace {days}d",
+
+  "devices_vitals_connectivity": "CONECTIVIDAD",
+  "devices_vitals_uptime": "TIEMPO DE ACTIVIDAD",
+  "devices_vitals_uptime_unit": "horas",
+  "devices_vitals_health": "SALUD DEL DISPOSITIVO",
+  "devices_vitals_last_update": "ÚLTIMA ACTUALIZACIÓN",
+  "devices_vitals_last_update_unit": "h"
 }
