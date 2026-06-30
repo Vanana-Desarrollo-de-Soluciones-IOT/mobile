@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/iam/interfaces/pages/login/login_cubit.dart';
@@ -61,18 +62,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Text(
-                            'Login to Clair',
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context)!.login_title,
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
                               color: Colors.white,
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Enter your credentials',
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context)!.login_subtitle,
+                            style: const TextStyle(
                               fontSize: 14,
                               color: Colors.white54,
                             ),
@@ -80,18 +81,18 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(height: 32),
                           AuthTextField(
                             controller: _emailController,
-                            label: 'Email*',
+                            label: AppLocalizations.of(context)!.common_email,
                             keyboardType: TextInputType.emailAddress,
                             prefixIcon: const Icon(Icons.email_outlined, color: Colors.white54, size: 20),
                             validator: (value) {
-                              if (value == null || value.isEmpty) return 'Email is required';
+                              if (value == null || value.isEmpty) return AppLocalizations.of(context)!.login_email_required;
                               return null;
                             },
                           ),
                           const SizedBox(height: 16),
                           AuthTextField(
                             controller: _passwordController,
-                            label: 'Password*',
+                            label: AppLocalizations.of(context)!.common_password,
                             obscureText: _obscurePassword,
                             prefixIcon: const Icon(Icons.lock_outline, color: Colors.white54, size: 20),
                             suffixIcon: IconButton(
@@ -103,13 +104,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                             ),
                             validator: (value) {
-                              if (value == null || value.isEmpty) return 'Password is required';
+                              if (value == null || value.isEmpty) return AppLocalizations.of(context)!.login_password_required;
                               return null;
                             },
                           ),
                           const SizedBox(height: 32),
                           AuthButton(
-                            label: 'Login',
+                            label: AppLocalizations.of(context)!.login_button,
                             isLoading: state.isLoading,
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
@@ -127,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 16),
                                 child: Text(
-                                  'OR LOGIN WITH',
+                                  AppLocalizations.of(context)!.login_or_with,
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -140,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(height: 24),
                           AuthButton(
-                            label: 'Google',
+                            label: AppLocalizations.of(context)!.login_google,
                             isSecondary: true,
                             isLoading: state.isLoading,
                             icon: const GoogleIcon(size: 18),
@@ -150,13 +151,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           GestureDetector(
                             onTap: () => context.go('/register'),
                             child: RichText(
-                              text: const TextSpan(
-                                text: 'Do not have an account? ',
-                                style: TextStyle(color: Colors.white54, fontSize: 14),
+                              text: TextSpan(
+                                text: AppLocalizations.of(context)!.login_no_account,
+                                style: const TextStyle(color: Colors.white54, fontSize: 14),
                                 children: [
                                   TextSpan(
-                                    text: 'Register',
-                                    style: TextStyle(
+                                    text: AppLocalizations.of(context)!.login_register_link,
+                                    style: const TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
                                     ),

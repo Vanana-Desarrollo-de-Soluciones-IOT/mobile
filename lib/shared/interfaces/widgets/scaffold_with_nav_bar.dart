@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/shared/interfaces/widgets/icons/air_quality_icon.dart';
 import 'package:mobile/shared/interfaces/widgets/icons/alerts_icon.dart';
@@ -52,7 +53,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                     size: 24,
                     color: selectedIndex == 0 ? Colors.white : Colors.white54,
                   ),
-                  label: 'Analytics',
+                  label: AppLocalizations.of(context)!.nav_analytics,
                   isSelected: selectedIndex == 0,
                   onTap: () => _onItemTapped(context, 0),
                 ),
@@ -61,7 +62,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                     size: 24,
                     color: selectedIndex == 1 ? Colors.white : Colors.white54,
                   ),
-                  label: 'Alerts',
+                  label: AppLocalizations.of(context)!.nav_alerts,
                   isSelected: selectedIndex == 1,
                   onTap: () => _onItemTapped(context, 1),
                 ),
@@ -73,7 +74,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                       color: selectedIndex == 2 ? Colors.white : Colors.white54,
                     ),
                   ),
-                  label: 'Spaces',
+                  label: AppLocalizations.of(context)!.nav_spaces,
                   isSelected: selectedIndex == 2,
                   onTap: () => _onItemTapped(context, 2),
                 ),

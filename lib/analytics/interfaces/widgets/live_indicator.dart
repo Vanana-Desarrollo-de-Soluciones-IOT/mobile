@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:mobile/analytics/interfaces/rest/transform/analytics_presentation.dart';
 
 /// LIVE pill with a pulsing dot when active; tap to enter live mode.
@@ -76,7 +77,7 @@ class _LiveIndicatorState extends State<LiveIndicator>
             ),
             const SizedBox(width: 8),
             Text(
-              'LIVE',
+              AppLocalizations.of(context)!.analytics_live,
               style: TextStyle(
                 color: active ? Colors.white : const Color(0xFF9CA3AF),
                 fontSize: 13,

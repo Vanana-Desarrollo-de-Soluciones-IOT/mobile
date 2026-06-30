@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:mobile/analytics/domain/model/valueobjects/dashboard_metrics.valueobject.dart';
 import 'package:mobile/analytics/domain/model/valueobjects/trend_point.valueobject.dart';
 
@@ -55,9 +56,10 @@ String formatValue(double? value) {
   return value.toStringAsFixed(2);
 }
 
-String formatUpdateTime(int secondsSinceUpdate) {
-  if (secondsSinceUpdate < 5) return 'just now';
-  return '$secondsSinceUpdate seconds ago';
+String formatUpdateTime(BuildContext context, int secondsSinceUpdate) {
+  final l10n = AppLocalizations.of(context)!;
+  if (secondsSinceUpdate < 5) return l10n.time_just_now;
+  return l10n.time_seconds_ago(secondsSinceUpdate);
 }
 
 double getMetricValue(TrendPoint point, String metric) {

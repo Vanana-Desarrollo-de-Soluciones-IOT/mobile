@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 
 class CreateOrganizationForm extends StatefulWidget {
   final bool isLoading;
@@ -39,7 +40,7 @@ class _CreateOrganizationFormState extends State<CreateOrganizationForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Create organization',
+            AppLocalizations.of(context)!.org_form_create_title,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
@@ -47,15 +48,15 @@ class _CreateOrganizationFormState extends State<CreateOrganizationForm> {
             controller: _nameController,
             enabled: !widget.isLoading,
             textInputAction: TextInputAction.done,
-            decoration: const InputDecoration(
-              labelText: 'Organization name',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.org_form_name_label,
+              border: const OutlineInputBorder(),
             ),
             validator: (v) {
               final value = (v ?? '').trim();
-              if (value.isEmpty) return 'Name is required';
-              if (value.length < 2) return 'Name is too short';
-              if (value.length > 64) return 'Name is too long';
+              if (value.isEmpty) return AppLocalizations.of(context)!.org_form_name_required;
+              if (value.length < 2) return AppLocalizations.of(context)!.org_form_name_short;
+              if (value.length > 64) return AppLocalizations.of(context)!.org_form_name_long;
               return null;
             },
             onFieldSubmitted: (_) => _submit(),
@@ -69,7 +70,7 @@ class _CreateOrganizationFormState extends State<CreateOrganizationForm> {
                     width: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Create'),
+                : Text(AppLocalizations.of(context)!.common_create),
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/core/di/service_locator.dart';
 import 'package:mobile/notifications/domain/model/valueobjects/notification_log.valueobject.dart';
@@ -36,18 +37,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
-  String _formatDateTime(DateTime dateTime) {
+  String _formatDateTime(BuildContext context, DateTime dateTime) {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final difference = now.difference(dateTime);
 
     if (difference.inSeconds < 60) {
-      return 'Just now';
+      return l10n.time_just_now;
     } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}m ago';
+      return l10n.time_minutes_ago(difference.inMinutes);
     } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
+      return l10n.time_hours_ago(difference.inHours);
     } else if (difference.inDays < 7) {
-      return '${difference.inDays}d ago';
+      return l10n.time_days_ago(difference.inDays);
     } else {
       return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
     }
@@ -93,9 +95,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Notifications',
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context)!.notifications_title,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 28,
                               fontWeight: FontWeight.w700,
@@ -135,7 +137,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             final notification = state.notifications[index];
                             return _NotificationCard(
                               notification: notification,
-                              formattedTime: _formatDateTime(notification.createdAt),
+                              formattedTime: _formatDateTime(context, notification.createdAt),
                             );
                           },
                           childCount: state.notifications.length +
@@ -285,19 +287,19 @@ class _EmptyState extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
-            'No notifications yet',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.notifications_empty_title,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'We will let you know when something important happens.',
+          Text(
+            AppLocalizations.of(context)!.notifications_empty_subtitle,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF9CA3AF),
               fontSize: 13,
             ),

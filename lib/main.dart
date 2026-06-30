@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:mobile/l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile/core/di/service_locator.dart';
+import 'package:mobile/shared/application/internal/cubits/locale_cubit.dart';
 import 'package:mobile/core/routing/app_router.dart';
 import 'package:mobile/iam/domain/model/queries/verify_token.query.dart';
 import 'package:mobile/iam/domain/model/valueobjects/access_token.valueobject.dart';
@@ -13,7 +17,8 @@ import 'package:onesignal_flutter/onesignal_flutter.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
-  setupServiceLocator();
+  final sharedPrefs = await SharedPreferences.getInstance();
+  setupServiceLocator(sharedPrefs);
 
   await _restoreSession();
 
@@ -62,21 +67,31 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'ClairCore',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: Colors.black,
-        colorScheme: const ColorScheme.dark(
-          primary: Colors.white,
-          onPrimary: Colors.black,
-          surface: Color(0xFF121212),
-          onSurface: Colors.white,
-        ),
-        useMaterial3: true,
+    return BlocProvider<LocaleCubit>(
+      create: (_) => getIt<LocaleCubit>(),
+      child: BlocBuilder<LocaleCubit, Locale>(
+        builder: (context, locale) {
+          return MaterialApp.router(
+            title: 'ClairCore',
+            debugShowCheckedModeBanner: false,
+            locale: locale,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            theme: ThemeData(
+              brightness: Brightness.dark,
+              scaffoldBackgroundColor: Colors.black,
+              colorScheme: const ColorScheme.dark(
+                primary: Colors.white,
+                onPrimary: Colors.black,
+                surface: Color(0xFF121212),
+                onSurface: Colors.white,
+              ),
+              useMaterial3: true,
+            ),
+            routerConfig: AppRouter.router,
+          );
+        },
       ),
-      routerConfig: AppRouter.router,
     );
   }
 }

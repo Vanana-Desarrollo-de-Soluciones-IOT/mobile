@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/devices/interfaces/pages/spaces/spaces_cubit.dart';
@@ -117,17 +118,18 @@ class _SpacesScreenState extends State<SpacesScreen> {
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
         return AlertDialog(
-          title: const Text('Delete space?'),
-          content: Text('This will delete "$spaceName".'),
+          title: Text(l10n.spaces_dialog_delete_title),
+          content: Text(l10n.spaces_dialog_delete_content(spaceName)),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: Text(l10n.common_cancel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Delete'),
+              child: Text(l10n.common_delete),
             ),
           ],
         );
@@ -141,7 +143,7 @@ class _SpacesScreenState extends State<SpacesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.organizationName ?? 'Spaces';
+    final title = widget.organizationName ?? AppLocalizations.of(context)!.spaces_title;
     return Scaffold(
       appBar: const ClairAppBar(),
       body: SafeArea(
@@ -180,7 +182,7 @@ class _SpacesScreenState extends State<SpacesScreen> {
                         ),
                       ),
                       IconButton(
-                        tooltip: 'Create space',
+                        tooltip: AppLocalizations.of(context)!.spaces_btn_create,
                         onPressed: state.isLoading ? null : () => _openCreateSpaceSheet(context),
                         icon: const Icon(Icons.add, color: Colors.white70),
                         style: IconButton.styleFrom(
@@ -211,10 +213,10 @@ class _SpacesScreenState extends State<SpacesScreen> {
                       }
 
                       if (state.spaces.isEmpty) {
-                        return const Center(
+                        return Center(
                           child: Text(
-                            'No spaces yet',
-                            style: TextStyle(color: Colors.white54),
+                            AppLocalizations.of(context)!.spaces_empty,
+                            style: const TextStyle(color: Colors.white54),
                           ),
                         );
                       }

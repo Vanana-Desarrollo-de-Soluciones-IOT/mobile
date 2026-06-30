@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:mobile/alerts/domain/model/valueobjects/alert.valueobject.dart';
@@ -55,9 +56,9 @@ class _AlertsScreenState extends State<AlertsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Alerts',
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context)!.alerts_title,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 28,
                               fontWeight: FontWeight.w700,
@@ -121,17 +122,17 @@ class _UpdateInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Row(
       children: [
-        Icon(
+        const Icon(
           Icons.sync,
           size: 14,
           color: Color(0xFF9CA3AF),
         ),
-        SizedBox(width: 6),
+        const SizedBox(width: 6),
         Text(
-          'Updated just now',
-          style: TextStyle(
+          AppLocalizations.of(context)!.time_updated_just_now,
+          style: const TextStyle(
             color: Color(0xFF9CA3AF),
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -162,13 +163,13 @@ class _AlertsTabBar extends StatelessWidget {
       child: Row(
         children: [
           _TabButton(
-            label: 'Active Alerts',
+            label: AppLocalizations.of(context)!.alerts_tab_active,
             isActive: tab == AlertTab.active,
             onTap: () => onChanged(AlertTab.active),
           ),
           const SizedBox(width: 24),
           _TabButton(
-            label: 'History',
+            label: AppLocalizations.of(context)!.alerts_tab_history,
             isActive: tab == AlertTab.history,
             onTap: () => onChanged(AlertTab.history),
           ),
@@ -248,7 +249,7 @@ class _PaginationBar extends StatelessWidget {
         TextButton.icon(
           onPressed: canGoPrevious ? onPrevious : null,
           icon: const Icon(Icons.chevron_left, size: 18),
-          label: const Text('Previous'),
+          label: Text(AppLocalizations.of(context)!.alerts_btn_previous),
           style: TextButton.styleFrom(
             foregroundColor: Colors.white,
             disabledForegroundColor: const Color(0xFF4B5563),
@@ -256,7 +257,7 @@ class _PaginationBar extends StatelessWidget {
         ),
         const SizedBox(width: 16),
         Text(
-          'Page ${currentPage + 1} of $totalPages',
+          AppLocalizations.of(context)!.alerts_page_info(currentPage + 1, totalPages),
           style: const TextStyle(
             color: Color(0xFF9CA3AF),
             fontSize: 13,
@@ -266,7 +267,7 @@ class _PaginationBar extends StatelessWidget {
         const SizedBox(width: 16),
         TextButton.icon(
           onPressed: canGoNext ? onNext : null,
-          label: const Text('Next'),
+          label: Text(AppLocalizations.of(context)!.alerts_btn_next),
           icon: const Icon(Icons.chevron_right, size: 18),
           style: TextButton.styleFrom(
             foregroundColor: Colors.white,
