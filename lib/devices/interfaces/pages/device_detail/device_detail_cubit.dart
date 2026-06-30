@@ -231,12 +231,27 @@ class DeviceDetailCubit extends Cubit<DeviceDetailState> {
 
     result.fold(
       (failure) => emit(state.copyWith(isTogglingPower: false, errorMessage: failure.message)),
-      (created) => emit(
-        state.copyWith(
-          isTogglingPower: false,
-          notificationMessage: 'Command queued: ${created.type.apiValue}',
-        ),
-      ),
+      (created) {
+        final newStatus = created.type == DeviceCommandType.wake ? 'ONLINE' : 'STANDBY';
+        final updatedDevice = DeviceDetailViewModel(
+          id: device.id,
+          name: device.name,
+          status: newStatus,
+          isPoweredOn: newStatus == 'ONLINE',
+          connectivityDbm: device.connectivityDbm,
+          uptimeHours: device.uptimeHours,
+          deviceHealthPercent: device.deviceHealthPercent,
+          lastUpdateHours: device.lastUpdateHours,
+          thresholds: device.thresholds,
+        );
+        emit(
+          state.copyWith(
+            isTogglingPower: false,
+            device: updatedDevice,
+            notificationMessage: 'Command queued: ${created.type.apiValue}',
+          ),
+        );
+      },
     );
   }
 

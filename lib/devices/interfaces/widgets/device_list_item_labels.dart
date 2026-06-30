@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:mobile/l10n/app_localizations.dart';
+import 'package:mobile/l10n/generated/app_localizations.dart';
 import 'package:mobile/devices/domain/model/readmodels/device.read_model.dart';
 
 String buildDeviceChipLabel(DeviceReadModel device) {

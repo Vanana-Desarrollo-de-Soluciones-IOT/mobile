@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/l10n/app_localizations.dart';
+import 'package:mobile/l10n/generated/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_cubit.dart';
@@ -112,6 +112,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
           listener: (context, state) {
             final error = state.errorMessage;
             if (error != null && error.isNotEmpty) {
+              ScaffoldMessenger.of(context).clearSnackBars();
               ScaffoldMessenger.of(context).showSnackBar(
                 _clairSnackBar(
                   context,
@@ -123,6 +124,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
 
             final note = state.notificationMessage;
             if (note != null && note.isNotEmpty) {
+              ScaffoldMessenger.of(context).clearSnackBars();
               ScaffoldMessenger.of(context).showSnackBar(
                 _clairSnackBar(context, message: note),
               );

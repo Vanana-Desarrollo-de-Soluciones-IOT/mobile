@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile/l10n/app_localizations.dart';
+import 'package:mobile/l10n/generated/app_localizations.dart';
 import 'package:mobile/iam/interfaces/pages/settings/settings_cubit.dart';
 import 'package:mobile/shared/application/internal/cubits/locale_cubit.dart';
 import 'package:mobile/shared/interfaces/widgets/widgets.dart';

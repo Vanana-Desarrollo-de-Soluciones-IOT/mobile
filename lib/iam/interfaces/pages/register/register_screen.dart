@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/l10n/app_localizations.dart';
+import 'package:mobile/l10n/generated/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/iam/interfaces/pages/register/register_cubit.dart';
