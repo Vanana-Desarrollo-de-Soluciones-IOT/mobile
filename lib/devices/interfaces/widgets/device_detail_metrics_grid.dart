@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/l10n/app_localizations.dart';
+import 'package:mobile/l10n/generated/app_localizations.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_view_model.dart';
 
 class DeviceDetailMetricsGrid extends StatelessWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/l10n/app_localizations.dart';
+import 'package:mobile/l10n/generated/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/core/di/service_locator.dart';
 import 'package:mobile/notifications/domain/model/valueobjects/notification_log.valueobject.dart';

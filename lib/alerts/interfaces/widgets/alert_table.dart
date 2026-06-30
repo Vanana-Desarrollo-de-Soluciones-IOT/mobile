@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/l10n/app_localizations.dart';
+import 'package:mobile/l10n/generated/app_localizations.dart';
 
 import '../../domain/model/valueobjects/alert.valueobject.dart';
 import 'alert_severity_badge.dart';

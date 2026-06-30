@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/l10n/app_localizations.dart';
+import 'package:mobile/l10n/generated/app_localizations.dart';
 import 'package:mobile/analytics/interfaces/rest/transform/analytics_presentation.dart';
 
 /// LIVE pill with a pulsing dot when active; tap to enter live mode.

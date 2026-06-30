@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/l10n/app_localizations.dart';
+import 'package:mobile/l10n/generated/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/shared/interfaces/widgets/icons/air_quality_icon.dart';
 import 'package:mobile/shared/interfaces/widgets/icons/alerts_icon.dart';

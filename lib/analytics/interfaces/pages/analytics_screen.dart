@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/l10n/app_localizations.dart';
+import 'package:mobile/l10n/generated/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/analytics/interfaces/pages/analytics_cubit.dart';
 import 'package:mobile/analytics/interfaces/rest/transform/analytics_presentation.dart';

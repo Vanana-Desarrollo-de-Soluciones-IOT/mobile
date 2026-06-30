@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/l10n/app_localizations.dart';
+import 'package:mobile/l10n/generated/app_localizations.dart';
 import 'package:mobile/analytics/domain/model/valueobjects/dashboard_metrics.valueobject.dart';
 import 'package:mobile/analytics/domain/model/valueobjects/trend_point.valueobject.dart';
 
