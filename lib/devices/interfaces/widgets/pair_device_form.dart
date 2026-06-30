@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 
 class PairDeviceForm extends StatefulWidget {
   final bool isLoading;
@@ -32,20 +33,20 @@ class _PairDeviceFormState extends State<PairDeviceForm> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Pair device',
-            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
+          Text(
+            AppLocalizations.of(context)!.devices_form_pair_title,
+            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _hardwareIdController,
             enabled: !widget.isLoading,
-            decoration: const InputDecoration(
-              labelText: 'Hardware ID',
-              hintText: 'e.g. CLAIR-AB12',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.devices_form_pair_hardware,
+              hintText: AppLocalizations.of(context)!.devices_form_pair_hardware_hint,
             ),
             validator: (v) {
-              if (v == null || v.trim().isEmpty) return 'Hardware ID is required';
+              if (v == null || v.trim().isEmpty) return AppLocalizations.of(context)!.devices_form_pair_hardware_required;
               return null;
             },
           ),
@@ -65,7 +66,7 @@ class _PairDeviceFormState extends State<PairDeviceForm> {
                       height: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Pair'),
+                  : Text(AppLocalizations.of(context)!.devices_form_pair_button),
             ),
           ),
         ],

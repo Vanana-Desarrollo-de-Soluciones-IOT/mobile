@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/devices/interfaces/pages/organizations/organizations_cubit.dart';
@@ -111,17 +112,18 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
         return AlertDialog(
-          title: const Text('Delete organization?'),
-          content: Text('This will delete "$organizationName".'),
+          title: Text(l10n.org_dialog_delete_title),
+          content: Text(l10n.org_dialog_delete_content(organizationName)),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: Text(l10n.common_cancel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Delete'),
+              child: Text(l10n.common_delete),
             ),
           ],
         );
@@ -146,7 +148,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Organizations',
+                    AppLocalizations.of(context)!.org_title,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
@@ -174,10 +176,10 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                       }
 
                       if (state.organizations.isEmpty) {
-                        return const Center(
+                        return Center(
                           child: Text(
-                            'No organizations yet',
-                            style: TextStyle(color: Colors.white54),
+                            AppLocalizations.of(context)!.org_empty,
+                            style: const TextStyle(color: Colors.white54),
                           ),
                         );
                       }

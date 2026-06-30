@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 
 class SpaceCard extends StatelessWidget {
   final String name;
@@ -47,7 +48,7 @@ class SpaceCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
-                    '$countLabel DEVICES',
+                    AppLocalizations.of(context)!.spaces_card_devices(countLabel),
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 12,
@@ -60,17 +61,17 @@ class SpaceCard extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Edit',
+            tooltip: AppLocalizations.of(context)!.common_edit,
             onPressed: onEdit,
             icon: const Icon(Icons.edit_outlined, color: Colors.white70),
           ),
           IconButton(
-            tooltip: 'Delete',
+            tooltip: AppLocalizations.of(context)!.common_delete,
             onPressed: onDelete,
             icon: const Icon(Icons.delete_outline, color: Colors.white70),
           ),
           IconButton(
-            tooltip: 'Open',
+            tooltip: AppLocalizations.of(context)!.common_open,
             onPressed: onOpen,
             icon: const Icon(Icons.chevron_right, color: Colors.white70),
           ),

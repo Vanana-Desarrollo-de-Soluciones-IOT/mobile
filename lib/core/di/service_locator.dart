@@ -1,5 +1,8 @@
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mobile/shared/infrastructure/persistence/local/language_local_storage.dart';
+import 'package:mobile/shared/application/internal/cubits/locale_cubit.dart';
 import 'package:mobile/core/constants/api_constants.dart';
 import 'package:mobile/core/network/dio_client.dart';
 import 'package:mobile/iam/application/internal/commandservices/authentication_command_service_impl.dart';
@@ -71,8 +74,10 @@ import 'package:mobile/notifications/interfaces/pages/notifications_cubit.dart';
 
 final getIt = GetIt.instance;
 
-void setupServiceLocator() {
+void setupServiceLocator(SharedPreferences sharedPreferences) {
   // Core
+  getIt.registerSingleton<SharedPreferences>(sharedPreferences);
+  getIt.registerLazySingleton<LanguageLocalStorage>(() => LanguageLocalStorage(sharedPreferences));
   getIt.registerLazySingleton<TokenLocalStorage>(() => TokenLocalStorage());
   getIt.registerLazySingleton<DioClient>(
     () => DioClient(tokenStorage: getIt<TokenLocalStorage>()),
@@ -272,5 +277,9 @@ void setupServiceLocator() {
 
   getIt.registerLazySingleton<NotificationsCubit>(
     () => NotificationsCubit(getIt<NotificationsQueryService>()),
+  );
+
+  getIt.registerLazySingleton<LocaleCubit>(
+    () => LocaleCubit(getIt<LanguageLocalStorage>()),
   );
 }

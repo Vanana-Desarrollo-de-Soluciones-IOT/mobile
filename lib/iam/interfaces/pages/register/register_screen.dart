@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/iam/interfaces/pages/register/register_cubit.dart';
@@ -64,18 +65,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Text(
-                            'Create Account',
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context)!.register_title,
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
                               color: Colors.white,
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Sign up to get started',
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context)!.register_subtitle,
+                            style: const TextStyle(
                               fontSize: 14,
                               color: Colors.white54,
                             ),
@@ -83,18 +84,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           const SizedBox(height: 32),
                           AuthTextField(
                             controller: _emailController,
-                            label: 'Email*',
+                            label: AppLocalizations.of(context)!.common_email,
                             keyboardType: TextInputType.emailAddress,
                             prefixIcon: const Icon(Icons.email_outlined, color: Colors.white54, size: 20),
                             validator: (value) {
-                              if (value == null || value.isEmpty) return 'Email is required';
+                              if (value == null || value.isEmpty) return AppLocalizations.of(context)!.register_email_required;
                               return null;
                             },
                           ),
                           const SizedBox(height: 16),
                           AuthTextField(
                             controller: _passwordController,
-                            label: 'Password*',
+                            label: AppLocalizations.of(context)!.common_password,
                             obscureText: _obscurePassword,
                             prefixIcon: const Icon(Icons.lock_outline, color: Colors.white54, size: 20),
                             suffixIcon: IconButton(
@@ -106,14 +107,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                             ),
                             validator: (value) {
-                              if (value == null || value.isEmpty) return 'Password is required';
-                              if (value.length < 8) return 'Password must be at least 8 characters';
+                              if (value == null || value.isEmpty) return AppLocalizations.of(context)!.register_password_required;
+                              if (value.length < 8) return AppLocalizations.of(context)!.register_password_length;
                               return null;
                             },
                           ),
                           const SizedBox(height: 32),
                           AuthButton(
-                            label: 'Sign Up',
+                            label: AppLocalizations.of(context)!.register_button,
                             isLoading: state.isLoading,
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
@@ -131,7 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 16),
                                 child: Text(
-                                  'OR REGISTER WITH',
+                                  AppLocalizations.of(context)!.register_or_with,
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -144,7 +145,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           const SizedBox(height: 24),
                           AuthButton(
-                            label: 'Google',
+                            label: AppLocalizations.of(context)!.register_google,
                             isSecondary: true,
                             isLoading: state.isLoading,
                             icon: const GoogleIcon(size: 18),
@@ -154,13 +155,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           GestureDetector(
                             onTap: () => context.go('/login'),
                             child: RichText(
-                              text: const TextSpan(
-                                text: 'Already have an account? ',
-                                style: TextStyle(color: Colors.white54, fontSize: 14),
+                              text: TextSpan(
+                                text: AppLocalizations.of(context)!.register_already_account,
+                                style: const TextStyle(color: Colors.white54, fontSize: 14),
                                 children: [
                                   TextSpan(
-                                    text: 'Login',
-                                    style: TextStyle(
+                                    text: AppLocalizations.of(context)!.register_login_link,
+                                    style: const TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
                                     ),

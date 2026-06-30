@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 
 class ClaimDeviceForm extends StatefulWidget {
   final bool isLoading;
@@ -32,20 +33,20 @@ class _ClaimDeviceFormState extends State<ClaimDeviceForm> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Add device',
-            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
+          Text(
+            AppLocalizations.of(context)!.devices_form_claim_title,
+            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _claimTokenController,
             enabled: !widget.isLoading,
-            decoration: const InputDecoration(
-              labelText: 'Claim token',
-              hintText: 'Enter the one-time token',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.devices_form_claim_token,
+              hintText: AppLocalizations.of(context)!.devices_form_claim_token_hint,
             ),
             validator: (v) {
-              if (v == null || v.trim().isEmpty) return 'Claim token is required';
+              if (v == null || v.trim().isEmpty) return AppLocalizations.of(context)!.devices_form_claim_token_required;
               return null;
             },
           ),
@@ -65,7 +66,7 @@ class _ClaimDeviceFormState extends State<ClaimDeviceForm> {
                       height: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Add'),
+                  : Text(AppLocalizations.of(context)!.common_add),
             ),
           ),
         ],

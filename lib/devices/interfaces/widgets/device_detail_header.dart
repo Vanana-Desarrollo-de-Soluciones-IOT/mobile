@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_view_model.dart';
 import 'package:mobile/shared/interfaces/widgets/icons/clair_device_icon.dart';
 
@@ -93,7 +94,7 @@ class DeviceDetailHeader extends StatelessWidget {
                       children: [
                         Icon(Icons.edit_outlined, size: 18, color: Colors.white70),
                         const SizedBox(width: 12),
-                        const Text('Edit', style: TextStyle(color: Colors.white)),
+                        Text(AppLocalizations.of(context)!.common_edit, style: const TextStyle(color: Colors.white)),
                       ],
                     ),
                   ),
@@ -103,7 +104,7 @@ class DeviceDetailHeader extends StatelessWidget {
                       children: [
                         Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
                         const SizedBox(width: 12),
-                        const Text('Delete', style: TextStyle(color: Colors.redAccent)),
+                        Text(AppLocalizations.of(context)!.common_delete, style: const TextStyle(color: Colors.redAccent)),
                       ],
                     ),
                   ),

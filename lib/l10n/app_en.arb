@@ -1,0 +1,273 @@
+{
+  "@@locale": "en",
+
+  "common_cancel": "Cancel",
+  "common_save": "Save",
+  "common_delete": "Delete",
+  "common_create": "Create",
+  "common_add": "Add",
+  "common_edit": "Edit",
+  "common_close": "Close",
+  "common_retry": "Retry",
+  "common_none": "None",
+  "common_select": "Select",
+  "common_email": "Email*",
+  "common_password": "Password*",
+
+  "login_title": "Login to Clair",
+  "login_subtitle": "Enter your credentials",
+  "login_email_required": "Email is required",
+  "login_password_required": "Password is required",
+  "login_button": "Login",
+  "login_or_with": "OR LOGIN WITH",
+  "login_google": "Google",
+  "login_no_account": "Do not have an account? ",
+  "login_register_link": "Register",
+
+  "register_title": "Create Account",
+  "register_subtitle": "Sign up to get started",
+  "register_email_required": "Email is required",
+  "register_password_required": "Password is required",
+  "register_password_length": "Password must be at least 8 characters",
+  "register_button": "Sign Up",
+  "register_or_with": "OR REGISTER WITH",
+  "register_google": "Google",
+  "register_already_account": "Already have an account? ",
+  "register_login_link": "Login",
+
+  "verify_title": "Verify Account",
+  "verify_subtitle": "Enter the verification code sent to your email",
+  "verify_code_label": "Verification Code",
+  "verify_code_hint": "ABCD-1234",
+  "verify_code_required": "Verification code is required",
+  "verify_button": "Verify",
+  "verify_back_login": "Back to Login",
+  "verify_success_message": "Registration confirmed! Please sign in.",
+
+  "nav_analytics": "Analytics",
+  "nav_alerts": "Alerts",
+  "nav_spaces": "Spaces",
+
+  "analytics_title": "Air Quality",
+  "analytics_live": "LIVE",
+  "analytics_live_unavailable": "Live data is not available right now.",
+  "analytics_no_measurements": "No measurements available",
+  "analytics_no_data_detail": "This device has no telemetry or historical data for the selected period.",
+  "analytics_no_measurements_short": "No measurements",
+  "analytics_updated_label": "Updated",
+  "analytics_dropdown_org": "ORGANIZATION",
+  "analytics_dropdown_space": "SPACE",
+  "analytics_dropdown_device": "DEVICE",
+  "analytics_metric_pm25": "PM2.5",
+  "analytics_metric_co2": "CO₂",
+  "analytics_metric_temp": "TEMP",
+  "analytics_metric_humidity": "HUMIDITY",
+  "analytics_metric_aqi": "AQI",
+
+  "time_just_now": "Just now",
+  "time_seconds_ago": "{seconds} seconds ago",
+  "@time_seconds_ago": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "time_minutes_ago": "{minutes}m ago",
+  "@time_minutes_ago": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "time_hours_ago": "{hours}h ago",
+  "@time_hours_ago": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "time_days_ago": "{days}d ago",
+  "@time_days_ago": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "time_updated_just_now": "Updated just now",
+
+  "alerts_title": "Alerts",
+  "alerts_tab_active": "Active Alerts",
+  "alerts_tab_history": "History",
+  "alerts_btn_previous": "Previous",
+  "alerts_btn_next": "Next",
+  "alerts_page_info": "Page {current} of {total}",
+  "@alerts_page_info": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+
+  "org_title": "Organizations",
+  "org_empty": "No organizations yet",
+  "org_btn_add": "Add Organization",
+  "org_form_create_title": "Create organization",
+  "org_form_name_label": "Organization name",
+  "org_form_name_required": "Name is required",
+  "org_form_name_short": "Name is too short",
+  "org_form_name_long": "Name is too long",
+  "org_form_edit_title": "Edit organization",
+  "org_dialog_delete_title": "Delete organization?",
+  "org_dialog_delete_content": "This will delete \"{name}\".",
+  "@org_dialog_delete_content": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+
+  "spaces_title": "Spaces",
+  "spaces_empty": "No spaces yet",
+  "spaces_btn_create": "Create space",
+  "spaces_form_name_label": "Space name",
+  "spaces_form_edit_title": "Edit space",
+  "spaces_dialog_delete_title": "Delete space?",
+  "spaces_dialog_delete_content": "This will delete \"{name}\".",
+  "@spaces_dialog_delete_content": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+
+  "devices_title": "Space",
+  "devices_empty": "No devices yet",
+  "devices_btn_add": "Add device",
+  "devices_form_claim_title": "Add device",
+  "devices_form_claim_token": "Claim token",
+  "devices_form_claim_token_hint": "Enter the one-time token",
+  "devices_form_claim_token_required": "Claim token is required",
+  "devices_form_pair_title": "Pair device",
+  "devices_form_pair_hardware": "Hardware ID",
+  "devices_form_pair_hardware_hint": "e.g. CLAIR-AB12",
+  "devices_form_pair_hardware_required": "Hardware ID is required",
+  "devices_form_pair_button": "Pair",
+  "devices_dialog_pairing_title": "Pairing started",
+  "devices_dialog_pairing_no_token": "No claim token returned.",
+  "devices_dialog_pairing_token": "Claim token: {token}",
+  "@devices_dialog_pairing_token": {
+    "placeholders": {
+      "token": {
+        "type": "String"
+      }
+    }
+  },
+  "devices_not_found": "Device not found",
+  "devices_dialog_delete_title": "Delete device",
+  "devices_dialog_delete_content": "Are you sure you want to delete \"{name}\"? This action will reset the device assignment.",
+  "@devices_dialog_delete_content": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "devices_thresholds": "Thresholds",
+  "devices_thresholds_health": "May affect device health",
+  "devices_thresholds_saved": "Thresholds saved successfully.",
+  "devices_thresholds_reset": "RESET",
+  "devices_thresholds_save": "SAVE",
+  "devices_thresholds_max": "max",
+
+  "settings_title": "Settings",
+  "settings_logout": "Logout",
+  "settings_language": "Language",
+  "settings_select_language": "Select Language",
+  "settings_english": "English",
+  "settings_spanish": "Spanish",
+
+  "notifications_title": "Notifications",
+  "notifications_empty_title": "No notifications yet",
+  "notifications_empty_subtitle": "We will let you know when something important happens.",
+
+  "analytics_device_offline_message": "Device with ID \"{deviceName}\" has no recent live telemetry data; it might be turned off or disconnected.",
+  "@analytics_device_offline_message": {
+    "placeholders": {
+      "deviceName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "alerts_last_30_days": "Last 30 days",
+  "alerts_col_device": "DEVICE",
+  "alerts_col_severity": "SEVERITY",
+  "alerts_col_space": "SPACE",
+  "alerts_col_variable": "VARIABLE",
+  "alerts_col_time": "TIME",
+  "alerts_col_status": "STATUS",
+  "alerts_no_alerts_found": "No alerts found",
+  "alerts_loading": "Loading alerts...",
+
+  "spaces_card_devices": "{count} DEVICES",
+  "@spaces_card_devices": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "common_open": "Open",
+
+  "time_updated_recently": "Updated recently",
+  "time_updated_just_now": "Updated just now",
+  "time_updated_seconds_ago": "Updated {seconds}s ago",
+  "@time_updated_seconds_ago": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "time_updated_minutes_ago": "Updated {minutes}m ago",
+  "@time_updated_minutes_ago": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "time_updated_hours_ago": "Updated {hours}h ago",
+  "@time_updated_hours_ago": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "time_updated_days_ago": "Updated {days}d ago",
+  "@time_updated_days_ago": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+
+  "devices_vitals_connectivity": "CONNECTIVITY",
+  "devices_vitals_uptime": "UPTIME",
+  "devices_vitals_uptime_unit": "hours",
+  "devices_vitals_health": "DEVICE HEALTH",
+  "devices_vitals_last_update": "LAST UPDATE",
+  "devices_vitals_last_update_unit": "h"
+}

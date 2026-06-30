@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/iam/interfaces/pages/confirm_registration/confirm_registration_cubit.dart';
@@ -30,7 +31,7 @@ class _ConfirmRegistrationScreenState extends State<ConfirmRegistrationScreen> {
           if (state.isSuccess) {
             context.go('/login');
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Registration confirmed! Please sign in.')),
+              SnackBar(content: Text(AppLocalizations.of(context)!.verify_success_message)),
             );
           }
           if (state.errorMessage != null) {
@@ -58,19 +59,19 @@ class _ConfirmRegistrationScreenState extends State<ConfirmRegistrationScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Text(
-                            'Verify Account',
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context)!.verify_title,
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
                               color: Colors.white,
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Enter the verification code sent to your email',
+                          Text(
+                            AppLocalizations.of(context)!.verify_subtitle,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
                               color: Colors.white54,
                             ),
@@ -78,18 +79,18 @@ class _ConfirmRegistrationScreenState extends State<ConfirmRegistrationScreen> {
                           const SizedBox(height: 32),
                           AuthTextField(
                             controller: _codeController,
-                            label: 'Verification Code',
-                            hint: 'ABCD-1234',
+                            label: AppLocalizations.of(context)!.verify_code_label,
+                            hint: AppLocalizations.of(context)!.verify_code_hint,
                             textCapitalization: TextCapitalization.characters,
                             prefixIcon: const Icon(Icons.verified_user_outlined, color: Colors.white54, size: 20),
                             validator: (value) {
-                              if (value == null || value.isEmpty) return 'Verification code is required';
+                              if (value == null || value.isEmpty) return AppLocalizations.of(context)!.verify_code_required;
                               return null;
                             },
                           ),
                           const SizedBox(height: 32),
                           AuthButton(
-                            label: 'Verify',
+                            label: AppLocalizations.of(context)!.verify_button,
                             isLoading: state.isLoading,
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
@@ -102,9 +103,9 @@ class _ConfirmRegistrationScreenState extends State<ConfirmRegistrationScreen> {
                           const SizedBox(height: 32),
                           TextButton(
                             onPressed: () => context.go('/login'),
-                            child: const Text(
-                              'Back to Login',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                            child: Text(
+                              AppLocalizations.of(context)!.verify_back_login,
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                             ),
                           ),
                         ],

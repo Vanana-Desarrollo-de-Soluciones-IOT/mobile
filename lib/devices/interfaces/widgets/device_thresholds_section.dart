@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_view_model.dart';
 import 'package:mobile/devices/interfaces/widgets/device_threshold_card.dart';
 
@@ -19,9 +20,9 @@ class DeviceThresholdsSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Text(
-              'Thresholds',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.devices_thresholds,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -45,7 +46,7 @@ class DeviceThresholdsSection extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'May affect device health',
+          AppLocalizations.of(context)!.devices_thresholds_health,
           style: TextStyle(
             color: Colors.white.withValues(alpha: 0.40),
             fontSize: 12,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/routing/app_router.dart';
@@ -124,17 +125,18 @@ class _SpaceDevicesScreenState extends State<SpaceDevicesScreen> with RouteAware
                       await showDialog<void>(
                         context: context,
                         builder: (context) {
+                          final l10n = AppLocalizations.of(context)!;
                           return AlertDialog(
-                            title: const Text('Pairing started'),
+                            title: Text(l10n.devices_dialog_pairing_title),
                             content: Text(
                               pairing.claimToken == null || pairing.claimToken!.isEmpty
-                                  ? 'No claim token returned.'
-                                  : 'Claim token: ${pairing.claimToken}',
+                                  ? l10n.devices_dialog_pairing_no_token
+                                  : l10n.devices_dialog_pairing_token(pairing.claimToken!),
                             ),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.of(context).pop(),
-                                child: const Text('Close'),
+                                child: Text(l10n.common_close),
                               ),
                             ],
                           );
@@ -153,7 +155,7 @@ class _SpaceDevicesScreenState extends State<SpaceDevicesScreen> with RouteAware
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.spaceName ?? 'Space';
+    final title = widget.spaceName ?? AppLocalizations.of(context)!.devices_title;
 
     return Scaffold(
       appBar: const ClairAppBar(),
@@ -192,7 +194,7 @@ class _SpaceDevicesScreenState extends State<SpaceDevicesScreen> with RouteAware
                         ),
                       ),
                       IconButton(
-                        tooltip: 'Add device',
+                        tooltip: AppLocalizations.of(context)!.devices_btn_add,
                         onPressed: state.isLoading ? null : () => _openClaimDeviceSheet(context),
                         icon: const Icon(Icons.add, color: Colors.black),
                         style: IconButton.styleFrom(
@@ -201,7 +203,7 @@ class _SpaceDevicesScreenState extends State<SpaceDevicesScreen> with RouteAware
                       ),
                       const SizedBox(width: 10),
                       IconButton(
-                        tooltip: 'Pair device',
+                        tooltip: AppLocalizations.of(context)!.devices_form_pair_title,
                         onPressed: state.isLoading ? null : () => _openPairDeviceSheet(context),
                         icon: const Icon(Icons.wifi_tethering_outlined, color: Colors.white70),
                         style: IconButton.styleFrom(
@@ -238,10 +240,10 @@ class _SpaceDevicesScreenState extends State<SpaceDevicesScreen> with RouteAware
                       }
 
                       if (state.devices.isEmpty) {
-                        return const Center(
+                        return Center(
                           child: Text(
-                            'No devices yet',
-                            style: TextStyle(color: Colors.white54),
+                            AppLocalizations.of(context)!.devices_empty,
+                            style: const TextStyle(color: Colors.white54),
                           ),
                         );
                       }

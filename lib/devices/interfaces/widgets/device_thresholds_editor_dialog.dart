@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:mobile/devices/domain/model/valueobjects/metric_threshold.valueobject.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_view_model.dart';
 import 'package:mobile/devices/interfaces/rest/transform/device_detail_threshold_defaults_transform.dart';
@@ -137,7 +138,7 @@ class _DeviceThresholdsEditorDialogState extends State<DeviceThresholdsEditorDia
                         borderRadius: BorderRadius.circular(99),
                       ),
                     ),
-                    child: const Text('RESET'),
+                    child: Text(AppLocalizations.of(context)!.devices_thresholds_reset),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -159,7 +160,7 @@ class _DeviceThresholdsEditorDialogState extends State<DeviceThresholdsEditorDia
                             height: 18,
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
                           )
-                        : const Text('SAVE'),
+                        : Text(AppLocalizations.of(context)!.devices_thresholds_save),
                   ),
                 ),
               ],
@@ -244,7 +245,7 @@ class _ThresholdEditorColumn extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'max',
+            AppLocalizations.of(context)!.devices_thresholds_max,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.45),
               fontSize: 13,

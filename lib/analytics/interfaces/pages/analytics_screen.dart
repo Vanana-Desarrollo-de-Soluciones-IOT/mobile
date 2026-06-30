@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/analytics/interfaces/pages/analytics_cubit.dart';
 import 'package:mobile/analytics/interfaces/rest/transform/analytics_presentation.dart';
@@ -55,10 +56,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Expanded(
+        Expanded(
           child: Text(
-            'Air Quality',
-            style: TextStyle(
+            AppLocalizations.of(context)!.analytics_title,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 28,
               fontWeight: FontWeight.w700,
@@ -100,21 +101,31 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     }
 
     if (state.liveUnavailable && !state.hasData) {
+      final l10n = AppLocalizations.of(context)!;
+      String message = state.liveUnavailableMessage;
+      if (message.contains('has no recent live telemetry') || message.contains('might be turned off')) {
+        final deviceId = state.selectedDeviceId;
+        final deviceName = state.devices.firstWhere(
+          (d) => d.id == deviceId,
+          orElse: () => const AnalyticsSelectOption(id: '', name: 'Device'),
+        ).name;
+        message = l10n.analytics_device_offline_message(deviceName);
+      }
       return _InfoState(
         icon: Icons.cloud_off,
         iconColor: const Color(0xFF6B7280),
-        message: state.liveUnavailableMessage.isEmpty
-            ? 'Live data is not available right now.'
-            : state.liveUnavailableMessage,
+        message: message.isEmpty
+            ? l10n.analytics_live_unavailable
+            : message,
       );
     }
 
     if (!state.hasData) {
-      return const _InfoState(
+      return _InfoState(
         icon: Icons.analytics_outlined,
-        iconColor: Color(0xFF4B5563),
-        title: 'No measurements available',
-        message: 'This device has no telemetry or historical data for the selected period.',
+        iconColor: const Color(0xFF4B5563),
+        title: AppLocalizations.of(context)!.analytics_no_measurements,
+        message: AppLocalizations.of(context)!.analytics_no_data_detail,
       );
     }
 
@@ -138,7 +149,7 @@ class _Dashboard extends StatelessWidget {
       children: [
         AqiGaugeCard(
           value: live?.aqi.value,
-          category: live?.aqi.category ?? 'No measurements',
+          category: live?.aqi.category ?? AppLocalizations.of(context)!.analytics_no_measurements_short,
           delta: activeDelta,
           isSelected: state.selectedMetric == 'aqiValue',
           onTap: () => cubit.selectMetric('aqiValue'),
@@ -204,7 +215,7 @@ class _Dashboard extends StatelessWidget {
               const Icon(Icons.sync, size: 14, color: Color(0xFF6B7280)),
               const SizedBox(width: 6),
               Text(
-                'Updated ${formatUpdateTime(state.secondsSinceUpdate)}',
+                '${AppLocalizations.of(context)!.analytics_updated_label} ${formatUpdateTime(context, state.secondsSinceUpdate)}',
                 style: const TextStyle(color: Color(0xFF6B7280), fontSize: 12),
               ),
             ],
@@ -223,12 +234,13 @@ class _DropdownsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: _Dropdown(
-            label: 'ORGANIZATION',
+            label: l10n.analytics_dropdown_org,
             value: state.selectedOrgId,
             options: state.organizations,
             onChanged: (id) {
@@ -239,7 +251,7 @@ class _DropdownsRow extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: _Dropdown(
-            label: 'SPACE',
+            label: l10n.analytics_dropdown_space,
             value: state.selectedSpaceId,
             options: state.spaces,
             onChanged: (id) {
@@ -250,7 +262,7 @@ class _DropdownsRow extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: _Dropdown(
-            label: 'DEVICE',
+            label: l10n.analytics_dropdown_device,
             value: state.selectedDeviceId,
             options: state.devices,
             onChanged: (id) {
@@ -311,7 +323,7 @@ class _Dropdown extends StatelessWidget {
               dropdownColor: const Color(0xFF1A1A1A),
               icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF9CA3AF), size: 18),
               hint: Text(
-                options.isEmpty ? 'None' : 'Select',
+                options.isEmpty ? AppLocalizations.of(context)!.common_none : AppLocalizations.of(context)!.common_select,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: Color(0xFF6B7280), fontSize: 13),
               ),

@@ -46,7 +46,7 @@ class DeviceListTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  buildDeviceUpdatedLabel(device),
+                  buildDeviceUpdatedLabel(context, device),
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.55),
                     fontSize: 12,

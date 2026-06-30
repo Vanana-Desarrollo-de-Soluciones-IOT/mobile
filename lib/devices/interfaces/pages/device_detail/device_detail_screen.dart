@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_cubit.dart';
@@ -71,21 +72,22 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
         return AlertDialog(
           backgroundColor: const Color(0xFF1E1E1E),
-          title: const Text('Delete device', style: TextStyle(color: Colors.white)),
+          title: Text(l10n.devices_dialog_delete_title, style: const TextStyle(color: Colors.white)),
           content: Text(
-            'Are you sure you want to delete "$deviceName"? This action will reset the device assignment.',
+            l10n.devices_dialog_delete_content(deviceName),
             style: const TextStyle(color: Colors.white70),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+              child: Text(l10n.common_cancel, style: const TextStyle(color: Colors.white70)),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Delete', style: TextStyle(color: Colors.redAccent)),
+              child: Text(l10n.common_delete, style: const TextStyle(color: Colors.redAccent)),
             ),
           ],
         );
@@ -151,10 +153,10 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
 
             final device = state.device;
             if (device == null) {
-              return const Center(
+              return Center(
                 child: Text(
-                  'Device not found',
-                  style: TextStyle(color: Colors.white70),
+                  AppLocalizations.of(context)!.devices_not_found,
+                  style: const TextStyle(color: Colors.white70),
                 ),
               );
             }
@@ -219,7 +221,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
 
                       if (saved == true && context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Thresholds saved successfully.')),
+                          SnackBar(content: Text(AppLocalizations.of(context)!.devices_thresholds_saved)),
                         );
                       }
                     },
@@ -254,7 +256,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
       margin: const EdgeInsets.all(16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       action: SnackBarAction(
-        label: 'Close',
+        label: AppLocalizations.of(context)!.common_close,
         textColor: Colors.white70,
         onPressed: () {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();

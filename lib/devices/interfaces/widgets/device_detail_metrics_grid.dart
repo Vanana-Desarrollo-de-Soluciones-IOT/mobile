@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/l10n/app_localizations.dart';
 import 'package:mobile/devices/interfaces/pages/device_detail/device_detail_view_model.dart';
 
 class DeviceDetailMetricsGrid extends StatelessWidget {
@@ -11,29 +12,30 @@ class DeviceDetailMetricsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final metrics = [
       _MetricItem(
-        label: 'CONNECTIVITY',
+        label: l10n.devices_vitals_connectivity,
         value: '${device.connectivityDbm}',
         unit: 'dBm',
         icon: Icons.signal_cellular_alt,
       ),
       _MetricItem(
-        label: 'UPTIME',
+        label: l10n.devices_vitals_uptime,
         value: '${device.uptimeHours}',
-        unit: 'hours',
+        unit: l10n.devices_vitals_uptime_unit,
         icon: Icons.trending_up,
       ),
       _MetricItem(
-        label: 'DEVICE HEALTH',
+        label: l10n.devices_vitals_health,
         value: '${device.deviceHealthPercent}',
         unit: '%',
         icon: Icons.favorite_border,
       ),
       _MetricItem(
-        label: 'LAST UPDATE',
+        label: l10n.devices_vitals_last_update,
         value: '${device.lastUpdateHours}',
-        unit: 'h',
+        unit: l10n.devices_vitals_last_update_unit,
         icon: Icons.access_time,
       ),
     ];
